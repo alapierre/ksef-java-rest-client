@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://ksef.mf.gov.pl/schema/gtw/svc/batch/init/request/2021/10/01/0001"
+	xmlns:request.init="http://ksef.mf.gov.pl/schema/gtw/svc/batch/init/request/2021/10/01/0001"
+	xmlns:types="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
+	xmlns:batch.types="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001"
+	targetNamespace="http://ksef.mf.gov.pl/schema/gtw/svc/batch/init/request/2021/10/01/0001"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0" xml:lang="PL"
+>
+	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001" schemaLocation="https://ksef-test.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001/gtwTypes.xsd"/>
+	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001" schemaLocation="https://ksef-test.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001/batchTypes.xsd"/>
+
+	<xs:element name="InitRequest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Identifier" type="types:SubjectIdentifierByType"/>
+				<xs:element name="DocumentType" type="types:DocumentTypeType"/>
+				<xs:element name="Encryption" type="types:EncryptionType"/>
+				<xs:element name="PackageSignature" type="PackageSignatureInitRequestType"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="PackageSignatureInitRequestType">
+		<xs:sequence>
+			<xs:element name="Package" type="batch.types:PackageType"/>
+			<xs:element name="PackageFileHash" type="batch.types:PackageFileHashType"/>
+			<xs:element name="PackagePartsList">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PackagePartSignature" type="batch.types:PackagePartSignatureInitRequestType" maxOccurs="100"/>
+					</xs:sequence>
+				</xs:complexType>
+				<xs:unique name="PackagePartSignaturePartFileNameUnique">
+					<xs:selector xpath="request.init:PackagePartSignature"/>
+					<xs:field xpath="batch.types:PartFileName"/>
+				</xs:unique>
+				<xs:unique name="PackagePartSignatureOrdinalNumberUnique">
+					<xs:selector xpath="request.init:PackagePartSignature"/>
+					<xs:field xpath="batch.types:OrdinalNumber"/>
+				</xs:unique>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

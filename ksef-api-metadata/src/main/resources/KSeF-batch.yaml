@@ -1,0 +1,280 @@
+openapi: 3.0.1
+info:
+  title: KSeF
+  description: Krajowy Systemu e-Faktur
+  contact:
+    name: Info
+    email: info.ksef@mf.gov.pl
+  version: 0.0.4
+externalDocs:
+  description: Dokumentacja
+  url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
+servers:
+- url: https://ksef-test.mf.gov.pl/api
+  description: Środowisko testowe
+  variables: {}
+tags:
+- name: KSeF
+  description: Krajowy Systemu e-Faktur
+paths:
+  /batch/Finish:
+    post:
+      tags:
+      - Wysyłka wsadowa
+      summary: Wysyłka wsadowa paczki faktur do KSeF - finalizacja
+      description: Finalizacja wysyłki wsadowej paczki faktur
+      operationId: finish
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinishRequest'
+        required: true
+      responses:
+        "200":
+          description: Finalizacja wysyłki wsadowej paczki faktur poprawna
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinishResponse'
+        "400":
+          description: Nieprawidłowe wywołanie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /batch/Init:
+    post:
+      tags:
+      - Wysyłka wsadowa
+      summary: Wysyłka wsadowa paczki faktur do KSeF - inicjalizacja
+      description: Inicjalizacja wysyłki wsadowej paczki faktur. Podpisany dokument
+        http://ksef.mf.gov.pl/schema/gtw/svc/batch/init/request/2021/10/01/0001/InitRequest
+      operationId: initRequest
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        "201":
+          description: Inicjalizacja wysyłki wsadowej paczki faktur poprawna
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InitResponse'
+        "400":
+          description: Nieprawidłowe wywołanie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+  /batch/Upload/{ReferenceNumber}/{PartName}:
+    put:
+      tags:
+      - Wysyłka wsadowa
+      summary: Wysyłka wsadowa paczki faktur do KSeF - załadowanie części paczki
+      description: Załadowanie zaszyfrowanych części paczki
+      operationId: upload
+      parameters:
+      - name: ReferenceNumber
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: PartName
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Zaszyfrowana część paczki kluczem symetrycznym zadeklarowanym
+          w dokumencie Init
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: true
+      responses:
+        "201":
+          description: Załadowanie części paczki poprawne
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadResponse'
+        "400":
+          description: Nieprawidłowe wywołanie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+components:
+  schemas:
+    FinishResponse:
+      required:
+      - referenceNumber
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        referenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
+    ExceptionDetailType:
+      required:
+      - exceptionCode
+      - exceptionDescription
+      type: object
+      properties:
+        exceptionCode:
+          minimum: 0
+          type: integer
+          format: int32
+        exceptionDescription:
+          maxLength: 256
+          minLength: 1
+          type: string
+    ExceptionResponse:
+      required:
+      - exception
+      type: object
+      properties:
+        exception:
+          $ref: '#/components/schemas/ExceptionType'
+    ExceptionType:
+      required:
+      - exceptionDetailList
+      - serviceCode
+      - serviceCtx
+      - serviceName
+      - timestamp
+      type: object
+      properties:
+        serviceCtx:
+          maxLength: 64
+          minLength: 1
+          type: string
+        serviceCode:
+          maxLength: 64
+          minLength: 1
+          type: string
+        serviceName:
+          maxLength: 64
+          minLength: 1
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        referenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
+        exceptionDetailList:
+          maxItems: 100
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/ExceptionDetailType'
+    FinishRequest:
+      required:
+      - referenceNumber
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        referenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
+    HeaderEntryType:
+      required:
+      - key
+      - value
+      type: object
+      properties:
+        key:
+          maxLength: 64
+          minLength: 1
+          type: string
+        value:
+          maxLength: 128
+          minLength: 1
+          type: string
+    InitResponse:
+      required:
+      - packageSignature
+      - referenceNumber
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        referenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
+        packageSignature:
+          $ref: '#/components/schemas/PackageSignatureInitResponseType'
+    PackagePartSignatureInitResponseType:
+      required:
+      - method
+      - ordinalNumber
+      - partFileName
+      - url
+      type: object
+      properties:
+        ordinalNumber:
+          minimum: 0
+          type: integer
+          format: int32
+        partFileName:
+          pattern: "[a-zA-Z0-9_\\.\\-]{5,100}"
+          type: string
+        url:
+          maxLength: 512
+          minLength: 1
+          pattern: "http[s]?:/{2}(([0-9a-z])([0-9a-z_-])*\\.)+([0-9a-z])([0-9a-z_-])*"
+          type: string
+        method:
+          type: string
+          enum:
+          - POST
+          - PUT
+        headerEntryList:
+          maxItems: 100
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderEntryType'
+    PackageSignatureInitResponseType:
+      required:
+      - packageName
+      - packagePartSignatureList
+      type: object
+      properties:
+        packageName:
+          pattern: "[a-zA-Z0-9_\\.\\-]{5,100}"
+          type: string
+        packagePartSignatureList:
+          maxItems: 100
+          minItems: 1
+          type: array
+          items:
+            $ref: '#/components/schemas/PackagePartSignatureInitResponseType'
+    UploadResponse:
+      required:
+      - referenceNumber
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        referenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
