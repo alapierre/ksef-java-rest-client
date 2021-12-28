@@ -1,5 +1,6 @@
 package io.alapierre.ksef.client.api.model;
 
+import io.alapierre.ksef.client.api.model.auth.ContextIdentifier;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,13 +13,6 @@ import lombok.Data;
 public class AuthorisationChallengeRequest {
 
     private ContextIdentifier contextIdentifier;
-
-    @Data
-    @Builder
-    public static class ContextIdentifier {
-        private IdentifierType identifierType;
-        private String identifier;
-    }
 
     public enum IdentifierType {
         onip,
