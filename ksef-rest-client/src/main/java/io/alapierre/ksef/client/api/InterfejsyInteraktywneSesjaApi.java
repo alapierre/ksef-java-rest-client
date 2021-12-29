@@ -5,9 +5,13 @@ import io.alapierre.ksef.client.api.model.AuthorisationChallengeRequest.Identifi
 import io.alapierre.ksef.client.api.model.AuthorisationChallengeResponse;
 import io.alapierre.ksef.client.api.model.auth.ContextIdentifier;
 import io.alapierre.ksef.client.api.model.auth.InitSignedResponse;
+import io.alapierre.ksef.client.api.model.auth.SessionStatus;
+import io.alapierre.ksef.client.api.model.auth.SessionTerminateResponse;
 import io.alapierre.ksef.client.internal.ApiClient;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -15,11 +19,13 @@ import lombok.val;
  */
 @SuppressWarnings("unused")
 @Slf4j
+@RequiredArgsConstructor
 public class InterfejsyInteraktywneSesjaApi {
 
-    private final ApiClient apiClient = new ApiClient();
+    private final ApiClient apiClient;
 
-    public AuthorisationChallengeResponse authorisationChallengeCall(String identifier, IdentifierType identifierType) throws ApiException {
+    @NotNull
+    public AuthorisationChallengeResponse authorisationChallengeCall(@NotNull String identifier, @NotNull IdentifierType identifierType) throws ApiException {
 
         val ret = apiClient.postJson(
                 "online/Session/AuthorisationChallenge",
@@ -29,7 +35,8 @@ public class InterfejsyInteraktywneSesjaApi {
        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }
 
-    public InitSignedResponse initSessionSignedCall(String challenge, String identifier, byte[] signedRequest) throws ApiException {
+    @NotNull
+    public InitSignedResponse initSessionSignedCall(@NotNull String challenge, @NotNull String identifier, byte[] signedRequest) throws ApiException {
 
         val ret = apiClient.postXMLFromBytes(
                 "online/Session/InitSigned",
@@ -40,6 +47,21 @@ public class InterfejsyInteraktywneSesjaApi {
         return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }
 
+    public SessionStatus sessionStatus(@NotNull String token, int pageSize, int pageOffset) throws ApiException {
+
+        val endpoint= String.format("online/Session/Status?PageSize=%d&PageOffset=%d", pageSize, pageOffset);
+
+        val ret = apiClient.getJson(endpoint, SessionStatus.class, token);
+        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+    }
+
+    public SessionTerminateResponse terminateSession(@NotNull String token) throws ApiException {
+        val ret = apiClient.getJson("online/Session/Terminate", SessionTerminateResponse.class, token);
+        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+    }
+
+
+
     protected AuthorisationChallengeRequest getAuthorisationChallengeRequest(String identifier, IdentifierType identifierType) {
         return AuthorisationChallengeRequest.builder()
                 .contextIdentifier(ContextIdentifier.builder()
@@ -48,7 +70,4 @@ public class InterfejsyInteraktywneSesjaApi {
                         .build())
                 .build();
     }
-
-
-
 }

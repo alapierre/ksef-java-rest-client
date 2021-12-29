@@ -17,7 +17,7 @@ public class SendInvoiceRequest {
     @Value
     @Builder
     public static class InvoicePayload{
-        String payloadType;
+        String type;
         String invoiceBody;
     }
 

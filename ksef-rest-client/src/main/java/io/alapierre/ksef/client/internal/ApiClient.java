@@ -27,8 +27,24 @@ public class ApiClient {
     private final OkHttpClient client = new OkHttpClient();
     private final Gson gson = new Gson();
 
+    public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
+
+        val builder = new Request.Builder();
+        builder.url(createUrl(endpoint));
+        builder.addHeader("SessionToken", token);
+        builder.get();
+
+        return callAndReturnJson(classOfR, builder.build());
+    }
+
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR) throws ApiException {
         return doPostJson(endpoint, body, classOfR, null);
+    }
+
+    public <B, R> Optional<R> putJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
+        RequestBody requestBody = RequestBody.create(gson.toJson(body), JSON);
+        Request request = createRequest(endpoint, requestBody, token, false);
+        return callAndReturnJson(classOfR, request);
     }
 
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
@@ -72,8 +88,12 @@ public class ApiClient {
     private  <B, R> Optional<R> doPostJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, @Nullable String authToken) throws ApiException {
 
         RequestBody requestBody = RequestBody.create(gson.toJson(body), JSON);
-        Request request = createRequest(endpoint, requestBody, authToken);
+        Request request = createRequest(endpoint, requestBody, authToken, true);
+        return callAndReturnJson(classOfR, request);
+    }
 
+    @NotNull
+    private <R> Optional<R> callAndReturnJson(@NotNull Class<R> classOfR, Request request) throws ApiException {
         try (Response response = client.newCall(request).execute()) {
 
             if(!response.isSuccessful()) {
@@ -86,33 +106,23 @@ public class ApiClient {
         } catch (IOException ex) {
             throw new ApiException(ex);
         }
-
     }
 
-    private @NotNull Request createRequest(@NotNull String endpoint, @NotNull RequestBody requestBody, String token) {
+    private @NotNull Request createRequest(@NotNull String endpoint, @NotNull RequestBody requestBody, String token, boolean post) {
 
-        Request request;
+        val builder = new Request.Builder();
+        builder.url(createUrl(endpoint));
+        if (token != null) builder.addHeader("SessionToken", token);
+        if (post) builder.post(requestBody);
+        else builder.put(requestBody);
 
-        if (token == null) {
-            request = new Request.Builder()
-                    .url(createUrl(endpoint))
-                    .post(requestBody)
-                    .build();
-        } else {
-            request = new Request.Builder()
-                    .url(createUrl(endpoint))
-                    .addHeader("SessionToken", token)
-                    .post(requestBody)
-                    .build();
-        }
-
-        return request;
+        return builder.build();
     }
 
     @NotNull
     private <R> Optional<R> postAndReturnJson(String endpoint, Class<R> classOfR, RequestBody requestBody, String token) throws ApiException, IOException {
 
-        Request request = createRequest(endpoint, requestBody, token);
+        Request request = createRequest(endpoint, requestBody, token, true);
 
         try (Response response = client.newCall(request).execute()) {
 
@@ -126,7 +136,7 @@ public class ApiClient {
         }
     }
 
-    protected @NotNull byte[] marshalXML(@NotNull Object o) throws JAXBException {
+    protected byte[] marshalXML(@NotNull Object o) throws JAXBException {
 
         val jc = JAXBContext.newInstance(o.getClass());
         val jaxbMarshaller = jc.createMarshaller();

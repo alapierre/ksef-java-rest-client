@@ -1,9 +1,11 @@
 package io.alapierre.ksef.client.api;
 
 import io.alapierre.io.IOUtils;
+import io.alapierre.ksef.client.api.model.invoice.InvoiceStatusResponse;
 import io.alapierre.ksef.client.api.model.invoice.SendInvoiceRequest;
 import io.alapierre.ksef.client.api.model.invoice.SendInvoiceResponse;
 import io.alapierre.ksef.client.internal.ApiClient;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
@@ -21,9 +23,10 @@ import java.util.Base64;
  * Copyrights by original author 2021.12.28
  */
 @Slf4j
-public class InterfejsyInteraktywneSesjaFaktura {
+@RequiredArgsConstructor
+public class InterfejsyInteraktywneFakturaApi {
 
-    private final ApiClient apiClient = new ApiClient();
+    private final ApiClient apiClient;
 
     public @NotNull SendInvoiceResponse invoiceSend(File file, @NotNull String token) throws IOException, ApiException {
         try (InputStream in = new FileInputStream(file)) {
@@ -37,8 +40,13 @@ public class InterfejsyInteraktywneSesjaFaktura {
 
     public @NotNull SendInvoiceResponse invoiceSend(byte[] invoiceBytes, @NotNull String token) throws ApiException {
         val request = prepareSendInvoiceRequest(invoiceBytes);
-        val response = apiClient.postJson("online/Invoice/Send", request, SendInvoiceResponse.class, token);
+        val response = apiClient.putJson("online/Invoice/Send", request, SendInvoiceResponse.class, token);
         return response.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+    }
+
+    public InvoiceStatusResponse invoiceStatus(@NotNull String token, @NotNull String referenceNumber) throws ApiException {
+        val ret = apiClient.getJson("online/Invoice/Status/" + referenceNumber, InvoiceStatusResponse.class, token);
+        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }
 
     public static SendInvoiceRequest prepareSendInvoiceRequest(byte[] invoiceBytes) {
@@ -59,7 +67,7 @@ public class InterfejsyInteraktywneSesjaFaktura {
                                     .build())
                             .build())
                     .invoicePayload(SendInvoiceRequest.InvoicePayload.builder()
-                            .payloadType("plain")
+                            .type("plain")
                             .invoiceBody(contentBase64)
                             .build())
                     .build();

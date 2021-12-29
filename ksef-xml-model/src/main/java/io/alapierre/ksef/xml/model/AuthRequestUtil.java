@@ -1,9 +1,12 @@
 package io.alapierre.ksef.xml.model;
 
+import lombok.val;
 import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import pl.gov.mf.ksef.schema.gtw.svc.online.auth.request._2021._10._01._0001.InitSessionSignedRequest;
+import pl.gov.mf.ksef.schema.gtw.svc.online.auth.request._2021._10._01._0001.InitSessionTokenRequest;
 import pl.gov.mf.ksef.schema.gtw.svc.online.auth.request._2021._10._01._0001.ObjectFactory;
+import pl.gov.mf.ksef.schema.gtw.svc.online.types._2021._10._01._0001.AuthorisationContextTokenType;
 import pl.gov.mf.ksef.schema.gtw.svc.types._2021._10._01._0001.*;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +17,24 @@ import java.io.File;
  * Copyrights by original author 2021.12.23
  */
 public class AuthRequestUtil {
+
+    public static @NotNull InitSessionTokenRequest prepareTokenAuthRequest(@NotNull String challenge, @NotNull String identifier, @NotNull String encryptedToken) {
+
+        val initSessionTokenRequest = new InitSessionTokenRequest();
+
+        val subjectIdentifier = new SubjectIdentifierByCompanyType();
+        subjectIdentifier.setIdentifier(identifier);
+
+        val context = new AuthorisationContextTokenType();
+        context.setChallenge(challenge);
+        context.setIdentifier(subjectIdentifier);
+        context.setToken(encryptedToken);
+
+        context.setDocumentType(prepareDocumentType());
+        initSessionTokenRequest.setContext(context);
+
+        return initSessionTokenRequest;
+    }
 
     public static @NotNull InitSessionSignedRequest prepareAuthRequest(@NotNull String challenge, @NotNull String identifier) {
 
@@ -26,16 +47,7 @@ public class AuthRequestUtil {
         context.setType(AuthorisationTypeType.SERIAL_NUMBER);
         context.setChallenge(challenge);
 
-        var documentTypeType = new DocumentTypeType();
-        documentTypeType.setService(ServiceType.K_SE_F);
-
-        var form = new FormCodeType();
-        form.setSystemCode("FA (1)");
-        form.setSchemaVersion("1-0E");
-        form.setTargetNamespace("http://crd.gov.pl/wzor/2021/11/29/11089/");
-        form.setValue("FA");
-
-        documentTypeType.setFormCode(form);
+        var documentTypeType = prepareDocumentType();
 
         context.setDocumentType(documentTypeType);
 
@@ -46,6 +58,22 @@ public class AuthRequestUtil {
         request.setContext(context);
 
         return request;
+    }
+
+    public static @NotNull DocumentTypeType prepareDocumentType() {
+
+        val documentTypeType = new DocumentTypeType();
+        documentTypeType.setService(ServiceType.K_SE_F);
+
+        val form = new FormCodeType();
+        form.setSystemCode("FA (1)");
+        form.setSchemaVersion("1-0E");
+        form.setTargetNamespace("http://crd.gov.pl/wzor/2021/11/29/11089/");
+        form.setValue("FA");
+
+        documentTypeType.setFormCode(form);
+
+        return documentTypeType;
     }
 
     public static void requestToFile(@NotNull InitSessionSignedRequest request, @NotNull File outputFile) {
