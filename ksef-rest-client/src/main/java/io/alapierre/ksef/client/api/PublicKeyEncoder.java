@@ -15,21 +15,29 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
 
+import static io.alapierre.ksef.client.api.Constants.DATE_FORMAT_PATTERN;
+
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2021.12.27
  */
-public class Encoder {
+public class PublicKeyEncoder {
 
     private final byte[] publicKey;
 
+    public static PublicKeyEncoder withBundledKey() {
+        val pk = PublicKeyEncoder.class.getClassLoader().getResourceAsStream("mfPublicKey.der");
+        if (pk == null) throw new IllegalStateException("Can't load bundled key mfPublicKey.der from classpath");
+        return new PublicKeyEncoder(pk);
+    }
+
     @SneakyThrows
-    public Encoder(@NotNull InputStream publicKeyStream) {
+    public PublicKeyEncoder(@NotNull InputStream publicKeyStream) {
         publicKey = IOUtils.toByteArray(publicKeyStream);
     }
 
     public static @NotNull Date parseChallengeTimestamp(@NotNull String challengeTimestamp) throws ParseException {
-        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").parse(challengeTimestamp);
+        return new SimpleDateFormat(DATE_FORMAT_PATTERN).parse(challengeTimestamp);
     }
 
     @SneakyThrows

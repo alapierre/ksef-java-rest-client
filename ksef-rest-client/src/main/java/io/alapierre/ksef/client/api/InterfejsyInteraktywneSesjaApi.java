@@ -47,6 +47,19 @@ public class InterfejsyInteraktywneSesjaApi {
         return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }
 
+    @NotNull
+    public InitSignedResponse initSessionTokenCall(byte[] tokenRequest) throws ApiException {
+
+        val ret = apiClient.postXMLFromBytes(
+                "online/Session/InitToken",
+                tokenRequest,
+                InitSignedResponse.class
+        );
+
+        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+    }
+
+    @NotNull
     public SessionStatus sessionStatus(@NotNull String token, int pageSize, int pageOffset) throws ApiException {
 
         val endpoint= String.format("online/Session/Status?PageSize=%d&PageOffset=%d", pageSize, pageOffset);
@@ -55,13 +68,13 @@ public class InterfejsyInteraktywneSesjaApi {
         return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }
 
+    @NotNull
     public SessionTerminateResponse terminateSession(@NotNull String token) throws ApiException {
         val ret = apiClient.getJson("online/Session/Terminate", SessionTerminateResponse.class, token);
         return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }
 
-
-
+    @NotNull
     protected AuthorisationChallengeRequest getAuthorisationChallengeRequest(String identifier, IdentifierType identifierType) {
         return AuthorisationChallengeRequest.builder()
                 .contextIdentifier(ContextIdentifier.builder()
