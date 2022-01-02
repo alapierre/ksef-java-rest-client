@@ -34,7 +34,7 @@
         <module>ksef-xml-model</module>
         <module>ksef-client-spec</module>
         <module>ksef-client-okhttp</module>
-        <module>ksef-rest-model</module>
+        <module>ksef-api</module>
         <module>ksef-json-serializer-gson</module>
         <module>ksef-json-serializer-jackson</module>
         <module>ksef-client-jdk11-http-client</module>
@@ -59,6 +59,27 @@
 
     <build>
         <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>
+                            <version>1.8</version>
+                            <vendor>openjdk</vendor>
+                        </jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

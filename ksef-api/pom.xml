@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ksef-rest-model</artifactId>
+    <artifactId>ksef-api</artifactId>
 
     <build>
         <plugins>
@@ -36,6 +36,12 @@
     </build>
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.alapierre.ksef</groupId>
+            <artifactId>ksef-client-spec</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
