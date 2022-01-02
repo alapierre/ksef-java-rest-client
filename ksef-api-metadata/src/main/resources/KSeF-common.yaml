@@ -1,21 +1,31 @@
 openapi: 3.0.1
 info:
   title: KSeF
-  description: Krajowy Systemu e-Faktur
+  description: Krajowy System e-Faktur
   contact:
     name: Info
+    url: https://ksef.mf.gov.pl
     email: info.ksef@mf.gov.pl
-  version: 0.0.4
+  version: 1.0.0
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
 servers:
+- url: https://ksef.mf.gov.pl/api
+  description: Środowisko produkcyjne
+  variables: {}
+- url: https://ksef-demo.mf.gov.pl/api
+  description: Środowisko demonstracyjne
+  variables: {}
 - url: https://ksef-test.mf.gov.pl/api
   description: Środowisko testowe
   variables: {}
 tags:
 - name: KSeF
-  description: Krajowy Systemu e-Faktur
+  description: Krajowy System e-Faktur
+  externalDocs:
+    description: Krajowy System e-Faktur
+    url: https://ksef.mf.gov.pl
 paths:
   /common/Invoice/KSeF:
     post:
@@ -154,7 +164,7 @@ components:
       type: object
       properties:
         ksefReferenceNumber:
-          pattern: "(([1-9]((\\d[1-9])|([1-9]\\d))\\d{7})|(M\\d{9})|([A-Z]{2}\\d{8}))-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-([0-9A-F]{6})){2}-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           type: string
         invoiceDetails:
           $ref: '#/components/schemas/InvoiceQueryDetailsType'
@@ -199,30 +209,30 @@ components:
             type: string
     SubjectIdentifierToType:
       required:
-      - identifierType
+      - type
       type: object
       properties:
-        identifierType:
+        type:
           type: string
       discriminator:
-        propertyName: identifierType
+        propertyName: type
         mapping:
           onip: '#/components/schemas/SubjectIdentifierToCompanyType'
           other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
           none: '#/components/schemas/SubjectIdentifierToNoneType'
     SubjectNameType:
       required:
-      - nameType
+      - type
       type: object
       properties:
         tradeName:
           maxLength: 256
           minLength: 1
           type: string
-        nameType:
+        type:
           type: string
       discriminator:
-        propertyName: nameType
+        propertyName: type
         mapping:
           fn: '#/components/schemas/SubjectFullNameType'
           pn: '#/components/schemas/SubjectPersonNameType'

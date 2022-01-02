@@ -1,21 +1,31 @@
 openapi: 3.0.1
 info:
   title: KSeF
-  description: Krajowy Systemu e-Faktur
+  description: Krajowy System e-Faktur
   contact:
     name: Info
+    url: https://ksef.mf.gov.pl
     email: info.ksef@mf.gov.pl
-  version: 0.0.4
+  version: 1.0.0
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
 servers:
+- url: https://ksef.mf.gov.pl/api
+  description: Środowisko produkcyjne
+  variables: {}
+- url: https://ksef-demo.mf.gov.pl/api
+  description: Środowisko demonstracyjne
+  variables: {}
 - url: https://ksef-test.mf.gov.pl/api
   description: Środowisko testowe
   variables: {}
 tags:
 - name: KSeF
-  description: Krajowy Systemu e-Faktur
+  description: Krajowy System e-Faktur
+  externalDocs:
+    description: Krajowy System e-Faktur
+    url: https://ksef.mf.gov.pl
 paths:
   /online/Credentials/GenerateToken:
     post:
@@ -131,6 +141,44 @@ paths:
             application/json: {}
       security:
       - SessionToken: []
+  /online/Credentials/RevokeToken:
+    post:
+      tags:
+      - Interfejsy interaktywne - poświadczenia
+      summary: Usunięcie tokena autoryzacyjnego
+      description: Odebranie Usunięcie tokena autoryzacyjnego
+      operationId: revokeToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeTokenRequest'
+        required: true
+      responses:
+        "202":
+          description: Dane zostały zapisane
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusCredentialsResponse'
+        "400":
+          description: Nie znaleziono danych
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        "401":
+          description: Nieautoryzowany dostęp
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        "404":
+          description: Nie znaleziono wyszukiwanej treści
+          content:
+            application/json: {}
+      security:
+      - SessionToken: []
   /online/Credentials/Status/{CredentialsElementReferenceNumber}:
     get:
       tags:
@@ -183,7 +231,7 @@ paths:
         in: path
         required: true
         schema:
-          pattern: "(([1-9]((\\d[1-9])|([1-9]\\d))\\d{7})|(M\\d{9})|([A-Z]{2}\\d{8}))-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-([0-9A-F]{6})){2}-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           type: string
       responses:
         "200":
@@ -198,12 +246,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                response example:
+                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.get
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
         "401":
           description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                response example:
+                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.get
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
         "404":
           description: Nie znaleziono wyszukiwanej treści
           content:
@@ -222,6 +298,26 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SendInvoiceRequest'
+            examples:
+              request example:
+                summary: Przykład żądania
+                description: Przykład żądania
+                value:
+                  invoiceHash:
+                    hashSHA:
+                      algorithm: SHA-256
+                      encoding: Base64
+                      value: ndeJt2MSJXAPbidtqM8Hnq7c2iIa7qY/y/dgkJUaQT4=
+                    fileSize: 2135
+                  invoicePayload:
+                    type: encrypted
+                    encryptedInvoiceHash:
+                      hashSHA:
+                        algorithm: SHA-256
+                        encoding: Base64
+                        value: CpecTP+QmTAbzC4i1rlJ0VKVZwJSXp/cKxkkvdElFG0=
+                      fileSize: 2144
+                    encryptedInvoiceBody: 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
         required: true
       responses:
         "202":
@@ -230,18 +326,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SendInvoiceResponse'
+              examples:
+                response example:
+                  summary: Przykład poprawnej odpowiedzi
+                  description: Przykład poprawnej odpowiedzi
+                  value:
+                    timestamp: 2021-10-01T12:13:14.999Z
+                    referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                    processingCode: 100
+                    processingDescription: Proces został zarejestrowany.
+                    elementReferenceNumber: 20211001-EE-FFFFFFFFFF-FFFFFFFFFF-FF
         "400":
           description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                response example:
+                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.send
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
         "401":
           description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                response example:
+                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.send
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
       security:
       - SessionToken: []
   /online/Invoice/Status/{InvoiceElementReferenceNumber}:
@@ -265,18 +399,61 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusInvoiceResponse'
+              examples:
+                response example:
+                  summary: Przykład poprawnej odpowiedzi
+                  description: Przykład poprawnej odpowiedzi
+                  value:
+                    timestamp: 2021-10-01T12:13:14.999Z
+                    referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                    processingCode: 200
+                    processingDescription: Zakończenie etapu finalizacji i zakończenia
+                      procesu
+                    elementReferenceNumber: 20211001-EE-FFFFFFFFFF-FFFFFFFFFF-FF
+                    invoiceStatus:
+                      invoiceNumber: INV_1111111111_2222222222_4727711098527000
+                      ksefReferenceNumber: 1111111111-20211001-FFFFFF-FFFFFF-FF
+                      acquisitionTimestamp: 2021-10-01T12:13:14.999Z
         "400":
           description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                response example:
+                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.status
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
         "401":
           description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+              examples:
+                response example:
+                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.status
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
         "404":
           description: Nie znaleziono wyszukiwanej treści
           content:
@@ -574,6 +751,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AuthorisationChallengeRequest'
+            examples:
+              request example:
+                summary: Przykład żądania
+                description: Przykład żądania
+                value:
+                  contextIdentifier:
+                    type: onip
+                    identifier: "1111111111"
         required: true
       responses:
         "201":
@@ -601,12 +786,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.authorisation.challenge
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.authorisation.challenge
-                      timestamp: 2021-10-01T12:13:15Z
   /online/Session/InitSigned:
     post:
       tags:
@@ -636,15 +823,22 @@ paths:
                   summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
                   value:
-                    timestamp: 2021-10-01T12:13:14Z
+                    timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     sessionToken:
+                      token: 161140207201d82aa59bbe17f57c347b7e3e313b69a36756a35a5f31c9f9df5f
                       context:
                         contextIdentifier:
-                          identifierType: onip
+                          type: onip
                           identifier: "1111111111"
-                        credentialsRoleList: []
-                      token: 055866a1337bf9bd8bd44ef6b5dc481483278f402ff955fc7282bd33ad9e2bc7
+                        contextName:
+                          type: fn
+                          tradeName: null
+                          fullName: CN_1111111111
+                        credentialsRoleList:
+                        - type: standard_plain
+                          roleType: owner
+                          roleDescription: system
         "400":
           description: Nieprawidłowe wywołanie
           content:
@@ -657,13 +851,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.signed.init
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.signed.init
-                      timestamp: 2021-10-01T12:13:15Z
   /online/Session/InitToken:
     post:
       tags:
@@ -694,15 +889,22 @@ paths:
                   summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
                   value:
-                    timestamp: 2021-10-01T12:13:14Z
+                    timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     sessionToken:
+                      token: 161140207201d82aa59bbe17f57c347b7e3e313b69a36756a35a5f31c9f9df5f
                       context:
                         contextIdentifier:
-                          identifierType: onip
+                          type: onip
                           identifier: "1111111111"
-                        credentialsRoleList: []
-                      token: 055866a1337bf9bd8bd44ef6b5dc481483278f402ff955fc7282bd33ad9e2bc7
+                        contextName:
+                          type: fn
+                          tradeName: null
+                          fullName: CN_1111111111
+                        credentialsRoleList:
+                        - type: standard_plain
+                          roleType: owner
+                          roleDescription: system
         "400":
           description: Nieprawidłowe wywołanie
           content:
@@ -715,13 +917,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.token.init
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.token.init
-                      timestamp: 2021-10-01T12:13:15Z
   /online/Session/Status:
     get:
       tags:
@@ -758,14 +961,14 @@ paths:
                   summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
                   value:
-                    timestamp: 2021-10-01T12:13:14Z
+                    timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     numberOfElements: 0
-                    pageOffset: 0
                     pageSize: 20
-                    processingCode: 100
-                    processingDescription: Sesja interaktywna rozpoczęta. Komunikacja
-                      otwarta.
+                    pageOffset: 0
+                    processingCode: 200
+                    processingDescription: Zakończenie etapu finalizacji i zakończenia
+                      procesu
                     invoiceStatusList: []
         "400":
           description: Nie znaleziono danych
@@ -779,13 +982,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.status.plain
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.plain
-                      timestamp: 2021-10-01T12:13:15Z
         "401":
           description: Nieautoryzowany dostęp
           content:
@@ -798,13 +1002,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.status.plain
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.plain
-                      timestamp: 2021-10-01T12:13:15Z
       security:
       - SessionToken: []
   /online/Session/Status/{ReferenceNumber}:
@@ -849,14 +1054,14 @@ paths:
                   summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
                   value:
-                    timestamp: 2021-10-01T12:13:14Z
+                    timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     numberOfElements: 0
-                    pageOffset: 0
                     pageSize: 20
-                    processingCode: 100
-                    processingDescription: Sesja interaktywna rozpoczęta. Komunikacja
-                      otwarta.
+                    pageOffset: 0
+                    processingCode: 200
+                    processingDescription: Zakończenie etapu finalizacji i zakończenia
+                      procesu
                     invoiceStatusList: []
         "400":
           description: Nie znaleziono danych
@@ -870,13 +1075,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.status.reference.Number
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.reference.Number
-                      timestamp: 2021-10-01T12:13:15Z
         "401":
           description: Nieautoryzowany dostęp
           content:
@@ -889,13 +1095,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.status.reference.Number
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.reference.Number
-                      timestamp: 2021-10-01T12:13:15Z
       security:
       - SessionToken: []
   /online/Session/Terminate:
@@ -917,7 +1124,7 @@ paths:
                   summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
                   value:
-                    timestamp: 2021-10-01T12:13:14Z
+                    timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     processingCode: 350
                     processingDescription: Sesja interaktywna zakończona. Komunikacja
@@ -934,13 +1141,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.terminate
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.terminate
-                      timestamp: 2021-10-01T12:13:15Z
         "401":
           description: Nieautoryzowany dostęp
           content:
@@ -953,13 +1161,14 @@ paths:
                   description: Przykład błędnej odpowiedzi
                   value:
                     exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.terminate
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.terminate
-                      timestamp: 2021-10-01T12:13:15Z
       security:
       - SessionToken: []
 components:
@@ -1158,15 +1367,15 @@ components:
             type: string
     CredentialsIdentifierRequestType:
       required:
-      - identifierType
+      - type
       type: object
       properties:
         identifier:
           type: string
-        identifierType:
+        type:
           type: string
       discriminator:
-        propertyName: identifierType
+        propertyName: type
         mapping:
           nip: '#/components/schemas/CredentialsIdentifierRequestIndividualNipType'
           pesel: '#/components/schemas/CredentialsIdentifierRequestIndividualPeselType'
@@ -1259,30 +1468,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CredentialsRoleRequestStandardBaseType'
-    SendInvoiceResponse:
+    RevokeTokenRequest:
       required:
-      - elementReferenceNumber
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
+      - revokeToken
       type: object
       properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        revokeToken:
+          $ref: '#/components/schemas/RevokeTokenRequestType'
+    RevokeTokenRequestType:
+      required:
+      - sourceTokenIdentifier
+      - tokenNumber
+      type: object
+      properties:
+        sourceTokenIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+        tokenNumber:
+          maxLength: 256
+          minLength: 1
           type: string
     File1MBHashType:
       required:
@@ -1355,13 +1558,13 @@ components:
             format: binary
     InvoicePayloadType:
       required:
-      - payloadType
+      - type
       type: object
       properties:
-        payloadType:
+        type:
           type: string
       discriminator:
-        propertyName: payloadType
+        propertyName: type
         mapping:
           plain: '#/components/schemas/InvoicePayloadPlainType'
           encrypted: '#/components/schemas/InvoicePayloadEncryptedType'
@@ -1375,6 +1578,31 @@ components:
           $ref: '#/components/schemas/File1MBHashType'
         invoicePayload:
           $ref: '#/components/schemas/InvoicePayloadType'
+    SendInvoiceResponse:
+      required:
+      - elementReferenceNumber
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        referenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
+        processingCode:
+          maximum: 999
+          minimum: 100
+          type: integer
+          format: int32
+        processingDescription:
+          type: string
+        elementReferenceNumber:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+          type: string
     InvoiceStatusType:
       type: object
       properties:
@@ -1383,7 +1611,7 @@ components:
           minLength: 1
           type: string
         ksefReferenceNumber:
-          pattern: "(([1-9]((\\d[1-9])|([1-9]\\d))\\d{7})|(M\\d{9})|([A-Z]{2}\\d{8}))-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-([0-9A-F]{6})){2}-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           type: string
         acquisitionTimestamp:
           type: string
@@ -1462,77 +1690,32 @@ components:
           type: array
           items:
             type: string
-    CredentialsBaseListType:
-      required:
-      - baseListType
-      type: object
-      discriminator:
-        propertyName: baseListType
-        mapping:
-          direct: '#/components/schemas/CredentialsDirectPlainType'
-          indirectLvl1: '#/components/schemas/CredentialsIndirectLvl1Type'
-          token: '#/components/schemas/CredentialsTokenType'
-      allOf:
-      - $ref: '#/components/schemas/CredentialsBaseTypeObject'
-      - type: object
-        properties:
-          identifier:
-            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-          credentialsRoleList:
-            type: array
-            items:
-              $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
-          baseListType:
-            type: string
-    CredentialsBaseSingleType:
-      required:
-      - baseSingleType
-      type: object
-      discriminator:
-        propertyName: baseSingleType
-        mapping:
-          parent: '#/components/schemas/CredentialsParentType'
-      allOf:
-      - $ref: '#/components/schemas/CredentialsBaseTypeObject'
-      - type: object
-        properties:
-          identifier:
-            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-          credentialsRole:
-            $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
-          baseSingleType:
-            type: string
     CredentialsBaseTypeObject:
       required:
-      - baseType
+      - type
       type: object
       properties:
         identifier:
           type: object
-        baseType:
+        type:
           type: string
       discriminator:
-        propertyName: baseType
+        propertyName: type
         mapping:
-          list: '#/components/schemas/CredentialsBaseListType'
-          single: '#/components/schemas/CredentialsBaseSingleType'
-    CredentialsDirectPlainType:
-      type: object
-      properties:
-        identifier:
-          $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-        credentialsRoleList:
-          type: array
-          items:
-            $ref: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
+          list_plain: '#/components/schemas/CredentialsPlainType'
+          list_token: '#/components/schemas/CredentialsTokenType'
+          single_parent: '#/components/schemas/CredentialsParentType'
     CredentialsIdentifierResponseAuthorisationTokenType:
       required:
       - identifier
       type: object
-      properties:
-        identifier:
-          pattern: "[0-9A-F]{64}"
-          type: string
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            pattern: "[0-9A-F]{64}"
+            type: string
     CredentialsIdentifierResponseIndividualCertificateFingerprintType:
       required:
       - identifier
@@ -1570,13 +1753,10 @@ components:
       required:
       - identifier
       type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-            type: string
+      properties:
+        identifier:
+          pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+          type: string
     CredentialsIdentifierResponseSystemType:
       required:
       - identifier
@@ -1585,15 +1765,15 @@ components:
       - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
     CredentialsIdentifierResponseType:
       required:
-      - identifierType
+      - type
       type: object
       properties:
         identifier:
           type: string
-        identifierType:
+        type:
           type: string
       discriminator:
-        propertyName: identifierType
+        propertyName: type
         mapping:
           system: '#/components/schemas/CredentialsIdentifierResponseSystemType'
           nip: '#/components/schemas/CredentialsIdentifierResponseIndividualNipType'
@@ -1601,112 +1781,91 @@ components:
           fingerprint: '#/components/schemas/CredentialsIdentifierResponseIndividualCertificateFingerprintType'
           onip: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
           token: '#/components/schemas/CredentialsIdentifierResponseAuthorisationTokenType'
-    CredentialsIndirectLvl1Type:
-      required:
-      - baseListIndirectType
-      type: object
-      discriminator:
-        propertyName: baseListIndirectType
-        mapping:
-          indirectLvl2: '#/components/schemas/CredentialsIndirectLvl2Type'
-      allOf:
-      - $ref: '#/components/schemas/CredentialsBaseListType'
-      - type: object
-        properties:
-          credentialsRoleList:
-            type: array
-            items:
-              $ref: '#/components/schemas/CredentialsRoleResponseStandardType'
-          parentLvl1:
-            $ref: '#/components/schemas/CredentialsParentType'
-          baseListIndirectType:
-            type: string
-    CredentialsIndirectLvl2Type:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIndirectLvl1Type'
-      - type: object
-        properties:
-          parentLvl2:
-            $ref: '#/components/schemas/CredentialsParentType'
     CredentialsParentType:
       type: object
       allOf:
-      - $ref: '#/components/schemas/CredentialsBaseSingleType'
+      - $ref: '#/components/schemas/CredentialsBaseTypeObject'
       - type: object
         properties:
+          identifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
           credentialsRole:
-            $ref: '#/components/schemas/CredentialsRoleResponseStandardType'
-    CredentialsRoleResponseBaseTypeObject:
+            $ref: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
+    CredentialsPlainType:
       type: object
       properties:
-        roleType:
-          type: object
-        roleDescription:
-          type: string
+        identifier:
+          $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+        credentialsRoleList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
     CredentialsRoleResponseStandardDetailsType:
       type: object
-      properties:
-        roleType:
-          type: string
-          enum:
-          - owner
-          - invoice_read
-          - invoice_write
-          - payment_confirmation_write
-          - credentials_read
-          - credentials_manage
-          - self_invoicing
-          - tax_representative
-          - enforcement_operations
-          - court_bailiff
-          - enforcement_authority
-        roleDescription:
-          type: string
-        credentialsAssignmentType:
-          type: string
-          enum:
-          - system
-          - user
-        roleAssigningAuthorIdentifier:
-          $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-    CredentialsRoleResponseStandardType:
+      allOf:
+      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleType:
+            type: string
+            enum:
+            - owner
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - credentials_read
+            - credentials_manage
+            - self_invoicing
+            - tax_representative
+            - enforcement_operations
+            - court_bailiff
+            - enforcement_authority
+          credentialsAssignmentType:
+            type: string
+            enum:
+            - system
+            - user
+          roleAssigningAuthorIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+    CredentialsRoleResponseStandardPlainType:
       type: object
-      properties:
-        roleType:
-          type: string
-          enum:
-          - owner
-          - invoice_read
-          - invoice_write
-          - payment_confirmation_write
-          - credentials_read
-          - credentials_manage
-          - self_invoicing
-          - tax_representative
-          - enforcement_operations
-          - court_bailiff
-          - enforcement_authority
-        roleDescription:
-          type: string
+      allOf:
+      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleType:
+            type: string
+            enum:
+            - owner
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - credentials_read
+            - credentials_manage
+            - self_invoicing
+            - tax_representative
+            - enforcement_operations
+            - court_bailiff
+            - enforcement_authority
     CredentialsRoleResponseTokenType:
       type: object
-      properties:
-        roleType:
-          type: string
-          enum:
-          - invoice_read
-          - invoice_write
-          - payment_confirmation_write
-          - credentials_read
-          - credentials_manage
-          - enforcement_operations
-        roleDescription:
-          type: string
+      allOf:
+      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleType:
+            type: string
+            enum:
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - credentials_read
+            - credentials_manage
+            - enforcement_operations
     CredentialsTokenType:
       type: object
       allOf:
-      - $ref: '#/components/schemas/CredentialsBaseListType'
+      - $ref: '#/components/schemas/CredentialsBaseTypeObject'
       - type: object
         properties:
           identifier:
@@ -1716,7 +1875,7 @@ components:
             items:
               $ref: '#/components/schemas/CredentialsRoleResponseTokenType'
           parent:
-            $ref: '#/components/schemas/CredentialsDirectPlainType'
+            $ref: '#/components/schemas/CredentialsPlainType'
           description:
             type: string
           status:
@@ -1747,30 +1906,25 @@ components:
       - queryCredentialsTypeResultType
       type: object
       allOf:
-      - $ref: '#/components/schemas/QueryCriteriaCredentialsPlainType'
+      - $ref: '#/components/schemas/QueryCriteriaCredentialsType'
+      - type: object
+        properties:
+          queryCredentialsTypeResultType:
+            type: string
+            enum:
+            - all
+            - standard
+            - token
+          queryCredentialsScopeResultType:
+            type: string
+            enum:
+            - current
     QueryCriteriaCredentialsIdType:
       required:
       - credentialsIdentifier
       - queryCredentialsScopeResultType
       - queryCredentialsTypeResultType
       type: object
-      allOf:
-      - $ref: '#/components/schemas/QueryCriteriaCredentialsPlainType'
-      - type: object
-        properties:
-          credentialsIdentifier:
-            $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-    QueryCriteriaCredentialsPlainType:
-      required:
-      - queryCredentialsScopeResultType
-      - queryCredentialsTypeResultType
-      - selectorType
-      type: object
-      discriminator:
-        propertyName: selectorType
-        mapping:
-          all: '#/components/schemas/QueryCriteriaCredentialsAllType'
-          id: '#/components/schemas/QueryCriteriaCredentialsIdType'
       allOf:
       - $ref: '#/components/schemas/QueryCriteriaCredentialsType'
       - type: object
@@ -1785,19 +1939,20 @@ components:
             type: string
             enum:
             - current
-          selectorType:
-            type: string
+          credentialsIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierRequestType'
     QueryCriteriaCredentialsType:
       required:
-      - structureType
+      - type
       type: object
       properties:
-        structureType:
+        type:
           type: string
       discriminator:
-        propertyName: structureType
+        propertyName: type
         mapping:
-          list: '#/components/schemas/QueryCriteriaCredentialsPlainType'
+          list_all: '#/components/schemas/QueryCriteriaCredentialsAllType'
+          list_id: '#/components/schemas/QueryCriteriaCredentialsIdType'
     QuerySyncCredentialsRequest:
       required:
       - queryCriteria
@@ -1845,8 +2000,7 @@ components:
             minLength: 1
             type: string
           ksefReferenceNumber:
-            pattern: "(([1-9]((\\d[1-9])|([1-9]\\d))\\d{7})|(M\\d{9})|([A-Z]{2}\\\
-              d{8}))-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-([0-9A-F]{6})){2}-([0-9A-F]{2})"
+            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
             type: string
           invoicingDateFrom:
             type: string
@@ -1892,8 +2046,8 @@ components:
             format: date-time
     QueryCriteriaInvoiceType:
       required:
-      - criteriaType
       - subjectType
+      - type
       type: object
       properties:
         subjectType:
@@ -1903,10 +2057,10 @@ components:
           - subject2
           - subject3
           - subjectAuthorized
-        criteriaType:
+        type:
           type: string
       discriminator:
-        propertyName: criteriaType
+        propertyName: type
         mapping:
           detail: '#/components/schemas/QueryCriteriaInvoiceDetailType'
           incremental: '#/components/schemas/QueryCriteriaInvoiceIncrementalType'
@@ -1953,13 +2107,13 @@ components:
             type: string
     SubjectIdentifierByType:
       required:
-      - identifierType
+      - type
       type: object
       properties:
-        identifierType:
+        type:
           type: string
       discriminator:
-        propertyName: identifierType
+        propertyName: type
         mapping:
           onip: '#/components/schemas/SubjectIdentifierByCompanyType'
     SubjectIdentifierToCompanyType:
@@ -1991,30 +2145,30 @@ components:
             type: string
     SubjectIdentifierToType:
       required:
-      - identifierType
+      - type
       type: object
       properties:
-        identifierType:
+        type:
           type: string
       discriminator:
-        propertyName: identifierType
+        propertyName: type
         mapping:
           onip: '#/components/schemas/SubjectIdentifierToCompanyType'
           other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
           none: '#/components/schemas/SubjectIdentifierToNoneType'
     SubjectNameType:
       required:
-      - nameType
+      - type
       type: object
       properties:
         tradeName:
           maxLength: 256
           minLength: 1
           type: string
-        nameType:
+        type:
           type: string
       discriminator:
-        propertyName: nameType
+        propertyName: type
         mapping:
           fn: '#/components/schemas/SubjectFullNameType'
           pn: '#/components/schemas/SubjectPersonNameType'
@@ -2154,7 +2308,7 @@ components:
           minLength: 1
           type: string
         ksefReferenceNumber:
-          pattern: "(([1-9]((\\d[1-9])|([1-9]\\d))\\d{7})|(M\\d{9})|([A-Z]{2}\\d{8}))-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-([0-9A-F]{6})){2}-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           type: string
         invoicingDate:
           type: string
@@ -2286,6 +2440,42 @@ components:
         challenge:
           pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
+    CredentialsRoleResponseBaseTypeObject:
+      required:
+      - type
+      type: object
+      properties:
+        roleType:
+          type: object
+        roleDescription:
+          type: string
+        type:
+          type: string
+      discriminator:
+        propertyName: type
+        mapping:
+          standard_plain: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
+          standard_details: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
+          token: '#/components/schemas/CredentialsRoleResponseTokenType'
+          granted: '#/components/schemas/CredentialsRoleResponseGrantedForInstitutionType'
+    CredentialsRoleResponseGrantedForInstitutionType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleType:
+            type: string
+            enum:
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - self_invoicing
+            - tax_representative
+            - court_bailiff
+            - enforcement_authority
+          roleGrantorIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
     InitSessionResponse:
       required:
       - referenceNumber
@@ -2351,7 +2541,7 @@ components:
           minLength: 1
           type: string
         ksefReferenceNumber:
-          pattern: "(([1-9]((\\d[1-9])|([1-9]\\d))\\d{7})|(M\\d{9})|([A-Z]{2}\\d{8}))-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])(-([0-9A-F]{6})){2}-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           type: string
         acquisitionTimestamp:
           type: string
