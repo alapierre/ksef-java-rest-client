@@ -45,7 +45,7 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
       <dependency>
         <groupId>io.alapierre.crypto</groupId>
         <artifactId>digital-signature</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
       </dependency>
     
       <dependency>
