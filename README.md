@@ -6,107 +6,140 @@ KSeF
 
 Krajowy Systemu e-Faktur
 
-Projekt na bardzo wczesnym etapie rozwoju.
+Projekt na bardzo wczesnym etapie rozwoju. Status pre-alfa. Przedstawione poniżej przykłady mogą nie działać prawidłowo. 
 
 Celem projektu jest stworzenie elastycznego klienta API KSeF na platformę Java, z wykorzystaniem 
-popularnych bibliotek wywołań http i serializacji JSON.  
+popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementowany jest tylko klient OkHttp `OkHttpApiClient` i serializer Gson `GsonJsonSerializer`.
 
-Pomoc w rozwoju projektu jest mile widziana. 
+Pomoc w rozwoju projektu jest bardzo mile widziana. 
 
 ## Przykładowe żądania
 
 ### Zależności projektowe
 
 ````xml
-         <dependency>
-            <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-client-okhttp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-gson-serializer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.22</version>            
-        </dependency>
+<dependencies>
+      <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-client-okhttp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-gson-serializer</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.alapierre.crypto</groupId>
+        <artifactId>digital-signature</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-xml-model</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+    
+</dependencies>
 ````
 
 ### Pobranie wyzwania autoryzacyjnego, autoryzacja podpisem i wysłanie faktury
 
 ````java
-import io.alapierre.ksef.client.*;
+import eu.europa.esig.dss.model.DSSDocument;
+import io.alapierre.crypto.dss.signer.P12Signer;
+import io.alapierre.ksef.client.ApiClient;
+import io.alapierre.ksef.client.ApiException;
+import io.alapierre.ksef.client.JsonSerializer;
+import io.alapierre.ksef.client.api.InterfejsyInteraktywneFakturaApi;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneSesjaApi;
 import io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeRequest;
 import io.alapierre.ksef.client.okhttp.OkHttpApiClient;
 import io.alapierre.ksef.client.serializer.gson.GsonJsonSerializer;
 import io.alapierre.ksef.xml.model.AuthRequestUtil;
-import io.alapierre.ksef.client.api.InterfejsyInteraktywneSesjaApi;
 import lombok.val;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.security.KeyStore;
 
 public class Main {
 
-  public static void main(String[] args) throws ApiException {
+  private final static File tokenFile = new File("token.p12");
+  private final static KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());;
 
-    JsonSerializer serializer = new GsonJsonSerializer();
-    ApiClient client = new OkHttpApiClient(serializer);
-    
-    val identifier = "NIP firmy";
+  public static void main(String[] args)  {
 
-    InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+    try {
 
-    val challenge = sesjaApi.authorisationChallengeCall(identifier, AuthorisationChallengeRequest.IdentifierType.onip);
+      JsonSerializer serializer = new GsonJsonSerializer();
+      ApiClient client = new OkHttpApiClient(serializer);
 
-    val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), identifier);
-    val toSigned = AuthRequestUtil.requestToBytes(auth);
+      InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-    // podpis elektroniczny toSigned i zapis podisanego XML do ByteArrayOutputStream signed 
+      val identifier = "NIP firmy";
+      val challenge = sesjaApi.authorisationChallengeCall(identifier, AuthorisationChallengeRequest.IdentifierType.onip);
 
-    val signedResponse = api.initSessionSignedCall(challenge.getChallenge(), identifier, signed.toByteArray());
+      System.out.println(challenge);
 
-    // signedResponse.getSessionToken() zawiera token sesyjny
+      val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), identifier);
+      val toSigned = AuthRequestUtil.requestToBytes(auth);
 
-    val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
-    invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken());    
+      // podpis elektroniczny XML 
+      ByteArrayOutputStream signed = signRequest(toSigned);
+
+      val signedResponse = sesjaApi.initSessionSignedCall(challenge.getChallenge(), identifier, signed.toByteArray());
+      // signedResponse.getSessionToken() zawiera token sesyjny, który jest niezbędny do kolejnych wywołań API
+
+      val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
+      invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken().getToken());
+
+    } catch (ApiException ex) {
+      System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
+    } catch (IOException e) {
+      System.out.println("Błąd operacji IO: " + e.getMessage());
+    }
   }
 
+  public static ByteArrayOutputStream signRequest(byte[] toSigned) throws IOException {
+
+    val signer = new P12Signer(pas, tokenFile);
+
+    ByteArrayInputStream is = new ByteArrayInputStream(toSigned);
+    DSSDocument signedDocument = signer.sign(is);
+
+    ByteArrayOutputStream signed = new ByteArrayOutputStream();
+    signedDocument.writeTo(signed);
+
+    return signed;
+  }
 }
 ````
 
-Podpis elektroniczny
+Biblioteka ułatwiająca wykonanie podpisu elektronicznego XADES na karcie kryptograficznej lub za pomocą tokena w formacie PKCS#12: 
 
 ````xml
 <dependency>
   <groupId>io.alapierre.crypto</groupId>
-  <artifactId>crypto-util</artifactId>
+  <artifactId>digital-signature</artifactId>
   <version>1.0-SNAPSHOT</version>
 </dependency>
-````
-
-````java
-import io.alapierre.crypto.dss.signer.P12Signer;
-import eu.europa.esig.dss.model.DSSDocument;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-
-val signer = new P12Signer(pass, token);
-
-ByteArrayInputStream is = new ByteArrayInputStream(toSigned);
-DSSDocument signedDocument = signer.sign(is);
-
-ByteArrayOutputStream signed = new ByteArrayOutputStream();
-signedDocument.writeTo(signed);
 ````
 
 ## Build Requirements
@@ -147,6 +180,3 @@ put toolchain.xml file in your `${user.home}/.m2`:
 </toolchains>
 
 ````
-
-
-
