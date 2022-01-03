@@ -68,8 +68,6 @@ public class Main {
 
     val challenge = sesjaApi.authorisationChallengeCall(identifier, AuthorisationChallengeRequest.IdentifierType.onip);
 
-    System.out.println(challenge);
-
     val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), identifier);
     val toSigned = AuthRequestUtil.requestToBytes(auth);
 
@@ -80,10 +78,7 @@ public class Main {
     // signedResponse.getSessionToken() zawiera token sesyjny
 
     val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
-
-    invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken());
-
-    
+    invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken());    
   }
 
 }
