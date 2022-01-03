@@ -42,7 +42,7 @@ Pomoc w rozwoju projektu jest mile widziana.
         </dependency>
 ````
 
-### Pobranie wyzwania autoryzacyjnego
+### Pobranie wyzwania autoryzacyjnego, autoryzacja podpisem i wysłanie faktury
 
 ````java
 import io.alapierre.ksef.client.*;
