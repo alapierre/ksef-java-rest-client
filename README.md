@@ -138,14 +138,14 @@ Biblioteka ułatwiająca wykonanie podpisu elektronicznego XADES na karcie krypt
 <dependency>
   <groupId>io.alapierre.crypto</groupId>
   <artifactId>digital-signature</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 </dependency>
 ````
 
 ## Build Requirements
 
 Building the API client library requires:
-1. Java 1.8+ and Java 11 (tu build `ksef-client-jdk11-http-client`)
+1. Java 1.8+ and Java 11 (to build `ksef-client-jdk11-http-client`)
 2. Maven
 3. Maven configured to build multi JDK projects
 
