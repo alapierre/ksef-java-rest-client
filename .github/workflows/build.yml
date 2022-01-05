@@ -13,11 +13,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Install Toolchain JDK
+      - name: Install Toolchain JDK 1.8
         uses: battila7/jdk-via-jabba@v1
         with:
           jdk: adopt@1.8.0-292
-          javaHomeEnvironmentVariable: TOOLCHAIN_JDK
+          javaHomeEnvironmentVariable: JDK_1_8
+      - name: Install Toolchain JDK 11
+        uses: battila7/jdk-via-jabba@v1
+        with:
+          jdk: adopt@11
+          javaHomeEnvironmentVariable: JDK_11
       - name: Set up Toolchain
         shell: bash
         run: |
@@ -32,8 +37,18 @@ jobs:
                   <vendor>openjdk</vendor>
                 </provides>
                 <configuration>
-                  <jdkHome>${{ env.TOOLCHAIN_JDK }}</jdkHome>
+                  <jdkHome>${{ env.JDK_1_8 }}</jdkHome>
                 </configuration>
+            </toolchain>
+          <toolchain>
+            <type>jdk</type>
+              <provides>
+                <version>11</version>
+                <vendor>openjdk</vendor>
+              </provides>
+              <configuration>
+                <jdkHome>${{ env.JDK_11 }}</jdkHome>
+              </configuration>
             </toolchain>
           </toolchains>
           EOF
@@ -41,6 +56,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -58,3 +76,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alapierre_ksef-java-rest-client
+      - name: deploy snapshots
+        run: mvn --batch-mode deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
