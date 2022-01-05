@@ -16,7 +16,7 @@ jobs:
       - name: Install Toolchain JDK
         uses: battila7/jdk-via-jabba@v1
         with:
-          jdk: 1.8
+          jdk: adopt@1.8.0-292
           javaHomeEnvironmentVariable: TOOLCHAIN_JDK
       - name: Set up Toolchain
         shell: bash
