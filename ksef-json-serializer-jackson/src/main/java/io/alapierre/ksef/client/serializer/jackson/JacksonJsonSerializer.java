@@ -27,7 +27,7 @@ public class JacksonJsonSerializer implements JsonSerializer {
     @SneakyThrows
     @Override
     public <R> Optional<R> fromJson(@Nullable String json, @NotNull Class<R> classOfR) {
-        return !"".equals(json)
+        return !("".equals(json) || json == null)
                 ? Optional.ofNullable(objectMapper.readValue(json, classOfR))
                 : Optional.empty();
     }
