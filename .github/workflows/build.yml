@@ -21,7 +21,7 @@ jobs:
       - name: Install Toolchain JDK 11
         uses: battila7/jdk-via-jabba@v1
         with:
-          jdk: adopt@11
+          jdk: adopt@1.11.0-11
           javaHomeEnvironmentVariable: JDK_11
       - name: Set up Toolchain
         shell: bash
