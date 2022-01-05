@@ -25,8 +25,8 @@ import java.security.KeyStore;
  */
 public class Main {
 
-    private final static File tokenFile = new File("token.p12");
-    private final static KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());;
+    private static final  File tokenFile = new File("token.p12");
+    private static final  KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());;
 
     public static void main(String[] args)  {
 

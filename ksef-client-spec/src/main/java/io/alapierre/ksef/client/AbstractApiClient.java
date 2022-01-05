@@ -18,15 +18,15 @@ public abstract class AbstractApiClient implements ApiClient {
 
     private final String url;
 
-    public AbstractApiClient() {
+    protected AbstractApiClient() {
         url = Environment.TEST.getUrl();
     }
 
-    public AbstractApiClient(String url) {
+    protected AbstractApiClient(String url) {
         this.url = url;
     }
 
-    public AbstractApiClient(Environment environment) {
+    protected AbstractApiClient(Environment environment) {
         url = environment.getUrl();
     }
 

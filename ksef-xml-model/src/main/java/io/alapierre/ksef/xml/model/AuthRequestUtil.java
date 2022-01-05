@@ -18,6 +18,9 @@ import java.io.File;
  */
 public class AuthRequestUtil {
 
+    private AuthRequestUtil() {
+    }
+
     public static @NotNull InitSessionTokenRequest prepareTokenAuthRequest(@NotNull String challenge, @NotNull String identifier, @NotNull String encryptedToken) {
 
         val initSessionTokenRequest = new InitSessionTokenRequest();

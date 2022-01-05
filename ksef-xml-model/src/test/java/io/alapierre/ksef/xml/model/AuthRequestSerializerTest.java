@@ -2,6 +2,7 @@ package io.alapierre.ksef.xml.model;
 
 import lombok.val;
 import lombok.var;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -21,6 +22,8 @@ class AuthRequestSerializerTest {
         var res = serializer.toString(request, true);
 
         System.out.println(res);
+
+        Assertions.assertNotNull(res);
 
     }
 
