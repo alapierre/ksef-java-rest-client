@@ -29,6 +29,16 @@ public class OkHttpApiClient extends AbstractApiClient {
     private final MediaType XML = MediaType.get("application/xml; charset=utf-8");
     private final MediaType OCTET = MediaType.get("application/octet-stream; charset=utf-8");
 
+    public OkHttpApiClient(JsonSerializer serializer, String url) {
+        super(url);
+        this.serializer = serializer;
+    }
+
+    public OkHttpApiClient(JsonSerializer serializer, Environment environment) {
+        super(environment);
+        this.serializer = serializer;
+    }
+
     @Override
     public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
 
@@ -59,14 +69,19 @@ public class OkHttpApiClient extends AbstractApiClient {
 
     @Override
     public <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR) throws ApiException {
-        throw new ApiException("Not implemented yet");
+        try {
+            RequestBody requestBody = RequestBody.create(body, OCTET);
+            return postAndReturnJson(endpoint, classOfR, requestBody, Collections.emptyMap());
+        } catch (IOException e) {
+            throw new ApiException("Błąd wywołania API", e);
+        }
     }
 
     @Override
     public <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
         try {
             RequestBody requestBody = RequestBody.create(body, OCTET);
-            return postAndReturnJson(endpoint, classOfR, requestBody, Collections.emptyMap());
+            return postAndReturnJson(endpoint, classOfR, requestBody, addAuthTokenHeader(token));
         } catch (IOException e) {
             throw new ApiException("Błąd wywołania API", e);
         }
