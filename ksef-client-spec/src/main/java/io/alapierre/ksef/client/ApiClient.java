@@ -2,6 +2,7 @@ package io.alapierre.ksef.client;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.OutputStream;
 import java.util.Optional;
 
 /**
@@ -12,6 +13,7 @@ public interface ApiClient {
 
     String TOKEN_HEADER_NAME = "SessionToken";
     String DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    String QUERY_DATE_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
     <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException;
 
@@ -26,4 +28,6 @@ public interface ApiClient {
     <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException;
 
     <R> Optional<R> postXML(@NotNull String endpoint, @NotNull Object body, @NotNull Class<R> classOfR) throws ApiException;
+
+    void getStream(@NotNull String endpoint, @NotNull String token, @NotNull OutputStream os) throws ApiException;
 }
