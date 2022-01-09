@@ -1,5 +1,6 @@
 package io.alapierre.ksef.client.okhttp;
 
+import io.alapierre.io.IOUtils;
 import io.alapierre.ksef.client.AbstractApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -82,6 +84,33 @@ public class OkHttpApiClient extends AbstractApiClient {
         } catch (IOException e) {
             throw new ApiException("Błąd wywołania API", e);
         }
+    }
+
+    @Override
+    public void getStream(@NotNull String endpoint, @NotNull String token, @NotNull OutputStream os) throws ApiException {
+
+        val builder = new Request.Builder();
+        builder.url(createUrl(endpoint));
+        builder.addHeader(TOKEN_HEADER_NAME, token);
+        builder.get();
+
+        try (Response response = client.newCall(builder.build()).execute()) {
+
+            if(!response.isSuccessful()) {
+                throw createException(response);
+            }
+
+            if(response.body() != null) {
+                val is = response.body().byteStream();
+                IOUtils.copy(is, os);
+                IOUtils.closeQuietly(is);
+                IOUtils.closeQuietly(os);
+            }
+
+        } catch (IOException ex) {
+            throw new ApiException(ex);
+        }
+
     }
 
     protected <B, R> Optional<R> doPostJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, Map<String, String> headers)  throws ApiException {

@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -79,4 +76,8 @@ public class InterfejsyInteraktywneFakturaApi {
         }
     }
 
+    public void getInvoice(@NotNull String referenceNumber, @NotNull String token, @NotNull OutputStream os) throws ApiException {
+        val endpoint = String.format("online/Invoice/Get/%s", referenceNumber);
+        apiClient.getStream(endpoint, token, os);
+    }
 }
