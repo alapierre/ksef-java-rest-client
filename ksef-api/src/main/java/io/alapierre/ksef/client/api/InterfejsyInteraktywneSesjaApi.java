@@ -4,10 +4,16 @@ import io.alapierre.ksef.client.ApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.model.rest.auth.*;
 import io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeRequest.IdentifierType;
+import io.alapierre.ksef.client.model.rest.auth.GenerateTokenRequest.RoleType;
+import io.alapierre.ksef.client.model.rest.auth.GenerateTokenRequest.TokenCredentialsRoleList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -18,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 public class InterfejsyInteraktywneSesjaApi {
 
+    public static final String BAD_API_RESPONSE = "Nieprawidłowa odpowiedź z API";
     private final ApiClient apiClient;
 
     @NotNull
@@ -28,7 +35,7 @@ public class InterfejsyInteraktywneSesjaApi {
                 getAuthorisationChallengeRequest(identifier, identifierType),
                 AuthorisationChallengeResponse.class);
 
-       return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+       return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
     @NotNull
@@ -40,7 +47,7 @@ public class InterfejsyInteraktywneSesjaApi {
                 InitSignedResponse.class
         );
 
-        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
     @NotNull
@@ -52,7 +59,7 @@ public class InterfejsyInteraktywneSesjaApi {
                 InitSignedResponse.class
         );
 
-        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
     @NotNull
@@ -61,13 +68,44 @@ public class InterfejsyInteraktywneSesjaApi {
         val endpoint= String.format("online/Session/Status?PageSize=%d&PageOffset=%d", pageSize, pageOffset);
 
         val ret = apiClient.getJson(endpoint, SessionStatus.class, token);
-        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
     @NotNull
     public SessionTerminateResponse terminateSession(@NotNull String token) throws ApiException {
         val ret = apiClient.getJson("online/Session/Terminate", SessionTerminateResponse.class, token);
-        return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
+    }
+
+    public CredentialStatus credentialStatus(String credentialsElementReferenceNumber, String token) throws ApiException {
+        val endpoint= String.format("online/Credentials/Status/%s", credentialsElementReferenceNumber);
+        val ret = apiClient.getJson(endpoint, CredentialStatus.class, token);
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
+    }
+
+    @NotNull
+    public AuthorisationToken generateToken(@NotNull String tokenDescription, @NotNull String token, RoleType... roles) throws ApiException {
+
+        val rolesConverted = Arrays.stream(roles).map(roleType -> TokenCredentialsRoleList.builder()
+                .roleDescription(tokenDescription)
+                .roleType(roleType)
+                .build()).collect(Collectors.toSet());
+
+        return generateToken(tokenDescription, token, rolesConverted);
+    }
+
+    @NotNull
+    public AuthorisationToken generateToken(@NotNull String tokenDescription, @NotNull String token, @NotNull Set<TokenCredentialsRoleList> roles) throws ApiException {
+
+        val req = GenerateTokenRequest.builder()
+                .generateToken(GenerateTokenRequest.GenerateToken.builder()
+                        .credentialsRoleList(roles)
+                        .description(tokenDescription)
+                        .build())
+                .build();
+
+        val ret = apiClient.postJson("online/Credentials/GenerateToken", req, AuthorisationToken.class, token);
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
     @NotNull
