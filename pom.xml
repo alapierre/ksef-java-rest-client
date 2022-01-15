@@ -9,6 +9,10 @@
 
     <version>2.0.4-SNAPSHOT</version>
 
+    <name>KSeF Java Rest Client</name>
+    <description>Krajowy System eFaktur Rest API Java Klient</description>
+    <url>https://github.com/alapierre/ksef-java-rest-client</url>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -21,6 +25,11 @@
             <name>Adrian Lapierre</name>
             <email>al@alapierre.io</email>
         </developer>
+        <developer>
+            <name>Karol Bryzgiel</name>
+            <email>karol.bryzgiel@soft-project.pl</email>
+        </developer>
+
     </developers>
 
     <scm>
