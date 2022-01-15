@@ -36,8 +36,8 @@
         <module>ksef-client-okhttp</module>
         <module>ksef-api</module>
         <module>ksef-json-serializer-gson</module>
-        <module>ksef-json-serializer-jackson</module>
-        <module>ksef-client-jdk11-http-client</module>
+<!--        <module>ksef-json-serializer-jackson</module>-->
+<!--        <module>ksef-client-jdk11-http-client</module>-->
         <module>ksef-sample</module>
     </modules>
     <packaging>pom</packaging>
