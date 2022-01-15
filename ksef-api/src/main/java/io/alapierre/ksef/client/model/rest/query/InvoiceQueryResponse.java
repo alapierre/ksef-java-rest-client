@@ -45,7 +45,7 @@ public class InvoiceQueryResponse {
     @Data
     public static class IssuedToName{
         private String type;
-        private Object tradeName;
+        private String tradeName;
         private String fullName;
     }
 
@@ -70,7 +70,7 @@ public class InvoiceQueryResponse {
     @Data
     public static class IssuedByName{
         private String type;
-        private Object tradeName;
+        private String tradeName;
         private String fullName;
     }
 

@@ -26,14 +26,15 @@ public class InterfejsyInteraktywneZapytaniaApi {
     private final ApiClient apiClient;
 
     @NotNull
-    public InvoiceQueryResponse invoiceQuery(@NotNull InvoiceQueryRequest request, int pageSize, int offset) throws ApiException {
+    public InvoiceQueryResponse invoiceQuery(@NotNull String token, @NotNull InvoiceQueryRequest request, int pageSize, int offset) throws ApiException {
 
-        val endpoint = String.format("online/Query/Invoice/Sync/PageSize=%d&PageOffset=%d", pageSize, offset);
+        val endpoint = String.format("online/Query/Invoice/Sync?PageSize=%d&PageOffset=%d", pageSize, offset);
 
         val ret = apiClient.postJson(
                 endpoint,
                 request,
-                InvoiceQueryResponse.class);
+                InvoiceQueryResponse.class,
+                token);
 
         return ret.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
     }

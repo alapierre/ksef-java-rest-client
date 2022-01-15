@@ -116,16 +116,13 @@ public class OkHttpApiClient extends AbstractApiClient {
             }
 
             if(response.body() != null) {
-                val is = response.body().byteStream();
-                IOUtils.copy(is, os);
-                IOUtils.closeQuietly(is);
-                IOUtils.closeQuietly(os);
+                try (val is = response.body().byteStream()) {
+                    IOUtils.copy(is, os);
+                }
             }
-
         } catch (IOException ex) {
             throw new ApiException(ex);
         }
-
     }
 
     protected <B, R> Optional<R> doPostJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, Map<String, String> headers)  throws ApiException {
