@@ -24,6 +24,7 @@ import java.util.*;
 @Slf4j
 public class OkHttpApiClient extends AbstractApiClient {
 
+    public static final String API_EXCEPTION = "Błąd wywołania API";
     private final JsonSerializer serializer;
     private final OkHttpClient client = new OkHttpClient();
 
@@ -75,7 +76,7 @@ public class OkHttpApiClient extends AbstractApiClient {
             RequestBody requestBody = RequestBody.create(body, OCTET);
             return postAndReturnJson(endpoint, classOfR, requestBody, Collections.emptyMap());
         } catch (IOException e) {
-            throw new ApiException("Błąd wywołania API", e);
+            throw new ApiException(API_EXCEPTION, e);
         }
     }
 
@@ -85,7 +86,7 @@ public class OkHttpApiClient extends AbstractApiClient {
             RequestBody requestBody = RequestBody.create(body, OCTET);
             return postAndReturnJson(endpoint, classOfR, requestBody, addAuthTokenHeader(token));
         } catch (IOException e) {
-            throw new ApiException("Błąd wywołania API", e);
+            throw new ApiException(API_EXCEPTION, e);
         }
     }
 
@@ -97,7 +98,7 @@ public class OkHttpApiClient extends AbstractApiClient {
         } catch (JAXBException e) {
             throw new ApiException("Błąd konwersji obiektu do XML", e);
         } catch (IOException e) {
-            throw new ApiException("Błąd wywołania API", e);
+            throw new ApiException(API_EXCEPTION, e);
         }
     }
 
@@ -190,7 +191,7 @@ public class OkHttpApiClient extends AbstractApiClient {
 
         val responseBody = response.body();
 
-        String body = null;
+        String body;
         try {
             body = responseBody != null ? responseBody.string() : null;
             log.debug("responseBody: {}", body);

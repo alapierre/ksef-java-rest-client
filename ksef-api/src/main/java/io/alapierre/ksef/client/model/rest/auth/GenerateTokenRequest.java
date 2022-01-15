@@ -18,15 +18,15 @@ public class GenerateTokenRequest {
     @Data
     @Builder
     public static class GenerateToken {
-        public String description;
-        public Set<TokenCredentialsRoleList> credentialsRoleList;
+        private String description;
+        private Set<TokenCredentialsRoleList> credentialsRoleList;
     }
 
     @Data
     @Builder
     public static class TokenCredentialsRoleList {
-        public RoleType roleType;
-        public String roleDescription;
+        private RoleType roleType;
+        private String roleDescription;
     }
 
     public enum RoleType {
