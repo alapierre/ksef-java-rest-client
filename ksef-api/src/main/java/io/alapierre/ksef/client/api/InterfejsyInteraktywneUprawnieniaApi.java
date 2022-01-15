@@ -26,14 +26,31 @@ public class InterfejsyInteraktywneUprawnieniaApi {
 
     private final ApiClient apiClient;
 
+    /**
+     * Sprawdzenie statusu poświadczeń
+     *
+     * @param token token sesyjny
+     * @param credentialsElementReferenceNumber numer referencyjny obiektu poświadczeń referenceNumber z odpowiedzi na żądanie generowania tokena lub nadania uprawnień
+     * @return Status poświadczeń
+     * @throws ApiException w przypadku błędu komunikacji z API
+     */
     public CredentialStatus credentialStatus(@NotNull String token, @NotNull String credentialsElementReferenceNumber) throws ApiException {
         val endpoint= String.format("online/Credentials/Status/%s", credentialsElementReferenceNumber);
         val ret = apiClient.getJson(endpoint, CredentialStatus.class, token);
         return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
+    /**
+     * Generowanie tokena autoryzacyjnego — wersja uproszczona. Nadaje ten sam opis tokenowi i wszystkim zawartym w nim rolom.
+     *
+     * @param tokenDescription opis tokena i wszystkich nadanych ról
+     * @param token token sesyjny
+     * @param roles tablica ról (uprawnień) dla generowanego tokena autoryzacyjnego
+     * @return Wygenerowany token oraz jego metadane
+     * @throws ApiException w przypadku błędu komunikacji z API
+     */
     @NotNull
-    public AuthorisationToken generateToken(@NotNull String tokenDescription, @NotNull String token, GenerateTokenRequest.RoleType... roles) throws ApiException {
+    public AuthorisationToken generateToken(@NotNull String token, @NotNull String tokenDescription, GenerateTokenRequest.RoleType... roles) throws ApiException {
 
         val rolesConverted = Arrays.stream(roles).map(roleType -> GenerateTokenRequest.TokenCredentialsRoleList.builder()
                 .roleDescription(tokenDescription)
@@ -43,6 +60,15 @@ public class InterfejsyInteraktywneUprawnieniaApi {
         return generateToken(tokenDescription, token, rolesConverted);
     }
 
+    /**
+     * Generowanie tokena autoryzacyjnego — wersja pełna. Pozwala nadać dowolne opisy dla ról w tokenie
+     *
+     * @param tokenDescription opis tokena
+     * @param token token sesyjny
+     * @param roles kolekcja unikalnych ról wraz z metadanymi
+     * @return Wygenerowany token oraz jego metadane
+     * @throws ApiException w przypadku błędu komunikacji z API
+     */
     @NotNull
     public AuthorisationToken generateToken(@NotNull String tokenDescription, @NotNull String token, @NotNull Set<GenerateTokenRequest.TokenCredentialsRoleList> roles) throws ApiException {
 

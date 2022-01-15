@@ -25,8 +25,9 @@ import java.security.KeyStore;
  */
 public class Main {
 
+    public static final String NIP_FIRMY = "NIP firmy";
     private static final  File tokenFile = new File("token.p12");
-    private static final  KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());;
+    private static final  KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());
 
     public static void main(String[] args)  {
 
@@ -37,12 +38,11 @@ public class Main {
 
             InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-            val identifier = "NIP firmy";
-            val challenge = sesjaApi.authorisationChallengeCall(identifier, AuthorisationChallengeRequest.IdentifierType.onip);
+            val challenge = sesjaApi.authorisationChallengeCall(NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip);
 
             System.out.println(challenge);
 
-            val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), identifier);
+            val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), NIP_FIRMY);
             val toSigned = AuthRequestUtil.requestToBytes(auth);
 
             // podpis elektroniczny XML

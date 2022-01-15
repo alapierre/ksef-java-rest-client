@@ -39,7 +39,7 @@ public class InterfejsyInteraktywneSesjaApi {
     }
 
     @NotNull
-    public InitSignedResponse initSessionSignedCall(@NotNull String challenge, @NotNull String identifier, byte[] signedRequest) throws ApiException {
+    public InitSignedResponse initSessionSignedCall(byte[] signedRequest) throws ApiException {
 
         val ret = apiClient.postXMLFromBytes(
                 "online/Session/InitSigned",

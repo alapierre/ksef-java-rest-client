@@ -1,6 +1,8 @@
 package io.alapierre.ksef.client.serializer.jackson;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.alapierre.ksef.client.JsonSerializer;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,9 @@ public class JacksonJsonSerializer implements JsonSerializer {
 
     public JacksonJsonSerializer() {
         objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     @SneakyThrows

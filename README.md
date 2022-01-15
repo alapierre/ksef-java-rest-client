@@ -10,7 +10,7 @@ KSeF
 
 Krajowy Systemu e-Faktur
 
-Projekt na bardzo wczesnym etapie rozwoju. Status pre-alfa. Przedstawione poniżej przykłady mogą nie działać prawidłowo. 
+Projekt na bardzo wczesnym etapie rozwoju. Status: RC1.  
 
 Celem projektu jest stworzenie elastycznego klienta API KSeF na platformę Java, z wykorzystaniem 
 popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementowany jest tylko klient OkHttp `OkHttpApiClient` i serializer Gson `GsonJsonSerializer`.
@@ -64,6 +64,8 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
 ### Pobranie wyzwania autoryzacyjnego, autoryzacja podpisem i wysłanie faktury
 
 ````java
+package io.alapierre.ksef.sample;
+
 import eu.europa.esig.dss.model.DSSDocument;
 import io.alapierre.crypto.dss.signer.P12Signer;
 import io.alapierre.ksef.client.ApiClient;
@@ -85,9 +87,10 @@ import java.security.KeyStore;
 
 public class Main {
 
-  private final static File tokenFile = new File("token.p12");
-  private final static KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());
-  
+  public static final String NIP_FIRMY = "NIP firmy";
+  private static final  File tokenFile = new File("token.p12");
+  private static final  KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());
+
   public static void main(String[] args)  {
 
     try {
@@ -97,19 +100,19 @@ public class Main {
 
       InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-      val identifier = "NIP firmy";
-      val challenge = sesjaApi.authorisationChallengeCall(identifier, AuthorisationChallengeRequest.IdentifierType.onip);
+      val challenge = sesjaApi.authorisationChallengeCall(NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip);
 
       System.out.println(challenge);
 
-      val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), identifier);
+      val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), NIP_FIRMY);
       val toSigned = AuthRequestUtil.requestToBytes(auth);
 
-      // podpis elektroniczny XML 
+      // podpis elektroniczny XML
       ByteArrayOutputStream signed = signRequest(toSigned);
 
-      val signedResponse = sesjaApi.initSessionSignedCall(challenge.getChallenge(), identifier, signed.toByteArray());
-      // signedResponse.getSessionToken() zawiera token sesyjny, który jest niezbędny do kolejnych wywołań API
+      val signedResponse = sesjaApi.initSessionSignedCall(signed.toByteArray());
+
+      // signedResponse.getSessionToken() zawiera token sesyjny
 
       val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
       invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken().getToken());
@@ -117,7 +120,7 @@ public class Main {
     } catch (ApiException ex) {
       System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
     } catch (IOException e) {
-      System.out.println("Błąd operacji IO: " + e.getMessage());
+      System.out.println(e.getMessage());
     }
   }
 
