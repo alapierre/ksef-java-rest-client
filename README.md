@@ -1,6 +1,6 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=alapierre_ksef-java-rest-client&metric=alert_status)](https://sonarcloud.io/dashboard?id=alapierre_ksef-java-rest-client)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
-[![Maven Central](http://img.shields.io/maven-central/v/io.github.fvarrui/javapackager)](https://search.maven.org/artifact/io.github.fvarrui/javapackager)
+[![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-java)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-java)
 
 # KSeF java REST client
 
