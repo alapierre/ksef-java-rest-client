@@ -83,7 +83,12 @@ public class InterfejsyInteraktywneSesjaApi {
         return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
+    /**
+     * @deprecated please use io.alapierre.ksef.client.api.InterfejsyInteraktywneUprawnieniaApi.generateToken()
+     * @see io.alapierre.ksef.client.api.InterfejsyInteraktywneUprawnieniaApi
+     */
     @NotNull
+    @Deprecated
     public AuthorisationToken generateToken(@NotNull String tokenDescription, @NotNull String token, RoleType... roles) throws ApiException {
 
         val rolesConverted = Arrays.stream(roles).map(roleType -> TokenCredentialsRoleList.builder()
@@ -94,6 +99,11 @@ public class InterfejsyInteraktywneSesjaApi {
         return generateToken(tokenDescription, token, rolesConverted);
     }
 
+    /**
+     * @deprecated please use io.alapierre.ksef.client.api.InterfejsyInteraktywneUprawnieniaApi.generateToken()
+     * @see io.alapierre.ksef.client.api.InterfejsyInteraktywneUprawnieniaApi
+     */
+    @Deprecated()
     @NotNull
     public AuthorisationToken generateToken(@NotNull String tokenDescription, @NotNull String token, @NotNull Set<TokenCredentialsRoleList> roles) throws ApiException {
 

@@ -1,11 +1,12 @@
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=alapierre_ksef-java-rest-client&metric=alert_status)](https://sonarcloud.io/dashboard?id=alapierre_ksef-java-rest-client)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![Maven Central](http://img.shields.io/maven-central/v/io.github.fvarrui/javapackager)](https://search.maven.org/artifact/io.github.fvarrui/javapackager)
 
 # KSeF java REST client
 
 KSeF
 - API version: 1.0.0
-  - Build date: 2022-01-02
+  - Build date: 2022-01-15
 
 Krajowy Systemu e-Faktur
 
@@ -85,8 +86,8 @@ import java.security.KeyStore;
 public class Main {
 
   private final static File tokenFile = new File("token.p12");
-  private final static KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());;
-
+  private final static KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());
+  
   public static void main(String[] args)  {
 
     try {

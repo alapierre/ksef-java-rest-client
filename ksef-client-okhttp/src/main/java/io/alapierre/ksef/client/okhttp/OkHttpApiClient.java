@@ -1,5 +1,6 @@
 package io.alapierre.ksef.client.okhttp;
 
+import io.alapierre.io.IOUtils;
 import io.alapierre.ksef.client.AbstractApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 /**
@@ -28,6 +30,16 @@ public class OkHttpApiClient extends AbstractApiClient {
     private final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final MediaType XML = MediaType.get("application/xml; charset=utf-8");
     private final MediaType OCTET = MediaType.get("application/octet-stream; charset=utf-8");
+
+    public OkHttpApiClient(JsonSerializer serializer, String url) {
+        super(url);
+        this.serializer = serializer;
+    }
+
+    public OkHttpApiClient(JsonSerializer serializer, Environment environment) {
+        super(environment);
+        this.serializer = serializer;
+    }
 
     @Override
     public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
@@ -86,6 +98,30 @@ public class OkHttpApiClient extends AbstractApiClient {
             throw new ApiException("Błąd konwersji obiektu do XML", e);
         } catch (IOException e) {
             throw new ApiException("Błąd wywołania API", e);
+        }
+    }
+
+    @Override
+    public void getStream(@NotNull String endpoint, @NotNull String token, @NotNull OutputStream os) throws ApiException {
+
+        val builder = new Request.Builder();
+        builder.url(createUrl(endpoint));
+        builder.addHeader(TOKEN_HEADER_NAME, token);
+        builder.get();
+
+        try (Response response = client.newCall(builder.build()).execute()) {
+
+            if(!response.isSuccessful()) {
+                throw createException(response);
+            }
+
+            if(response.body() != null) {
+                try (val is = response.body().byteStream()) {
+                    IOUtils.copy(is, os);
+                }
+            }
+        } catch (IOException ex) {
+            throw new ApiException(ex);
         }
     }
 

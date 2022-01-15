@@ -48,7 +48,7 @@ public class Main {
             // podpis elektroniczny XML
             ByteArrayOutputStream signed = signRequest(toSigned);
 
-            val signedResponse = sesjaApi.initSessionSignedCall(challenge.getChallenge(), identifier, signed.toByteArray());
+            val signedResponse = sesjaApi.initSessionSignedCall(signed.toByteArray());
 
             // signedResponse.getSessionToken() zawiera token sesyjny
 
