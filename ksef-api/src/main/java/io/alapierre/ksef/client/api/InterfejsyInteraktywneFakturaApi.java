@@ -3,9 +3,7 @@ package io.alapierre.ksef.client.api;
 import io.alapierre.io.IOUtils;
 import io.alapierre.ksef.client.ApiClient;
 import io.alapierre.ksef.client.ApiException;
-import io.alapierre.ksef.client.model.rest.invoice.InvoiceStatusResponse;
-import io.alapierre.ksef.client.model.rest.invoice.SendInvoiceRequest;
-import io.alapierre.ksef.client.model.rest.invoice.SendInvoiceResponse;
+import io.alapierre.ksef.client.model.rest.invoice.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -79,5 +77,31 @@ public class InterfejsyInteraktywneFakturaApi {
     public void getInvoice(@NotNull String referenceNumber, @NotNull String token, @NotNull OutputStream os) throws ApiException {
         val endpoint = String.format("online/Invoice/Get/%s", referenceNumber);
         apiClient.getStream(endpoint, token, os);
+    }
+
+    /**
+     * Pobiera UPO dla podanego numeru referencyjnego sesji interaktywnej lub wsadowej. Przekształca wynik zwracany
+     * z API ze String na ciąg bajtów zakodowany w UTF-8. Jeśli UPO nie jest dostępne, pole UpoDTO.upo będzie miało
+     * wartość null.
+     *
+     * @param referenceNumber numer referencyjny zakończonej sesji interaktywnej lub wsadowej
+     *
+     * @return Odpowiedź z API z UPO w postaci ciągu bajtów (jeśli UPO jest dostępne)
+     */
+    public UpoDTO getUpo(@NotNull String referenceNumber) throws ApiException {
+        val endpoint = String.format("common/Status/%s", referenceNumber);
+        val resp = apiClient.getJson(endpoint, UpoResponse.class);
+
+        val upo = resp.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+
+        val decodedUpo = upo.getUpo() != null && !upo.getUpo().isEmpty()
+                ? Base64.getDecoder().decode(upo.getUpo())
+                : null;
+
+        return UpoDTO.builder()
+                .processingCode(upo.getProcessingCode())
+                .upo(decodedUpo)
+                .processingDescription(upo.getProcessingDescription())
+                .build();
     }
 }

@@ -72,11 +72,26 @@ public class InterfejsyInteraktywneSesjaApi {
     }
 
     @NotNull
+    public SessionStatus sessionStatusByReference(@NotNull String token, @NotNull String reference, int pageSize, int pageOffset) throws ApiException {
+
+        val endpoint= String.format("online/Session/Status/%s?PageSize=%d&PageOffset=%d", reference, pageSize, pageOffset);
+
+        val ret = apiClient.getJson(endpoint, SessionStatus.class, token);
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
+    }
+
+    @NotNull
     public SessionTerminateResponse terminateSession(@NotNull String token) throws ApiException {
         val ret = apiClient.getJson("online/Session/Terminate", SessionTerminateResponse.class, token);
         return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
+    /**
+     * @deprecated please use io.alapierre.ksef.client.api.InterfejsyInteraktywneUprawnieniaApi.credentialStatus()
+     * @see io.alapierre.ksef.client.api.InterfejsyInteraktywneUprawnieniaApi
+     */
+    @NotNull
+    @Deprecated
     public CredentialStatus credentialStatus(String credentialsElementReferenceNumber, String token) throws ApiException {
         val endpoint= String.format("online/Credentials/Status/%s", credentialsElementReferenceNumber);
         val ret = apiClient.getJson(endpoint, CredentialStatus.class, token);

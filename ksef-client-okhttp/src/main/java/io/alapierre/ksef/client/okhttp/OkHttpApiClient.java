@@ -13,7 +13,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -48,6 +51,16 @@ public class OkHttpApiClient extends AbstractApiClient {
         val builder = new Request.Builder();
         builder.url(createUrl(endpoint));
         builder.addHeader(TOKEN_HEADER_NAME, token);
+        builder.get();
+
+        return callAndReturnJson(classOfR, builder.build());
+    }
+
+    @Override
+    public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR) throws ApiException {
+
+        val builder = new Request.Builder();
+        builder.url(createUrl(endpoint));
         builder.get();
 
         return callAndReturnJson(classOfR, builder.build());

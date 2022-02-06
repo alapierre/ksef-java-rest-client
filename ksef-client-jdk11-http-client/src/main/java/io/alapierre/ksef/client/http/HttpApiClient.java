@@ -19,6 +19,11 @@ public class HttpApiClient extends AbstractApiClient {
     }
 
     @Override
+    public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR) throws ApiException {
+        throw new IllegalStateException("Not implemented yet");
+    }
+
+    @Override
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR) throws ApiException {
         throw new IllegalStateException("Not implemented yet");
     }
