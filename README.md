@@ -31,7 +31,7 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
     
       <dependency>
         <groupId>io.alapierre.ksef</groupId>
-        <artifactId>ksef-gson-serializer</artifactId>
+        <artifactId>ksef-json-serializer-gson</artifactId>
         <version>${project.version}</version>
       </dependency>
     

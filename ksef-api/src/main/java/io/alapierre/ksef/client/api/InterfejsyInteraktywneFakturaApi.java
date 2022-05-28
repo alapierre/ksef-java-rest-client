@@ -101,6 +101,7 @@ public class InterfejsyInteraktywneFakturaApi {
         return UpoDTO.builder()
                 .processingCode(upo.getProcessingCode())
                 .upo(decodedUpo)
+                .referenceNumber(upo.getReferenceNumber())
                 .processingDescription(upo.getProcessingDescription())
                 .build();
     }
