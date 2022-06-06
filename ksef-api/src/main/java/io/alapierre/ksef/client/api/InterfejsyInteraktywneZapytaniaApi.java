@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -48,5 +49,9 @@ public class InterfejsyInteraktywneZapytaniaApi {
         return df.format(date);
     }
 
+    public String convertDate(LocalDateTime date) {
+        val df = new SimpleDateFormat(ApiClient.QUERY_DATE_FORMAT_PATTERN);
+        return df.format(DateUtils.asDate(date));
+    }
 
 }
