@@ -19,8 +19,8 @@ import java.net.http.HttpResponse;
 import java.util.*;
 
 /**
- * @author Adrian Lapierre {@literal al@alapierre.io}
- * Copyrights by original author 2022.01.02
+ * @author Karol Bryzgiel {@literal karol.bryzgiel@soft-project.pl}
+ * Copyrights by original author 2022.04.24
  */
 @Slf4j
 public class HttpApiClient extends AbstractApiClient {
