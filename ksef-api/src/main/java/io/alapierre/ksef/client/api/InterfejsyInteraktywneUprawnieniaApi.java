@@ -2,9 +2,7 @@ package io.alapierre.ksef.client.api;
 
 import io.alapierre.ksef.client.ApiClient;
 import io.alapierre.ksef.client.ApiException;
-import io.alapierre.ksef.client.model.rest.auth.AuthorisationToken;
-import io.alapierre.ksef.client.model.rest.auth.CredentialStatus;
-import io.alapierre.ksef.client.model.rest.auth.GenerateTokenRequest;
+import io.alapierre.ksef.client.model.rest.auth.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -80,6 +78,35 @@ public class InterfejsyInteraktywneUprawnieniaApi {
                 .build();
 
         val ret = apiClient.postJson("online/Credentials/GenerateToken", req, AuthorisationToken.class, token);
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
+    }
+
+    /**
+     * Wycofanie tokena autoryzacyjnego
+     *
+     * @param tokenToRemove id tokena który ma być wycofany
+     * @param identifier numer identyfikacyny podatnika
+     * @param type typ indentyfikatora podatnika nip, pesel
+     * @param token token sesyjny
+     * @return metadane
+     * @throws ApiException w przypadku błędu komunikacji z API
+     */
+    @NotNull
+    public AuthorisationToken revokeToken(@NotNull String tokenToRemove, @NotNull String identifier, @NotNull AuthorisationChallengeRequest.IdentifierType type, @NotNull String token) throws ApiException {
+
+        val revoke = RevokeTokenRequest.builder()
+                .revokeToken(
+                        RevokeTokenRequest.RevokeToken.builder()
+                                .tokenNumber(tokenToRemove)
+                                .sourceTokenIdentifier(RevokeTokenRequest.SourceTokenIdentifier.builder()
+                                        .identifier(identifier)
+                                        .type(type)
+                                        .build())
+                                .build())
+                .build();
+
+
+        val ret = apiClient.postJson("online/Credentials/RevokeToken", revoke, AuthorisationToken.class, token);
         return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
     }
 
