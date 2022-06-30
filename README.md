@@ -5,8 +5,8 @@
 # KSeF java REST client
 
 KSeF
-- API version: 1.0.0
-  - Build date: 2022-01-15
+- API version: 1.0.3
+  - Build date: 2022-06-30
 
 Krajowy Systemu e-Faktur
 
