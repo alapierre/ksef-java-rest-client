@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -81,8 +82,12 @@ public class HttpApiClient extends AbstractApiClient {
 
     @Override
     public <R> Optional<R> postXML(@NotNull String endpoint, @NotNull Object body, @NotNull Class<R> classOfR) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(marshalXML(body)), false);
-        return callAndReturnJson(classOfR, request);
+        try {
+            HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(marshalXML(body)), false);
+            return callAndReturnJson(classOfR, request);
+        } catch (JAXBException e) {
+            throw new ApiException("Błąd wywołania API", e);
+        }
     }
 
     @Override
