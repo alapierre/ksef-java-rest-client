@@ -47,6 +47,7 @@
         <module>ksef-json-serializer-jackson</module>
         <module>ksef-client-jdk11-http-client</module>
         <module>ksef-sample</module>
+        <module>ksef-token-facade</module>
     </modules>
     <packaging>pom</packaging>
 
