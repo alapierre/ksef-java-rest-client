@@ -15,6 +15,10 @@ Projekt sprawdzony produkcyjnie. Status: RC2.
 Celem projektu jest stworzenie elastycznego klienta API KSeF na platformę Java, z wykorzystaniem 
 popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementowany jest klient OkHttp `OkHttpApiClient` oraz JDK11+ `HttpClient` a także serializer Gson `GsonJsonSerializer` i Jackson.
 
+Stabilne wersje są dostępne w Maven Central (nie ma potrzeby samodzielnego budowania ze źródeł): [![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-java)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-java)
+
+Aktualna wersja stabilna to: `2.0.10`
+
 Pomoc w rozwoju projektu jest bardzo mile widziana. 
 
 ## Przykładowe żądania
@@ -26,19 +30,19 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
       <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-client-okhttp</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.12</version>
       </dependency>
     
       <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-json-serializer-gson</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.12</version>
       </dependency>
     
       <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-api</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.12</version>
       </dependency>
     
       <dependency>
@@ -55,7 +59,19 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
       <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-xml-model</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.12</version>
+      </dependency>
+      
+      <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-xml-model</artifactId>
+        <version>2.0.12</version>
+      </dependency>
+    
+      <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-token-facade</artifactId>
+        <version>2.0.12</version>
       </dependency>
     
 </dependencies>
