@@ -6,14 +6,14 @@
 
 KSeF
 - API version: 1.0.3
-  - Build date: 2022-06-30
+  - Build date: 2022-11-06
 
 Krajowy Systemu e-Faktur
 
-Projekt na bardzo wczesnym etapie rozwoju. Status: RC1.  
+Projekt sprawdzony produkcyjnie. Status: RC2.  
 
 Celem projektu jest stworzenie elastycznego klienta API KSeF na platformę Java, z wykorzystaniem 
-popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementowany jest tylko klient OkHttp `OkHttpApiClient` i serializer Gson `GsonJsonSerializer`.
+popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementowany jest klient OkHttp `OkHttpApiClient` oraz JDK11+ `HttpClient` a także serializer Gson `GsonJsonSerializer` i Jackson.
 
 Pomoc w rozwoju projektu jest bardzo mile widziana. 
 
@@ -59,6 +59,33 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
       </dependency>
     
 </dependencies>
+````
+
+### Autoryzacja tokenem i wysłanie faktury
+
+````java
+
+import io.alapierre.ksef.token.facade.*;
+
+public class Main {
+
+    public static final String NIP_FIRMY = "NIP firmy";
+
+    public static void loginByToken() throws Exception {
+
+        JsonSerializer serializer = new GsonJsonSerializer();
+        ApiClient client = new OkHttpApiClient(serializer);
+
+        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+
+        InitSignedResponse session = KsefTokenFacade.authByToken(sesjaApi, NIP_FIRMY, "TEST", AuthorisationChallengeRequest.IdentifierType.onip, "token");
+
+        val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
+        invoiceApi.invoiceSend(new File("FA1.xml"), session.getSessionToken().getToken());
+    }
+    
+}
+
 ````
 
 ### Pobranie wyzwania autoryzacyjnego, autoryzacja podpisem i wysłanie faktury

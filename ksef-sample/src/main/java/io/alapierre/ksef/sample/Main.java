@@ -12,6 +12,8 @@ import io.alapierre.ksef.client.okhttp.OkHttpApiClient;
 import io.alapierre.ksef.client.serializer.gson.GsonJsonSerializer;
 import io.alapierre.ksef.xml.model.AuthRequestUtil;
 import lombok.val;
+import io.alapierre.ksef.token.facade.*;
+import io.alapierre.ksef.client.model.rest.auth.InitSignedResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,4 +76,18 @@ public class Main {
 
         return signed;
     }
+
+    public static void loginByToken() throws Exception {
+
+        JsonSerializer serializer = new GsonJsonSerializer();
+        ApiClient client = new OkHttpApiClient(serializer);
+
+        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+
+        InitSignedResponse session = KsefTokenFacade.authByToken(sesjaApi, NIP_FIRMY, "TEST", AuthorisationChallengeRequest.IdentifierType.onip, "token");
+
+        val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
+        invoiceApi.invoiceSend(new File("FA1.xml"), session.getSessionToken().getToken());
+    }
+
 }

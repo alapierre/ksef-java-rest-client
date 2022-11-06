@@ -41,6 +41,12 @@
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
+            <artifactId>ksef-token-facade</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-xml-model</artifactId>
             <version>${project.version}</version>
         </dependency>
