@@ -17,7 +17,6 @@ popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementow
 
 Stabilne wersje są dostępne w Maven Central (nie ma potrzeby samodzielnego budowania ze źródeł): [![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-java)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-java)
 
-Aktualna wersja stabilna to: `2.0.10`
 
 Pomoc w rozwoju projektu jest bardzo mile widziana. 
 
