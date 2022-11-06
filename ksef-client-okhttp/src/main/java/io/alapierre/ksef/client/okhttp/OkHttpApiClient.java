@@ -10,7 +10,6 @@ import lombok.val;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -108,9 +107,7 @@ public class OkHttpApiClient extends AbstractApiClient {
         try {
             RequestBody requestBody = RequestBody.create(marshalXML(body), XML);
             return postAndReturnJson(endpoint, classOfR, requestBody, Collections.emptyMap());
-        } catch (JAXBException e) {
-            throw new ApiException("Błąd konwersji obiektu do XML", e);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ApiException(API_EXCEPTION, e);
         }
     }

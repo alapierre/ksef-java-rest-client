@@ -61,7 +61,7 @@
         <logback-classic.version>1.2.11</logback-classic.version>
         <okhttp.version>4.10.0</okhttp.version>
         <gson.version>2.9.0</gson.version>
-        <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
+        <junit-jupiter-api.version>5.9.0</junit-jupiter-api.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <jackson-databind.version>2.13.3</jackson-databind.version>
         <sonar.organization>alapierre</sonar.organization>
@@ -71,27 +71,6 @@
 
     <build>
         <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-toolchains-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>toolchain</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <toolchains>
-                        <jdk>
-                            <version>1.8</version>
-                            <vendor>openjdk</vendor>
-                        </jdk>
-                    </toolchains>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -246,6 +225,24 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>2.4.0-b180830.0359</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -275,7 +272,32 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <!-- Enable JDK8 build-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-toolchains-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>toolchain</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <toolchains>
+                                <jdk>
+                                    <version>1.8</version>
+                                    <vendor>openjdk</vendor>
+                                </jdk>
+                            </toolchains>
+                        </configuration>
+                    </plugin>
+
+
                 </plugins>
+
             </build>
         </profile>
     </profiles>

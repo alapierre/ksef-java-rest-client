@@ -193,10 +193,11 @@ Biblioteka ułatwiająca wykonanie podpisu elektronicznego XADES na karcie krypt
 
 ## Build Requirements
 
+Project can be build on JDK11+ and stating from version 2.0.13, we will stop supporting JDK8 at all. Last JDK8 compatible version is 2.0.12.
+
 Building the API client library requires:
-1. Java 1.8+ and Java 11 (to build `ksef-client-jdk11-http-client`)
+1. Java 11+
 2. Maven
-3. Maven configured to build multi JDK projects
 
 ## Configuring maven to build multi JDK projects
 
