@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2022.11.08
+ *
+ * based on Spring Framework HttpStatus
  */
 public enum HttpStatus {
 
