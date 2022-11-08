@@ -17,6 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.util.Date;
 
+import static io.alapierre.ksef.client.AbstractApiClient.Environment;
+
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2022.10.15
@@ -25,11 +27,13 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class KsefTokenFacade {
 
-    public static InitSignedResponse authByToken(@NonNull InterfejsyInteraktywneSesjaApi api, @NonNull String identifier, @NonNull String env, AuthorisationChallengeRequest.IdentifierType identifierType, @NotNull String token) throws ApiException, ParseException {
+    private final InterfejsyInteraktywneSesjaApi api;
+
+    public InitSignedResponse authByToken(@NonNull Environment env, @NonNull String identifier, AuthorisationChallengeRequest.IdentifierType identifierType, @NotNull String token) throws ApiException, ParseException {
         AuthorisationChallengeResponse challengeResponse = api.authorisationChallengeCall(identifier, identifierType);
         log.debug("challengeResponse = {}", challengeResponse);
         Date timestamp = PublicKeyEncoder.parseChallengeTimestamp(challengeResponse.getTimestamp());
-        PublicKeyEncoder encoder = PublicKeyEncoder.withBundledKey(env);
+        PublicKeyEncoder encoder = PublicKeyEncoder.withBundledKey(env.name());
         String encryptedToken = encoder.encodeSessionToken(token, timestamp);
         InitSessionTokenRequest request = AuthRequestUtil.prepareTokenAuthRequest(challengeResponse.getChallenge(), identifier, encryptedToken);
         log.debug("Token request {}", request);

@@ -86,7 +86,8 @@ public class Main {
 
         InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-        InitSignedResponse session = KsefTokenFacade.authByToken(sesjaApi, NIP_FIRMY, "TEST", AuthorisationChallengeRequest.IdentifierType.onip, "token");
+        val facade = new KsefTokenFacade(sesjaApi);
+        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip, "token");
 
         val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
         invoiceApi.invoiceSend(new File("FA1.xml"), session.getSessionToken().getToken());
