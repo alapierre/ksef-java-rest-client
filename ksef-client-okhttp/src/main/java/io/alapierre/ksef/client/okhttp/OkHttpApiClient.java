@@ -4,7 +4,6 @@ import io.alapierre.io.IOUtils;
 import io.alapierre.ksef.client.AbstractApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.*;
@@ -12,22 +11,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2022.01.02
  */
 @SuppressWarnings("unused")
-@RequiredArgsConstructor
 @Slf4j
 public class OkHttpApiClient extends AbstractApiClient {
 
     public static final String API_EXCEPTION = "Błąd wywołania API";
-    private final JsonSerializer serializer;
+
     private final OkHttpClient client = new OkHttpClient();
 
     private final MediaType JSON = MediaType.get("application/json; charset=utf-8");
@@ -35,13 +30,11 @@ public class OkHttpApiClient extends AbstractApiClient {
     private final MediaType OCTET = MediaType.get("application/octet-stream; charset=utf-8");
 
     public OkHttpApiClient(JsonSerializer serializer, String url) {
-        super(url);
-        this.serializer = serializer;
+        super(serializer, url);
     }
 
     public OkHttpApiClient(JsonSerializer serializer, Environment environment) {
-        super(environment);
-        this.serializer = serializer;
+        super(serializer, environment);
     }
 
     @Override
@@ -213,7 +206,7 @@ public class OkHttpApiClient extends AbstractApiClient {
         val headers = response.headers().toMultimap();
         log.debug("headers: {}", headers);
 
-        return new ApiException(response.code(), response.message(), headers, body);
+        return mapExceptionResponseToException(response.code(), response.message(), headers, body);
     }
 
 }

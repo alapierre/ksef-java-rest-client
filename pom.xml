@@ -27,6 +27,12 @@
             <name>Karol Bryzgiel</name>
             <email>karol.bryzgiel@soft-project.pl</email>
         </developer>
+        <developer>
+            <name>Michał Domański</name>
+        </developer>
+        <developer>
+            <name>Robert Bartosiak</name>
+        </developer>
 
     </developers>
 
@@ -241,6 +247,12 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
                 <version>4.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.alapierre.commons</groupId>
+                <artifactId>io-utils</artifactId>
+                <version>1.4</version>
             </dependency>
 
         </dependencies>

@@ -27,15 +27,13 @@ import java.util.*;
 public class HttpApiClient extends AbstractApiClient {
 
     private final HttpClient client = HttpClient.newHttpClient();
-    private final JsonSerializer serializer;
 
     public HttpApiClient(JsonSerializer serializer) {
-        this.serializer = serializer;
+        super(serializer);
     }
 
     public HttpApiClient(String url, JsonSerializer serializer) {
-        super(url);
-        this.serializer = serializer;
+        super(serializer, url);
     }
 
     @Override
@@ -96,7 +94,7 @@ public class HttpApiClient extends AbstractApiClient {
 
         try {
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
-            if (response.body() != null) {
+            if (response.body() != null) { // TODO: sprawdzić czy to jest potrzebne
                 try (InputStream is = response.body()) {
                     IOUtils.copy(is, os);
                 }
@@ -169,7 +167,7 @@ public class HttpApiClient extends AbstractApiClient {
         }
     }
 
-    protected ApiException createException(HttpResponse response) {
+    protected ApiException createException(@NotNull HttpResponse response) {
 
         val responseBody = response.body();
 
@@ -180,6 +178,6 @@ public class HttpApiClient extends AbstractApiClient {
         val headers = response.headers().map();
         log.debug("headers: {}", headers);
 
-        return new ApiException(response.statusCode(), response.body().toString(), headers, body);
+        return mapExceptionResponseToException(response.statusCode(), String.valueOf(response.statusCode()), headers, body);
     }
 }

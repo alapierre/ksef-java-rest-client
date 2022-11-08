@@ -24,7 +24,6 @@
         <dependency>
             <groupId>io.alapierre.commons</groupId>
             <artifactId>io-utils</artifactId>
-            <version>${common-utils.version}</version>
         </dependency>
 
         <dependency>
