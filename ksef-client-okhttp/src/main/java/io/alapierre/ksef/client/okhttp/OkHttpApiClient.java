@@ -29,6 +29,10 @@ public class OkHttpApiClient extends AbstractApiClient {
     private final MediaType XML = MediaType.get("application/xml; charset=utf-8");
     private final MediaType OCTET = MediaType.get("application/octet-stream; charset=utf-8");
 
+    public OkHttpApiClient(JsonSerializer serializer) {
+        super(serializer, Environment.TEST);
+    }
+
     public OkHttpApiClient(JsonSerializer serializer, String url) {
         super(serializer, url);
     }
