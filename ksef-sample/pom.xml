@@ -22,22 +22,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.alapierre.crypto</groupId>
-            <artifactId>digital-signature</artifactId>
-            <version>1.5</version>
-        </dependency>
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
@@ -47,8 +31,15 @@
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-xml-model</artifactId>
+            <artifactId>ksef-dss-facade</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

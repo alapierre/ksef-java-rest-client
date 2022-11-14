@@ -7,12 +7,11 @@ import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneFakturaApi;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneSesjaApi;
-import io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeRequest;
 import io.alapierre.ksef.client.model.rest.auth.InitSignedResponse;
 import io.alapierre.ksef.client.okhttp.OkHttpApiClient;
 import io.alapierre.ksef.client.serializer.gson.GsonJsonSerializer;
 import io.alapierre.ksef.token.facade.KsefTokenFacade;
-import io.alapierre.ksef.xml.model.AuthRequestUtil;
+import io.alapierre.ntt.ksef.api.dss.facade.KsefDssFacade;
 import lombok.val;
 
 import java.io.ByteArrayInputStream;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.security.KeyStore;
 
 import static io.alapierre.ksef.client.AbstractApiClient.Environment;
+import static io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeRequest.IdentifierType;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -39,20 +39,12 @@ public class Main {
 
             JsonSerializer serializer = new GsonJsonSerializer();
             ApiClient client = new OkHttpApiClient(serializer);
-
             InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-            val challenge = sesjaApi.authorisationChallengeCall(NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip);
+            val signer = new P12Signer(pas, tokenFile);
+            KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
 
-            System.out.println(challenge);
-
-            val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), NIP_FIRMY);
-            val toSigned = AuthRequestUtil.requestToBytes(auth);
-
-            // podpis elektroniczny XML
-            ByteArrayOutputStream signed = signRequest(toSigned);
-
-            val signedResponse = sesjaApi.initSessionSignedCall(signed.toByteArray());
+            val signedResponse = facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
 
             // signedResponse.getSessionToken() zawiera token sesyjny
 
@@ -64,6 +56,21 @@ public class Main {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+
+    public static void loginBySignature() throws IOException, ApiException {
+
+        JsonSerializer serializer = new GsonJsonSerializer();
+        ApiClient client = new OkHttpApiClient(serializer);
+        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+
+
+        val signer = new P12Signer(pas, tokenFile);
+        KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
+
+        facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
+
     }
 
     public static ByteArrayOutputStream signRequest(byte[] toSigned) throws IOException {
@@ -87,7 +94,7 @@ public class Main {
         InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
         val facade = new KsefTokenFacade(sesjaApi);
-        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip, "token");
+        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, IdentifierType.onip, "token");
 
         val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
         invoiceApi.invoiceSend(new File("FA1.xml"), session.getSessionToken().getToken());

@@ -26,52 +26,30 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
 
 ````xml
 <dependencies>
-      <dependency>
+    <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-client-okhttp</artifactId>
-        <version>2.0.12</version>
-      </dependency>
-    
-      <dependency>
+        <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-json-serializer-gson</artifactId>
-        <version>2.0.12</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>io.alapierre.ksef</groupId>
-        <artifactId>ksef-api</artifactId>
-        <version>2.0.12</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-      </dependency>
-    
-      <dependency>
-        <groupId>io.alapierre.crypto</groupId>
-        <artifactId>digital-signature</artifactId>
-        <version>1.0</version>
-      </dependency>
-    
-      <dependency>
-        <groupId>io.alapierre.ksef</groupId>
-        <artifactId>ksef-xml-model</artifactId>
-        <version>2.0.12</version>
-      </dependency>
-      
-      <dependency>
-        <groupId>io.alapierre.ksef</groupId>
-        <artifactId>ksef-xml-model</artifactId>
-        <version>2.0.12</version>
-      </dependency>
-    
-      <dependency>
+        <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-token-facade</artifactId>
-        <version>2.0.12</version>
-      </dependency>
+        <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>io.alapierre.ksef</groupId>
+        <artifactId>ksef-dss-facade</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+    </dependency>
     
 </dependencies>
 ````
@@ -104,7 +82,7 @@ public class Main {
 
 ````
 
-### Pobranie wyzwania autoryzacyjnego, autoryzacja podpisem i wysłanie faktury
+### Autoryzacja podpisem i wysłanie faktury
 
 ````java
 package io.alapierre.ksef.sample;
@@ -138,46 +116,25 @@ public class Main {
 
     try {
 
-      JsonSerializer serializer = new GsonJsonSerializer();
-      ApiClient client = new OkHttpApiClient(serializer);
+        JsonSerializer serializer = new GsonJsonSerializer();
+        ApiClient client = new OkHttpApiClient(serializer);
+        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-      InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+        val signer = new P12Signer(pas, tokenFile);
+        KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
 
-      val challenge = sesjaApi.authorisationChallengeCall(NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip);
+        val signedResponse = facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
 
-      System.out.println(challenge);
+        // signedResponse.getSessionToken() zawiera token sesyjny
 
-      val auth = AuthRequestUtil.prepareAuthRequest(challenge.getChallenge(), NIP_FIRMY);
-      val toSigned = AuthRequestUtil.requestToBytes(auth);
-
-      // podpis elektroniczny XML
-      ByteArrayOutputStream signed = signRequest(toSigned);
-
-      val signedResponse = sesjaApi.initSessionSignedCall(signed.toByteArray());
-
-      // signedResponse.getSessionToken() zawiera token sesyjny
-
-      val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
-      invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken().getToken());
+        val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
+        invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken().getToken());
 
     } catch (ApiException ex) {
       System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }
-  }
-
-  public static ByteArrayOutputStream signRequest(byte[] toSigned) throws IOException {
-
-    val signer = new P12Signer(pas, tokenFile);
-
-    ByteArrayInputStream is = new ByteArrayInputStream(toSigned);
-    DSSDocument signedDocument = signer.sign(is);
-
-    ByteArrayOutputStream signed = new ByteArrayOutputStream();
-    signedDocument.writeTo(signed);
-
-    return signed;
   }
 }
 ````
