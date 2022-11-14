@@ -5,7 +5,7 @@
     <groupId>io.alapierre.ksef</groupId>
     <artifactId>ksef-java</artifactId>
 
-    <version>2.0.13-SNAPSHOT</version>
+    <version>2.0.14-SNAPSHOT</version>
 
     <name>KSeF Java Rest Client</name>
     <description>Krajowy System eFaktur Rest API Java Klient</description>
@@ -26,6 +26,12 @@
         <developer>
             <name>Karol Bryzgiel</name>
             <email>karol.bryzgiel@soft-project.pl</email>
+        </developer>
+        <developer>
+            <name>Michał Domański</name>
+        </developer>
+        <developer>
+            <name>Robert Bartosiak</name>
         </developer>
 
     </developers>
@@ -48,6 +54,7 @@
         <module>ksef-client-jdk11-http-client</module>
         <module>ksef-sample</module>
         <module>ksef-token-facade</module>
+        <module>ksef-dss-facade</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -60,13 +67,14 @@
         <slf4j-api.version>1.7.36</slf4j-api.version>
         <logback-classic.version>1.2.11</logback-classic.version>
         <okhttp.version>4.10.0</okhttp.version>
-        <gson.version>2.9.0</gson.version>
-        <junit-jupiter-api.version>5.9.0</junit-jupiter-api.version>
+        <gson.version>2.9.1</gson.version>
+        <junit-jupiter-api.version>5.9.1</junit-jupiter-api.version>
         <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
         <jackson-databind.version>2.13.3</jackson-databind.version>
         <sonar.organization>alapierre</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <common-utils.version>1.4</common-utils.version>
+        <crypto-utils.version>1.5</crypto-utils.version>
     </properties>
 
     <build>
@@ -241,6 +249,12 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
                 <version>4.0.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.alapierre.commons</groupId>
+                <artifactId>io-utils</artifactId>
+                <version>1.4</version>
             </dependency>
 
         </dependencies>

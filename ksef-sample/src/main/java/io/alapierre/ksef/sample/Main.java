@@ -8,18 +8,20 @@ import io.alapierre.ksef.client.JsonSerializer;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneFakturaApi;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneSesjaApi;
 import io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeRequest;
+import io.alapierre.ksef.client.model.rest.auth.InitSignedResponse;
 import io.alapierre.ksef.client.okhttp.OkHttpApiClient;
 import io.alapierre.ksef.client.serializer.gson.GsonJsonSerializer;
+import io.alapierre.ksef.token.facade.KsefTokenFacade;
 import io.alapierre.ksef.xml.model.AuthRequestUtil;
 import lombok.val;
-import io.alapierre.ksef.token.facade.*;
-import io.alapierre.ksef.client.model.rest.auth.InitSignedResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
+
+import static io.alapierre.ksef.client.AbstractApiClient.Environment;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -80,11 +82,12 @@ public class Main {
     public static void loginByToken() throws Exception {
 
         JsonSerializer serializer = new GsonJsonSerializer();
-        ApiClient client = new OkHttpApiClient(serializer);
+        ApiClient client = new OkHttpApiClient(serializer, Environment.TEST);
 
         InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
 
-        InitSignedResponse session = KsefTokenFacade.authByToken(sesjaApi, NIP_FIRMY, "TEST", AuthorisationChallengeRequest.IdentifierType.onip, "token");
+        val facade = new KsefTokenFacade(sesjaApi);
+        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, AuthorisationChallengeRequest.IdentifierType.onip, "token");
 
         val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
         invoiceApi.invoiceSend(new File("FA1.xml"), session.getSessionToken().getToken());
