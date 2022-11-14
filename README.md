@@ -5,8 +5,8 @@
 # KSeF java REST client
 
 KSeF
-- API version: 1.0.3
-  - Build date: 2022-11-06
+- API version: 1.1.0
+  - Build date: 2022-11-014
 
 Krajowy Systemu e-Faktur
 
@@ -29,25 +29,25 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-client-okhttp</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.14</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-json-serializer-gson</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.14</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-token-facade</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.14</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-dss-facade</artifactId>
-        <version>${project.version}</version>
+        <version>2.0.14</version>
         <scope>compile</scope>
     </dependency>
     
