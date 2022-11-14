@@ -66,13 +66,4 @@
 
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>sonatype-snapshots</id>
-            <name>sonatype snapshots maven repository</name>
-            <snapshots/>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-
 </project>
