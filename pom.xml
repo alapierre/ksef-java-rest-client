@@ -74,7 +74,7 @@
         <sonar.organization>alapierre</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <common-utils.version>1.4</common-utils.version>
-        <crypto-utils.version>1.6-SNAPSHOT</crypto-utils.version>
+        <crypto-utils.version>1.6</crypto-utils.version>
     </properties>
 
     <build>
