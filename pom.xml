@@ -254,7 +254,7 @@
             <dependency>
                 <groupId>io.alapierre.commons</groupId>
                 <artifactId>io-utils</artifactId>
-                <version>1.5</version>
+                <version>${common-utils.version}</version>
             </dependency>
 
         </dependencies>
@@ -308,10 +308,7 @@
                             </toolchains>
                         </configuration>
                     </plugin>
-
-
                 </plugins>
-
             </build>
         </profile>
     </profiles>
@@ -320,7 +317,12 @@
         <repository>
             <id>sonatype-snapshots</id>
             <name>sonatype snapshots maven repository</name>
-            <snapshots/>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
     </repositories>
