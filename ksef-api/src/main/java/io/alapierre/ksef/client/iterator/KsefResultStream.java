@@ -1,6 +1,7 @@
 package io.alapierre.ksef.client.iterator;
 
 import io.alapierre.ksef.client.ApiException;
+import lombok.val;
 
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -25,6 +26,11 @@ public class KsefResultStream<T> {
     private int totalNumberOfElements;
 
     private PageSupplier<PageableResult<T>> supplier;
+
+    public static <T> Stream<T> builder(PageSupplier<PageableResult<T>> supplier) throws ApiException {
+        val in = new KsefResultStream<T>();
+        return in.stream(supplier);
+    }
 
     public Stream<T> stream(PageSupplier<PageableResult<T>> supplier) throws ApiException {
 

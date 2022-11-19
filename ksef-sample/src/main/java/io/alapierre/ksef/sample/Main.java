@@ -13,7 +13,6 @@ import io.alapierre.ksef.client.iterator.InvoiceQueryResponseAdapter;
 import io.alapierre.ksef.client.iterator.KsefResultStream;
 import io.alapierre.ksef.client.model.rest.auth.InitSignedResponse;
 import io.alapierre.ksef.client.model.rest.query.InvoiceQueryRequest;
-import io.alapierre.ksef.client.model.rest.query.InvoiceQueryResponse;
 import io.alapierre.ksef.client.okhttp.OkHttpApiClient;
 import io.alapierre.ksef.client.serializer.gson.GsonJsonSerializer;
 import io.alapierre.ksef.token.facade.KsefTokenFacade;
@@ -130,8 +129,9 @@ public class Main {
                         .build())
                 .build();
 
-        new KsefResultStream<InvoiceQueryResponse.InvoiceHeaderList>().stream(
-                page -> new InvoiceQueryResponseAdapter(zapytaniaApi.invoiceQuery(session.getSessionToken().getToken(), request, 100, page)))
+        val token = session.getSessionToken().getToken();
+        KsefResultStream.builder(
+                page -> new InvoiceQueryResponseAdapter(zapytaniaApi.invoiceQuery(token, request, 100, page)))
                 .forEach(System.out::println);
     }
 
