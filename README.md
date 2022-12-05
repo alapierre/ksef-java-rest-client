@@ -6,7 +6,7 @@
 
 KSeF
 - API version: 1.1.0
-  - Build date: 2022-11-014
+  - Build date: 2022-12-05
 
 Krajowy Systemu e-Faktur
 
@@ -29,25 +29,25 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-client-okhttp</artifactId>
-        <version>2.0.14</version>
+        <version>2.0.15</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-json-serializer-gson</artifactId>
-        <version>2.0.14</version>
+        <version>2.0.15</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-token-facade</artifactId>
-        <version>2.0.14</version>
+        <version>2.0.15</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-dss-facade</artifactId>
-        <version>2.0.14</version>
+        <version>2.0.15</version>
         <scope>compile</scope>
     </dependency>
     
@@ -139,6 +139,41 @@ public class Main {
 }
 ````
 
+# Pobranie faktur zakupowych 
+
+````java
+public class Main {
+
+    public static final String NIP_FIRMY = "NIP firmy";
+    
+    public static void loadIncomingInvoices() throws Exception {
+
+        JsonSerializer serializer = new GsonJsonSerializer();
+        ApiClient client = new OkHttpApiClient(serializer, Environment.TEST);
+
+        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+
+        val facade = new KsefTokenFacade(sesjaApi);
+        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, IdentifierType.onip, "token");
+        val sessionToken = session.getSessionToken().getToken();
+        
+        val zapytaniaApi = new InterfejsyInteraktywneZapytaniaApi(client);
+
+        val request = InvoiceQueryRequest.builder()
+                .queryCriteria(InvoiceQueryRequest.QueryCriteria.builder()
+                        .subjectType("subject2")
+                        .acquisitionTimestampThresholdFrom(zapytaniaApi.convertDate(DateUtils.firstDayOfMonth(LocalDate.now())))
+                        .acquisitionTimestampThresholdTo(zapytaniaApi.convertDate(LocalDateTime.now()))
+                        .build())
+                .build();
+        
+        KsefResultStream.builder(
+                        page -> new InvoiceQueryResponseAdapter(zapytaniaApi.invoiceQuery(sessionToken, request, 100, page)))
+                .forEach(System.out::println);
+    }
+}
+````
+
 Biblioteka ułatwiająca wykonanie podpisu elektronicznego XADES na karcie kryptograficznej lub za pomocą tokena w formacie PKCS#12: 
 
 ````xml
@@ -158,6 +193,8 @@ Building the API client library requires:
 2. Maven
 
 ## Configuring maven to build multi JDK projects
+
+Normally you do not need it to build whole project with JDK 11.
 
 put toolchain.xml file in your `${user.home}/.m2`:
 
