@@ -1,5 +1,6 @@
 package io.alapierre.ksef.client;
 
+import io.alapierre.ksef.client.exception.BadRequestException;
 import io.alapierre.ksef.client.exception.ExceptionResponse;
 import io.alapierre.ksef.client.exception.TooManyRequestsException;
 import lombok.Getter;
@@ -81,9 +82,12 @@ public abstract class AbstractApiClient implements ApiClient {
         return details;
     }
 
-    protected ApiException mapExceptionResponseToException(int code, String message, Map<String, List<String>> headers, String body) {
+    protected ApiException mapHttpResponseStatusToException(int code, String message, Map<String, List<String>> headers, String body) {
         if(code == 429)
             return new TooManyRequestsException(code, message, headers, body, getExceptionDetails(body));
+        else if (code == 400) {
+            return new BadRequestException(code, message, headers, body, getExceptionDetails(body));
+        }
 
         return new ApiException(code, message, headers, body, getExceptionDetails(body));
     }

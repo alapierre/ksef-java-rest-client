@@ -210,7 +210,7 @@ public class OkHttpApiClient extends AbstractApiClient {
         val headers = response.headers().toMultimap();
         log.debug("headers: {}", headers);
 
-        return mapExceptionResponseToException(response.code(), response.message(), headers, body);
+        return mapHttpResponseStatusToException(response.code(), response.message(), headers, body);
     }
 
 }

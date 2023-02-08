@@ -29,7 +29,22 @@ public class PublicKeyEncoder {
 
     @SneakyThrows
     public static PublicKeyEncoder withBundledKey(@NonNull String env)  {
-        String keyName = "TEST".equals(env) ? "publicKey-test.der" : "publicKey-prod.der";
+
+        String keyName;
+
+        switch (env) {
+            case "TEST":
+                keyName = "publicKey-test.der";
+                break;
+            case "DEMO":
+                keyName = "publicKey-demo.der";
+                break;
+            case "PROD":
+                keyName = "publicKey-prod.der";
+                break;
+            default: throw new IllegalStateException("Unknown environment name '" + env + "'");
+        }
+
         log.debug("klucz publiczny {}" + keyName);
         InputStream pk = PublicKeyEncoder.class.getClassLoader().getResourceAsStream(keyName);
         if (pk == null) {

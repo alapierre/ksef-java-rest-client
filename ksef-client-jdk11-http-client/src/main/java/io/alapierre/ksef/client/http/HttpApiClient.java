@@ -178,6 +178,6 @@ public class HttpApiClient extends AbstractApiClient {
         val headers = response.headers().map();
         log.debug("headers: {}", headers);
 
-        return mapExceptionResponseToException(response.statusCode(), HttpStatus.valueOf(response.statusCode()).getMessage(), headers, body);
+        return mapHttpResponseStatusToException(response.statusCode(), HttpStatus.valueOf(response.statusCode()).getMessage(), headers, body);
     }
 }
