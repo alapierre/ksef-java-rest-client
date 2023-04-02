@@ -62,7 +62,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <annotations.version>23.0.0</annotations.version>
+        <annotations.version>24.0.1</annotations.version>
         <lombok.version>1.18.26</lombok.version>
         <slf4j-api.version>2.0.5</slf4j-api.version>
         <logback-classic.version>1.4.5</logback-classic.version>
