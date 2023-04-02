@@ -75,7 +75,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <common-utils.version>1.5</common-utils.version>
         <crypto-utils.version>1.6</crypto-utils.version>
-        <jaxb.version>4.0.1</jaxb.version>
+        <jaxb.version>4.0.2</jaxb.version>
     </properties>
 
     <build>
