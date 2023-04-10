@@ -49,8 +49,16 @@ public class Main {
             val signedResponse = loginByToken();
             val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
             val sessionToken = signedResponse.getSessionToken().getToken();
-            invoiceApi.invoiceSend(new File("ksef-sample/src/main/resources/FA1.xml"), sessionToken);
+            val resp = invoiceApi.invoiceSend(new File("ksef-sample/src/main/resources/FA1.xml"), sessionToken);
 
+            System.out.printf("ElementReferenceNumber %s, ReferenceNumber %s, ProcessingCode %d\n",
+                    resp.getElementReferenceNumber(),
+                    resp.getReferenceNumber(),
+                    resp.getProcessingCode());
+
+            loadIncomingInvoices(sessionToken);
+
+            sesjaApi.terminateSession(sessionToken);
         } catch (ApiException ex) {
             System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
         } catch (IOException | ParseException e) {
@@ -68,22 +76,13 @@ public class Main {
     @SuppressWarnings("DuplicatedCode")
     public static InitSignedResponse loginByToken() throws ApiException, ParseException {
 
-        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
         val facade = new KsefTokenFacade(sesjaApi);
         InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, IdentifierType.onip, token);
         return session;
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public static void loadIncomingInvoices() throws Exception {
-
-        JsonSerializer serializer = new GsonJsonSerializer();
-        ApiClient client = new OkHttpApiClient(serializer, Environment.TEST);
-
-        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
-
-        val facade = new KsefTokenFacade(sesjaApi);
-        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, IdentifierType.onip, "token");
+    public static void loadIncomingInvoices(String sessionToken) throws ParseException, ApiException {
 
         val zapytaniaApi = new InterfejsyInteraktywneZapytaniaApi(client);
 
@@ -95,9 +94,8 @@ public class Main {
                         .build())
                 .build();
 
-        val token = session.getSessionToken().getToken();
         KsefResultStream.builder(
-                page -> new InvoiceQueryResponseAdapter(zapytaniaApi.invoiceQuery(token, request, 100, page)))
+                page -> new InvoiceQueryResponseAdapter(zapytaniaApi.invoiceQuery(sessionToken, request, 100, page)))
                 .forEach(System.out::println);
     }
 

@@ -53,13 +53,13 @@
             <version>${ksef.client.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-token-facade</artifactId>
             <version>${ksef.client.version}</version>
         </dependency>
 
+        <!-- potrzebne, tylko jeśli logujemy się podpisem -->
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-dss-facade</artifactId>
