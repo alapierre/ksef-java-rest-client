@@ -45,10 +45,10 @@ public class PublicKeyEncoder {
             default: throw new IllegalStateException("Unknown environment name '" + env + "'");
         }
 
-        log.debug("klucz publiczny {}" + keyName);
+        log.debug("klucz publiczny {}", keyName);
         InputStream pk = PublicKeyEncoder.class.getClassLoader().getResourceAsStream(keyName);
         if (pk == null) {
-            throw new IllegalStateException("Can't load bundled key mfPublicKey.der from classpath");
+            throw new IllegalStateException("Can't load bundled key " + keyName + " from classpath");
         } else {
             return new PublicKeyEncoder(pk);
         }

@@ -9,6 +9,12 @@
 
     <artifactId>ksef-sample</artifactId>
 
+    <properties>
+        <ksef.client.version>2.0.16</ksef.client.version>
+<!--        <ksef.client.version>${project.version}</ksef.client.version>-->
+    </properties>
+
+
     <build>
         <plugins>
             <plugin>
@@ -38,26 +44,26 @@
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-client-okhttp</artifactId>
-            <version>${project.version}</version>
+            <version>${ksef.client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-json-serializer-gson</artifactId>
-            <version>${project.version}</version>
+            <version>${ksef.client.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-token-facade</artifactId>
-            <version>${project.version}</version>
+            <version>${ksef.client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
             <artifactId>ksef-dss-facade</artifactId>
-            <version>${project.version}</version>
+            <version>${ksef.client.version}</version>
             <scope>compile</scope>
         </dependency>
 

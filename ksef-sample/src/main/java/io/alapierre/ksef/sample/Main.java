@@ -1,6 +1,5 @@
 package io.alapierre.ksef.sample;
 
-import eu.europa.esig.dss.model.DSSDocument;
 import io.alapierre.commons.date.DateUtils;
 import io.alapierre.crypto.dss.signer.P12Signer;
 import io.alapierre.ksef.client.ApiClient;
@@ -19,11 +18,10 @@ import io.alapierre.ksef.token.facade.KsefTokenFacade;
 import io.alapierre.ntt.ksef.api.dss.facade.KsefDssFacade;
 import lombok.val;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -36,76 +34,44 @@ import static io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeReq
  */
 public class Main {
 
-    public static final String NIP_FIRMY = "NIP firmy";
+    public static final String NIP_FIRMY = "9781399259";
     private static final  File tokenFile = new File("token.p12");
     private static final  KeyStore.PasswordProtection pas = new KeyStore.PasswordProtection("_____token_password_____".toCharArray());
+
+    private static final JsonSerializer serializer = new GsonJsonSerializer();
+    private static final ApiClient client = new OkHttpApiClient(serializer);
+    private static final InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
+    public static final String token = "30AC53BF6313480A4C12278907E718C82086E19FD56DF3F43C889A28572FDD4A";
 
     public static void main(String[] args)  {
 
         try {
-
-            JsonSerializer serializer = new GsonJsonSerializer();
-            ApiClient client = new OkHttpApiClient(serializer);
-            InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
-
-            val signer = new P12Signer(pas, tokenFile);
-            KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
-
-            val signedResponse = facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
-
-            // signedResponse.getSessionToken() zawiera token sesyjny
-
+            val signedResponse = loginByToken();
             val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
-            invoiceApi.invoiceSend(new File("FA1.xml"), signedResponse.getSessionToken().getToken());
+            val sessionToken = signedResponse.getSessionToken().getToken();
+            invoiceApi.invoiceSend(new File("ksef-sample/src/main/resources/FA1.xml"), sessionToken);
 
         } catch (ApiException ex) {
             System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             System.out.println(e.getMessage());
         }
     }
 
-
-    public static void loginBySignature() throws IOException, ApiException {
-
-        JsonSerializer serializer = new GsonJsonSerializer();
-        ApiClient client = new OkHttpApiClient(serializer);
-        InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
-
+    public static InitSignedResponse loginBySignature() throws IOException, ApiException {
 
         val signer = new P12Signer(pas, tokenFile);
         KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
-
-        facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
-
-    }
-
-    public static ByteArrayOutputStream signRequest(byte[] toSigned) throws IOException {
-
-        val signer = new P12Signer(pas, tokenFile);
-
-        ByteArrayInputStream is = new ByteArrayInputStream(toSigned);
-        DSSDocument signedDocument = signer.sign(is);
-
-        ByteArrayOutputStream signed = new ByteArrayOutputStream();
-        signedDocument.writeTo(signed);
-
-        return signed;
+        return facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public static void loginByToken() throws Exception {
-
-        JsonSerializer serializer = new GsonJsonSerializer();
-        ApiClient client = new OkHttpApiClient(serializer, Environment.TEST);
+    public static InitSignedResponse loginByToken() throws ApiException, ParseException {
 
         InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
-
         val facade = new KsefTokenFacade(sesjaApi);
-        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, IdentifierType.onip, "token");
-
-        val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
-        invoiceApi.invoiceSend(new File("FA1.xml"), session.getSessionToken().getToken());
+        InitSignedResponse session = facade.authByToken(Environment.TEST, NIP_FIRMY, IdentifierType.onip, token);
+        return session;
     }
 
     @SuppressWarnings("DuplicatedCode")
