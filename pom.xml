@@ -55,6 +55,7 @@
         <module>ksef-sample</module>
         <module>ksef-token-facade</module>
         <module>ksef-dss-facade</module>
+        <module>ksef-test-common</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -74,8 +75,9 @@
         <sonar.organization>alapierre</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <common-utils.version>1.5</common-utils.version>
-        <crypto-utils.version>1.6</crypto-utils.version>
+        <crypto-utils.version>1.12</crypto-utils.version>
         <jaxb.version>4.0.2</jaxb.version>
+        <mockserver.version>5.14.0</mockserver.version>
     </properties>
 
     <build>

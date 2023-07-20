@@ -1,40 +1,37 @@
 openapi: 3.0.1
 info:
-  title: KSeF
-  description: Krajowy System e-Faktur
   contact:
+    email: info.ksef@mf.gov.pl
     name: Info
     url: https://ksef.mf.gov.pl
-    email: info.ksef@mf.gov.pl
-  version: 1.0.0
+  description: Krajowy System e-Faktur
+  title: KSeF
+  version: 1.1.3
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
 servers:
-- url: https://ksef.mf.gov.pl/api
-  description: Środowisko produkcyjne
+- description: Środowisko produkcyjne
+  url: https://ksef.mf.gov.pl/api
   variables: {}
-- url: https://ksef-demo.mf.gov.pl/api
-  description: Środowisko demonstracyjne
+- description: Środowisko demonstracyjne
+  url: https://ksef-demo.mf.gov.pl/api
   variables: {}
-- url: https://ksef-test.mf.gov.pl/api
-  description: Środowisko testowe
+- description: Środowisko testowe
+  url: https://ksef-test.mf.gov.pl/api
   variables: {}
 tags:
-- name: KSeF
-  description: Krajowy System e-Faktur
+- description: Krajowy System e-Faktur
   externalDocs:
     description: Krajowy System e-Faktur
     url: https://ksef.mf.gov.pl
+  name: KSeF
 paths:
   /common/Invoice/KSeF:
     post:
-      tags:
-      - Interfejsy wspólne - pobranie faktury
-      summary: Pobranie faktury z repozytorium KSeF - kryteria oparte o numer KSeF
       description: Pobranie faktury z repozytorium KSeF na podstawie kryteriów opartych
         o numer KSeF
-      operationId: invoiceKSeF
+      operationId: common.invoice.ksef
       requestBody:
         content:
           application/json:
@@ -43,246 +40,251 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
           content:
             application/octet-stream:
               schema:
                 type: object
+          description: OK
         "400":
-          description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
+      summary: Pobranie faktury z repozytorium KSeF - kryteria oparte o numer KSeF
+      tags:
+      - Interfejsy wspólne - pobranie faktury
   /common/Status/{ReferenceNumber}:
     get:
-      tags:
-      - Interfejsy wspólne - status
-      summary: Interfejs wspólny pobrania statusu przetwarzania wsadowego
       description: Sprawdzenie statusu przetwarzania wsadowego
-      operationId: status
+      operationId: common.status
       parameters:
-      - name: ReferenceNumber
-        in: path
+      - in: path
+        name: ReferenceNumber
         required: true
         schema:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
       responses:
         "200":
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusResponse'
+          description: OK
         "400":
-          description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+      summary: Interfejs wspólny pobrania statusu przetwarzania wsadowego
+      tags:
+      - Interfejsy wspólne - status
 components:
   schemas:
     ExceptionDetailType:
-      required:
-      - exceptionCode
-      - exceptionDescription
       type: object
       properties:
         exceptionCode:
-          minimum: 0
           type: integer
           format: int32
+          minimum: 0
         exceptionDescription:
+          type: string
           maxLength: 256
           minLength: 1
-          type: string
-    ExceptionResponse:
       required:
-      - exception
+      - exceptionCode
+      - exceptionDescription
+    ExceptionResponse:
       type: object
       properties:
         exception:
           $ref: '#/components/schemas/ExceptionType'
+      required:
+      - exception
     ExceptionType:
+      type: object
+      properties:
+        exceptionDetailList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExceptionDetailType'
+          maxItems: 100
+          minItems: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        serviceCode:
+          type: string
+          maxLength: 64
+          minLength: 1
+        serviceCtx:
+          type: string
+          maxLength: 64
+          minLength: 1
+        serviceName:
+          type: string
+          maxLength: 64
+          minLength: 1
+        timestamp:
+          type: string
+          format: date-time
       required:
       - exceptionDetailList
       - serviceCode
       - serviceCtx
       - serviceName
       - timestamp
+    InvoiceQueryDetailsType:
       type: object
       properties:
-        serviceCtx:
-          maxLength: 64
+        dueValue:
+          type: string
+          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
+        invoiceOryginalNumber:
+          type: string
+          maxLength: 256
           minLength: 1
-          type: string
-        serviceCode:
-          maxLength: 64
-          minLength: 1
-          type: string
-        serviceName:
-          maxLength: 64
-          minLength: 1
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        exceptionDetailList:
-          maxItems: 100
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/ExceptionDetailType'
-    InvoiceQueryDetailsType:
+        subjectTo:
+          $ref: '#/components/schemas/SubjectToType'
       required:
       - dueValue
       - invoiceOryginalNumber
       - subjectTo
+    InvoiceRequestKSeF:
       type: object
       properties:
-        subjectTo:
-          $ref: '#/components/schemas/SubjectToType'
-        invoiceOryginalNumber:
-          maxLength: 128
-          minLength: 1
+        invoiceDetails:
+          $ref: '#/components/schemas/InvoiceQueryDetailsType'
+        ksefReferenceNumber:
           type: string
-        dueValue:
-          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
-          type: string
-    InvoiceRequestKSeF:
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
       required:
       - invoiceDetails
       - ksefReferenceNumber
+    StatusResponse:
       type: object
       properties:
-        ksefReferenceNumber:
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
           type: string
-        invoiceDetails:
-          $ref: '#/components/schemas/InvoiceQueryDetailsType'
-    SubjectFullNameType:
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+        upo:
+          type: string
+          format: binary
       required:
-      - fullName
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    SubjectFullNameType:
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectNameType'
       - type: object
         properties:
           fullName:
+            type: string
             maxLength: 256
             minLength: 1
-            type: string
-    SubjectIdentifierToCompanyType:
       required:
-      - identifier
+      - fullName
+    SubjectIdentifierToCompanyType:
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectIdentifierToType'
       - type: object
         properties:
           identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
             type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
     SubjectIdentifierToNoneType:
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectIdentifierToType'
     SubjectIdentifierToOtherTaxType:
-      required:
-      - identifier
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectIdentifierToType'
       - type: object
         properties:
           identifier:
+            type: string
             maxLength: 50
             minLength: 1
-            type: string
-    SubjectIdentifierToType:
       required:
-      - type
+      - identifier
+    SubjectIdentifierToType:
       type: object
-      properties:
-        type:
-          type: string
       discriminator:
-        propertyName: type
         mapping:
+          none: '#/components/schemas/SubjectIdentifierToNoneType'
           onip: '#/components/schemas/SubjectIdentifierToCompanyType'
           other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
-          none: '#/components/schemas/SubjectIdentifierToNoneType'
-    SubjectNameType:
-      required:
-      - type
-      type: object
+        propertyName: type
       properties:
-        tradeName:
-          maxLength: 256
-          minLength: 1
-          type: string
         type:
           type: string
+      required:
+      - type
+    SubjectNameType:
+      type: object
       discriminator:
-        propertyName: type
         mapping:
           fn: '#/components/schemas/SubjectFullNameType'
           pn: '#/components/schemas/SubjectPersonNameType'
-    SubjectPersonNameType:
+        propertyName: type
+      properties:
+        tradeName:
+          type: string
+          maxLength: 256
+          minLength: 1
+        type:
+          type: string
       required:
-      - firstName
-      - surname
+      - type
+    SubjectPersonNameType:
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectNameType'
       - type: object
         properties:
           firstName:
+            type: string
             maxLength: 30
             minLength: 1
-            type: string
           surname:
+            type: string
             maxLength: 81
             minLength: 1
-            type: string
-    SubjectToType:
       required:
-      - issuedToIdentifier
+      - firstName
+      - surname
+    SubjectToType:
       type: object
       properties:
         issuedToIdentifier:
           $ref: '#/components/schemas/SubjectIdentifierToType'
         issuedToName:
           $ref: '#/components/schemas/SubjectNameType'
-    StatusResponse:
       required:
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        upo:
-          type: string
-          format: binary
+      - issuedToIdentifier

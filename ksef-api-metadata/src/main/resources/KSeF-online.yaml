@@ -1,39 +1,112 @@
 openapi: 3.0.1
 info:
-  title: KSeF
-  description: Krajowy System e-Faktur
   contact:
+    email: info.ksef@mf.gov.pl
     name: Info
     url: https://ksef.mf.gov.pl
-    email: info.ksef@mf.gov.pl
-  version: 1.0.0
+  description: Krajowy System e-Faktur
+  title: KSeF
+  version: 1.1.3
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
 servers:
-- url: https://ksef.mf.gov.pl/api
-  description: Środowisko produkcyjne
+- description: Środowisko produkcyjne
+  url: https://ksef.mf.gov.pl/api
   variables: {}
-- url: https://ksef-demo.mf.gov.pl/api
-  description: Środowisko demonstracyjne
+- description: Środowisko demonstracyjne
+  url: https://ksef-demo.mf.gov.pl/api
   variables: {}
-- url: https://ksef-test.mf.gov.pl/api
-  description: Środowisko testowe
+- description: Środowisko testowe
+  url: https://ksef-test.mf.gov.pl/api
   variables: {}
 tags:
-- name: KSeF
-  description: Krajowy System e-Faktur
+- description: Krajowy System e-Faktur
   externalDocs:
     description: Krajowy System e-Faktur
     url: https://ksef.mf.gov.pl
+  name: KSeF
 paths:
-  /online/Credentials/GenerateToken:
+  /online/Credentials/ContextGrant:
     post:
+      description: Nadanie poświadczeń kontekstowych
+      operationId: online.credentials.credentials.context.grant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantContextCredentialsRequest'
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusCredentialsResponse'
+          description: Dane zostały zapisane
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nie znaleziono danych
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
+        "404":
+          content:
+            application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
+      security:
+      - SessionToken: []
+      summary: Nadanie poświadczeń kontekstowych
       tags:
       - Interfejsy interaktywne - poświadczenia
-      summary: Generowanie tokena autoryzacyjnego
+  /online/Credentials/ContextRevoke:
+    post:
+      description: Odebranie poświadczeń kontekstowych
+      operationId: online.credentials.credentials.context.revoke
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeContextCredentialsRequest'
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusCredentialsResponse'
+          description: Dane zostały zapisane
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nie znaleziono danych
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
+        "404":
+          content:
+            application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
+      security:
+      - SessionToken: []
+      summary: Odebranie poświadczeń kontekstowych
+      tags:
+      - Interfejsy interaktywne - poświadczenia
+  /online/Credentials/GenerateToken:
+    post:
       description: Generowanie tokena autoryzacyjnego
-      operationId: generateToken
+      operationId: online.credentials.generate.token
       requestBody:
         content:
           application/json:
@@ -42,36 +115,36 @@ paths:
         required: true
       responses:
         "200":
-          description: Dane zostały zapisane
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenerateTokenResponse'
+          description: Dane zostały zapisane
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Credentials/Grant:
-    post:
+      summary: Generowanie tokena autoryzacyjnego
       tags:
       - Interfejsy interaktywne - poświadczenia
-      summary: Nadanie poświadczeń
+  /online/Credentials/Grant:
+    post:
       description: Nadanie poświadczeń
-      operationId: grantCredentials
+      operationId: online.credentials.credentials.grant
       requestBody:
         content:
           application/json:
@@ -80,36 +153,36 @@ paths:
         required: true
       responses:
         "202":
-          description: Dane zostały zapisane
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusCredentialsResponse'
+          description: Dane zostały zapisane
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Credentials/Revoke:
-    post:
+      summary: Nadanie poświadczeń
       tags:
       - Interfejsy interaktywne - poświadczenia
-      summary: Odebranie poświadczeń
+  /online/Credentials/Revoke:
+    post:
       description: Odebranie poświadczeń
-      operationId: revokeCredentials
+      operationId: online.credentials.credentials.revoke
       requestBody:
         content:
           application/json:
@@ -118,158 +191,160 @@ paths:
         required: true
       responses:
         "202":
-          description: Dane zostały zapisane
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusCredentialsResponse'
+          description: Dane zostały zapisane
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Credentials/RevokeToken:
-    post:
+      summary: Odebranie poświadczeń
       tags:
       - Interfejsy interaktywne - poświadczenia
-      summary: Usunięcie tokena autoryzacyjnego
+  /online/Credentials/RevokeToken:
+    post:
       description: Odebranie Usunięcie tokena autoryzacyjnego
-      operationId: revokeToken
+      operationId: online.credentials.revoke.token
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/RevokeTokenRequest'
+          application/vnd.v2+json:
+            schema:
+              $ref: '#/components/schemas/V2_RevokeTokenRequest'
         required: true
       responses:
         "202":
-          description: Dane zostały zapisane
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusCredentialsResponse'
+            application/vnd.v2+json:
+              schema:
+                $ref: '#/components/schemas/V2_RevokeTokenResponse'
+          description: Dane zostały zapisane
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Credentials/Status/{CredentialsElementReferenceNumber}:
-    get:
+      summary: Usunięcie tokena autoryzacyjnego
       tags:
       - Interfejsy interaktywne - poświadczenia
-      summary: Sprawdzenie statusu poświadczeń
+  /online/Credentials/Status/{CredentialsElementReferenceNumber}:
+    get:
       description: Sprawdzenie statusu poświadczeń
-      operationId: statusCredentials
+      operationId: online.credentials.credentials.status
       parameters:
-      - name: CredentialsElementReferenceNumber
-        in: path
+      - in: path
+        name: CredentialsElementReferenceNumber
         required: true
         schema:
-          maxLength: 128
-          minLength: 1
           type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
       responses:
         "200":
-          description: Poświadczenie wykonane prawidłowo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusCredentialsResponse'
+          description: Poświadczenie wykonane prawidłowo
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
+      summary: Sprawdzenie statusu poświadczeń
+      tags:
+      - Interfejsy interaktywne - poświadczenia
   /online/Invoice/Get/{KSeFReferenceNumber}:
     get:
-      tags:
-      - Interfejsy interaktywne - faktury
-      summary: Pobranie faktury
       description: Pobranie faktury
-      operationId: getInvoice
+      operationId: online.invoice.invoice.get
       parameters:
-      - name: KSeFReferenceNumber
-        in: path
+      - in: path
+        name: KSeFReferenceNumber
         required: true
         schema:
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
       responses:
         "200":
-          description: OK
           content:
             application/octet-stream:
               schema:
                 type: object
+          description: OK
         "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.get
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-              examples:
-                response example:
-                  summary: Przykład błędnej odpowiedzi
-                  description: Przykład błędnej odpowiedzi
-                  value:
-                    exception:
-                      serviceCtx: srvDVAKA
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.invoice.invoice.get
-                      timestamp: 2021-10-01T12:13:14.999Z
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      exceptionDetailList:
-                      - exceptionCode: 12345
-                        exceptionDescription: Opis błędu.
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -280,28 +355,29 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Invoice/Send:
-    put:
+      summary: Pobranie faktury
       tags:
       - Interfejsy interaktywne - faktury
-      summary: Wysyłka faktury
+  /online/Invoice/Send:
+    put:
       description: 'Wysyłka faktury '
-      operationId: sendInvoice
+      operationId: online.invoice.invoice.send
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/SendInvoiceRequest'
             examples:
               request example:
-                summary: Przykład żądania
                 description: Przykład żądania
+                summary: Przykład żądania
                 value:
                   invoiceHash:
                     hashSHA:
@@ -318,54 +394,53 @@ paths:
                         value: CpecTP+QmTAbzC4i1rlJ0VKVZwJSXp/cKxkkvdElFG0=
                       fileSize: 2144
                     encryptedInvoiceBody: RJ1H3kOesCQHUkcpTi7GTbIQkF0IMdKuUFGrduK+471oGc/HjH3td7M/PXVdoTPDBWIY8oIMrwNbGXEpSBo0muK+iAtt/XOQCsEBiXw1lO0O8YVd62AScttHcx4I9hOlKGSFj4/f8wkuOfM5D7Uoh3vsB0wktx0GvNNAWNM6F9XJ5LRjnIOFGy9hWoWDT2YccFtgxBSmiQD6GS0qm4KnQzVebV6ICPrmaN08d1WdYBod3JEFCA8rFNBN4e617apjvUiLO7IV/vNp5zTps59/NW9DddoiUnYR/AubKwSD93ztcsCM8rcN3XzMnYdJ3rNdg9e8n4UhAMc8DcvuHW8GY9EGcbaVDPaFSlEAJj5ubpbpqOM6Xb1XfeXLlGRn7WLHDhPDyGh+aIKc4a94pXKRzoo6Vc7j8fzrCrIr6TgEr6OmIlfaSS9QBmgn2PyzruC1ORDwgLdWdGLpZz9ic4pGj1rJPxchL5TfJzOunYqCUEt7VMW1V0H4/7cK48HctvHPBKrhu99RxPY7vddGeE2l9o8yPAjFlgYa5z4AkQPH3m3YBW+1WNl57nhlC/R5sv59BnG1W/p/OtFA3PkyNRZNzKh9u74n/1/fWy1jWcMnIuZHnqJdr6MvUBr9w3AL1sSpyv8t7v7nQvlvjFKSHeqi6QFr2umW1DOdwSerttRii571xLLONEpwChzgEMCL0G/o5p8vtD93Gaat7LvY6sxeOR8QJ5AJlif5ViguHsvlTMEnAN9F1O2h3eozkCfrm3Fh9dIrLOOOMOAWLmq8jhHSEp1gUc8RRnYqKFgagSwn8f2kzMGOSlFAY1Wz0ODaZlTKINXtCoDznjdqJ72PP3MPAB7PCw7TJbXsT9RsbfyCX9K0oTEAIe8VQj1rJ//GJ3Uugav2b5eTvMATlAzzLMdkTWoiE/LPZsoBqbq0wJZbVmcInXYZ7eI7x7FGbNO638EWfV146sUOhO6JMAKwBiKU0gMqnE+AgaNBqKve0reVdEUWs2pX2iLaXhLObbuY+ADS8odED1mz0dx4d2bPy9H9uK0WiFLTQU014oP2juYwi4JRln0lbLTYu2+R4R5J/fL1kgkH2Vd8i0wZPZKv+OyrYzT+K1vWB/kbSExw2vuxD4OYXEItiCBN4+rJh57S6hS/7kN1b2X42TiqQhgmh8pDHsjlFwjYns7laxn71VaBDoyBaU3CZj8OJrDwZPP87ZGd5GIukBandjV4/uVSVvuNlsMsfHm7zI8+b2skQpwbtbL8zEYkfqYyh2s/+Aak9wAcPl523QilLaZ89/lRUvXJhjuiHAco5Bxiod9B8jUjvZoaEZu9bNNUuEbuXDPhC8zOqisnTADyVbxQlQo64ZOb0iGbsDzK77TGiAOrYjQM9nXDMCB5QgmQ47jgVB/yt3S+lb6E+k14GwP39LKt+A5Icgl8Ztji28NT7buz8BhQyeTENcafosOkI9xiWh3ZvGqLUG0/pv926bLRLipIBUY4vqRqtAF0fQKyswqI0C6XbCBri1Kb4pv1QEC69h3N7ZlhiiAtJkZ3i1Bjj6H4Qrqw7uvA/ULVkn4Rm35aYwIP/jxf4grNGZt+A28JeXKAT1P4eqRnNYa62uSnVBel1KZJIU9Ql1Zxss7ZtGkBNS/1nlH4/I+BAYBV0zkI86Ib/ZdD4eSHnlEkCbJqtWjW3YfAFGwCcnSqlPWVtmNP+hYuCbGKGXiCmg5oyiJkvxrBH7fvWmPftnrN3pn0SDPm7stO0ogI0ksFfaxzJ+2oc5ckMUYgHYPG56A4tETOQzLlRjWTGlrzsSwkh050K8Ev57vHJ0AxckW9ynlfGBnzV4wAFm91yWhewOzOTaEtTeUJrsP9xoruGQPkglmseujG43Fj4uA76v/X4iZfr4BAHvuAYKOo3GTQK2r6ZYGZSqTskiO0hdBUJxjK4x8OEqMs8Q78WGTZQdEo87/dOwGS4HoBYeETZ5GtAR27LlyLNepQ9TKkaWdhmQ3UF4F5DFX1Sll+d5KLGLJEaGecWuTPEkV5Uaj4mVLogWwFNiaW2XLXi9cIBO+mPIuVOdF+/88xJO1d0UhU3Gksgxu0xm4B1SM0d4uElSnGdL7ClhPbfOHPgFiPudNXqP8A0zEle5l/VR8zIbCFZfJl4UI5xOMjzjQm7yE9ZHgftGEAY2mb74CvxyzHnsfHTGz7YO6oapZFSNBmfQqiWjp27tWpsTT7HkO+/Q44QcFcA2MqGfMjit9cpEdeMdvSwxSMD9AM2lPx1CqF4ZkT2nKvD61Vu+KGg+E/fn9+P00XrQKlzEVrVvHoPq4Uj7K4ll5sG3tFbfKqX9NrjslzO8czVPZlOth4KeGAqxe5XFFZ2fs7rZg9OOjmURFC6dUMUFnZuKxmCsz51LD12l/iPmMLPxUrY8md1FKZNBJ/8SjbxvIk6U6PlEG10+iIPCjcYHmvHz8ORY+AaUfc+5P1XVyJdphX2RyDtyYFNxoJaJ/iZ5O0O/C5ihtv1BH8urtzfBR9tjT9F540CWuQwJPbx8e7VZP9GeMR6wxE20IIHAm3azhtpILjLRSmaCOreMciKt9TRfV7IOmuPOWKdNMV5yO15+kMBOyZTA91f4INpwSsGbUL7mJQL6oW3dMCOdY2OJglDlLs+QZusbiw38lEvNlWruAGQNDqkvOF2srLSkRYklS4+Q1FZKk+E2z8ncvLdsxLCDad2yfq/d+YtBAS6ws5WIaWCsOK4A2uCICQZg0rQ0510pzghsYLYEmBuAiRGbvTbR8UHBankK9m2h3IOijD9wc6Wfov/67zCcTjbz6KJ9OI/3SdI+2+ZU4W+BPni1FtL/wlKJZUcR3Pcq90eLYh2XMridD0djXwQRA=
+            schema:
+              $ref: '#/components/schemas/SendInvoiceRequest'
         required: true
       responses:
         "202":
-          description: Pomyślnie wysłano fakturę
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/SendInvoiceResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     processingCode: 100
                     processingDescription: Proces został zarejestrowany.
                     elementReferenceNumber: 20211001-EE-FFFFFFFFFF-FFFFFFFFFF-FF
+              schema:
+                $ref: '#/components/schemas/SendInvoiceResponse'
+          description: Pomyślnie wysłano fakturę
         "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.send
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-              examples:
-                response example:
-                  summary: Przykład błędnej odpowiedzi
-                  description: Przykład błędnej odpowiedzi
-                  value:
-                    exception:
-                      serviceCtx: srvDVAKA
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.invoice.invoice.send
-                      timestamp: 2021-10-01T12:13:14.999Z
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      exceptionDetailList:
-                      - exceptionCode: 12345
-                        exceptionDescription: Opis błędu.
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -376,33 +451,33 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
-  /online/Invoice/Status/{InvoiceElementReferenceNumber}:
-    get:
+      summary: Wysyłka faktury
       tags:
       - Interfejsy interaktywne - faktury
-      summary: Sprawdzenie statusu wysłanej faktury
+  /online/Invoice/Status/{InvoiceElementReferenceNumber}:
+    get:
       description: Sprawdzenie statusu wysłanej faktury
-      operationId: statusInvoice
+      operationId: online.invoice.invoice.status
       parameters:
-      - name: InvoiceElementReferenceNumber
-        in: path
+      - in: path
+        name: InvoiceElementReferenceNumber
         required: true
         schema:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
       responses:
         "200":
-          description: OK
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/StatusInvoiceResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
@@ -414,36 +489,36 @@ paths:
                       invoiceNumber: INV_1111111111_2222222222_4727711098527000
                       ksefReferenceNumber: 1111111111-20211001-FFFFFF-FFFFFF-FF
                       acquisitionTimestamp: 2021-10-01T12:13:14.999Z
+              schema:
+                $ref: '#/components/schemas/StatusInvoiceResponse'
+          description: OK
         "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.invoice.invoice.status
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-              examples:
-                response example:
-                  summary: Przykład błędnej odpowiedzi
-                  description: Przykład błędnej odpowiedzi
-                  value:
-                    exception:
-                      serviceCtx: srvDVAKA
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.invoice.invoice.status
-                      timestamp: 2021-10-01T12:13:14.999Z
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      exceptionDetailList:
-                      - exceptionCode: 12345
-                        exceptionDescription: Opis błędu.
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -454,57 +529,60 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
+      summary: Sprawdzenie statusu wysłanej faktury
+      tags:
+      - Interfejsy interaktywne - faktury
   /online/Payment/Identifier/GetReferenceNumbers/{PaymentIdentifier}:
     get:
-      tags:
-      - Interfejsy interaktywne - płatności
-      summary: Pobranie listy faktur dla identyfikatora płatności
       description: Pobranie listy faktur dla identyfikatora płatności
-      operationId: getPaymentIdentifierReferenceNumbers
+      operationId: online.payment.payment.identifier.get.reference.numbers
       parameters:
-      - name: PaymentIdentifier
-        in: path
+      - in: path
+        name: PaymentIdentifier
         required: true
         schema:
           type: string
       responses:
         "200":
-          description: Pobrano faktury oznaczone identyfikatorem płatności
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetPaymentIdentifierReferenceNumbersResponse'
+          description: Pobrano faktury oznaczone identyfikatorem płatności
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Payment/Identifier/Request:
-    post:
+      summary: Pobranie listy faktur dla identyfikatora płatności
       tags:
       - Interfejsy interaktywne - płatności
-      summary: Wygenerowanie identyfikatora płatności
+  /online/Payment/Identifier/Request:
+    post:
       description: Wygenerowanie identyfikatora płatności
-      operationId: requestPaymentIdentifier
+      operationId: online.payment.payment.identifier.request
       requestBody:
         content:
           application/json:
@@ -513,36 +591,36 @@ paths:
         required: true
       responses:
         "201":
-          description: Wygenerowano identyfikator płatności
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/RequestPaymentIdentifierResponse'
+          description: Wygenerowano identyfikator płatności
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
+      summary: Wygenerowanie identyfikatora płatności
+      tags:
+      - Interfejsy interaktywne - płatności
   /online/Query/Credential/Sync:
     post:
-      tags:
-      - Interfejsy interaktywne - zapytania
-      summary: Zapytanie o poświadczenia
       description: Zapytanie o poświadczenia
-      operationId: queryCredentialsSync
+      operationId: online.query.query.credentials
       requestBody:
         content:
           application/json:
@@ -551,239 +629,242 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/QuerySyncCredentialsResponse'
+          description: OK
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
-  /online/Query/Invoice/Async/Fetch/{QueryElementReferenceNumber}/{PartElementReferenceNumber}:
-    get:
+      summary: Zapytanie o poświadczenia
       tags:
       - Interfejsy interaktywne - zapytania
-      summary: Pobranie wyników zapytania o faktury
+  /online/Query/Invoice/Async/Fetch/{QueryElementReferenceNumber}/{PartElementReferenceNumber}:
+    get:
       description: Pobranie wyników zapytania o faktury
-      operationId: queryInvoiceAsyncFetch
+      operationId: online.query.query.invoice.fetch
       parameters:
-      - name: QueryElementReferenceNumber
-        in: path
+      - in: path
+        name: QueryElementReferenceNumber
         required: true
         schema:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
-      - name: PartElementReferenceNumber
-        in: path
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      - in: path
+        name: PartElementReferenceNumber
         required: true
         schema:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
       responses:
         "200":
-          description: OK
           content:
             application/octet-stream:
               schema:
                 type: object
+          description: OK
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Query/Invoice/Async/Init:
-    post:
+      summary: Pobranie wyników zapytania o faktury
       tags:
       - Interfejsy interaktywne - zapytania
-      summary: Inicjalizacja zapytania o faktury
+  /online/Query/Invoice/Async/Init:
+    post:
       description: Inicjalizacja zapytania o faktury
-      operationId: queryInvoiceAsyncInit
+      operationId: online.query.query.invoice.init
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/QueryInvoiceRequest'
+          application/vnd.v2+json:
+            schema:
+              $ref: '#/components/schemas/V2_QueryInvoiceRequest'
         required: true
       responses:
         "202":
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueryInvoiceAsyncInitResponse'
+          description: OK
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
-  /online/Query/Invoice/Async/Status/{QueryElementReferenceNumber}:
-    get:
+      summary: Inicjalizacja zapytania o faktury
       tags:
       - Interfejsy interaktywne - zapytania
-      summary: Sprawdzenie statusu zapytania o faktury
+  /online/Query/Invoice/Async/Status/{QueryElementReferenceNumber}:
+    get:
       description: Sprawdzenie statusu zapytania o faktury
-      operationId: queryInvoiceAsyncStatus
+      operationId: online.query.query.invoice.status
       parameters:
-      - name: QueryElementReferenceNumber
-        in: path
+      - in: path
+        name: QueryElementReferenceNumber
         required: true
         schema:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
       responses:
         "200":
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueryInvoiceAsyncStatusResponse'
+          description: OK
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
         "404":
-          description: Nie znaleziono wyszukiwanej treści
           content:
             application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
       security:
       - SessionToken: []
-  /online/Query/Invoice/Sync:
-    post:
+      summary: Sprawdzenie statusu zapytania o faktury
       tags:
       - Interfejsy interaktywne - zapytania
-      summary: Zapytanie o faktury
+  /online/Query/Invoice/Sync:
+    post:
       description: Zapytanie o faktury
-      operationId: queryInvoiceSync
+      operationId: online.query.query.invoice
       parameters:
-      - name: PageSize
-        in: query
+      - in: query
+        name: PageSize
         required: true
         schema:
-          maximum: 100
-          minimum: 0
           type: integer
           format: int32
-      - name: PageOffset
-        in: query
+          maximum: 100
+          minimum: 10
+      - in: query
+        name: PageOffset
         required: true
         schema:
-          maximum: 100
-          minimum: 0
           type: integer
           format: int32
+          maximum: 100
+          minimum: 0
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/QueryInvoiceRequest'
+          application/vnd.v2+json:
+            schema:
+              $ref: '#/components/schemas/V2_QueryInvoiceRequest'
         required: true
       responses:
         "200":
-          description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/QueryInvoiceSyncResponse'
+          description: OK
         "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
+      summary: Zapytanie o faktury
+      tags:
+      - Interfejsy interaktywne - zapytania
   /online/Session/AuthorisationChallenge:
     post:
-      tags:
-      - Interfejsy interaktywne - sesja
-      summary: Inicjalizacja mechanizmu uwierzytelnienia i autoryzacji
       description: Inicjalizacja mechanizmu uwierzytelnienia i autoryzacji.
-      operationId: authorisationChallenge
+      operationId: online.session.authorisation.challenge
       requestBody:
         content:
           application/json:
-            schema:
-              $ref: '#/components/schemas/AuthorisationChallengeRequest'
             examples:
               request example:
-                summary: Przykład żądania
                 description: Przykład żądania
+                summary: Przykład żądania
                 value:
                   contextIdentifier:
                     type: onip
                     identifier: "1111111111"
+            schema:
+              $ref: '#/components/schemas/AuthorisationChallengeRequest'
         required: true
       responses:
         "201":
-          description: Inicjalizacja sesji interaktywnej poprawna
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/AuthorisationChallengeResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14Z
                     challenge: 20211001-CR-FFFFFFFFFF-FFFFFFFFFF-FF
+              schema:
+                $ref: '#/components/schemas/AuthorisationChallengeResponse'
+          description: Inicjalizacja sesji interaktywnej poprawna
         "400":
-          description: Nieprawidłowe wywołanie
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -794,16 +875,19 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-  /online/Session/InitSigned:
-    post:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+      summary: Inicjalizacja mechanizmu uwierzytelnienia i autoryzacji
       tags:
       - Interfejsy interaktywne - sesja
-      summary: "Inicjalizacja sesji, wskazanie kontekstu, uwierzytelnienie i autoryzacja"
+  /online/Session/InitSigned:
+    post:
       description: Inicjalizacja sesji interaktywnej. Podpisany dokument http://ksef.mf.gov.pl/schema/gtw/svc/online/auth/request/2021/10/01/0001/InitSessionSignedRequest
       externalDocs:
         description: Przykład żądania
         url: document/InitSessionSignedRequestExample/1.0
-      operationId: initSessionSigned
+      operationId: online.session.session.signed.init
       requestBody:
         content:
           application/octet-stream:
@@ -813,15 +897,12 @@ paths:
         required: true
       responses:
         "201":
-          description: Inicjalizacja sesji interaktywnej poprawna
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/InitSessionResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
@@ -839,16 +920,40 @@ paths:
                         - type: standard_plain
                           roleType: owner
                           roleDescription: system
-        "400":
-          description: Nieprawidłowe wywołanie
-          content:
-            application/json:
               schema:
-                $ref: '#/components/schemas/ExceptionResponse'
+                $ref: '#/components/schemas/InitSessionResponse'
+            application/vnd.v2+json:
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
+                  value:
+                    timestamp: 2021-10-01T12:13:14.999Z
+                    referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                    sessionToken:
+                      token: 161140207201d82aa59bbe17f57c347b7e3e313b69a36756a35a5f31c9f9df5f
+                      context:
+                        contextIdentifier:
+                          type: onip
+                          identifier: "1111111111"
+                        contextName:
+                          type: fn
+                          tradeName: null
+                          fullName: CN_1111111111
+                        credentialsRoleList:
+                        - type: standard_plain
+                          roleType: owner
+                          roleDescription: system
+              schema:
+                $ref: '#/components/schemas/V2_InitSessionResponse'
+          description: Inicjalizacja sesji interaktywnej poprawna
+        "400":
+          content:
+            application/json:
+              examples:
+                response example:
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -859,17 +964,20 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
-  /online/Session/InitToken:
-    post:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+      summary: "Inicjalizacja sesji, wskazanie kontekstu, uwierzytelnienie i autoryzacja"
       tags:
       - Interfejsy interaktywne - sesja
-      summary: "Inicjalizacja sesji, wskazanie kontekstu, uwierzytelnienie i autoryzacja"
+  /online/Session/InitToken:
+    post:
       description: Inicjalizacja sesji interaktywnej. Zaszyfrowany kluczem publicznym
         KSeF dokument http://ksef.mf.gov.pl/schema/gtw/svc/online/auth/request/2021/10/01/0001/InitSessionTokenRequest
       externalDocs:
         description: Przykład żądania
         url: document/InitSessionTokenRequestExample/1.0
-      operationId: initSessionToken
+      operationId: online.session.session.token.init
       requestBody:
         content:
           application/octet-stream:
@@ -879,15 +987,12 @@ paths:
         required: true
       responses:
         "201":
-          description: Inicjalizacja sesji interaktywnej poprawna
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/InitSessionResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
@@ -905,16 +1010,40 @@ paths:
                         - type: standard_plain
                           roleType: owner
                           roleDescription: system
-        "400":
-          description: Nieprawidłowe wywołanie
-          content:
-            application/json:
               schema:
-                $ref: '#/components/schemas/ExceptionResponse'
+                $ref: '#/components/schemas/InitSessionResponse'
+            application/vnd.v2+json:
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
+                  description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
+                  value:
+                    timestamp: 2021-10-01T12:13:14.999Z
+                    referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                    sessionToken:
+                      token: 161140207201d82aa59bbe17f57c347b7e3e313b69a36756a35a5f31c9f9df5f
+                      context:
+                        contextIdentifier:
+                          type: onip
+                          identifier: "1111111111"
+                        contextName:
+                          type: fn
+                          tradeName: null
+                          fullName: CN_1111111111
+                        credentialsRoleList:
+                        - type: standard_plain
+                          roleType: owner
+                          roleDescription: system
+              schema:
+                $ref: '#/components/schemas/V2_InitSessionResponse'
+          description: Inicjalizacja sesji interaktywnej poprawna
+        "400":
+          content:
+            application/json:
+              examples:
+                response example:
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -925,41 +1054,45 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+      summary: "Inicjalizacja sesji, wskazanie kontekstu, uwierzytelnienie i autoryzacja"
+      tags:
+      - Interfejsy interaktywne - sesja
   /online/Session/Status:
     get:
-      tags:
-      - Interfejsy interaktywne - sesja
-      summary: Sprawdzenie statusu aktywnej sesji interaktywnej
       description: Sprawdzenie statusu obecnego przetwarzania interaktywnego
-      operationId: sessionStatusPlain
+      operationId: online.session.session.status.plain
       parameters:
-      - name: PageSize
-        in: query
-        required: true
+      - in: query
+        name: PageSize
         schema:
-          maximum: 100
-          minimum: 0
           type: integer
           format: int32
-      - name: PageOffset
-        in: query
-        required: true
-        schema:
+          default: 10
           maximum: 100
-          minimum: 0
+          minimum: 10
+      - in: query
+        name: PageOffset
+        schema:
           type: integer
           format: int32
+          default: 0
+          minimum: 0
+      - in: query
+        name: IncludeDetails
+        schema:
+          type: boolean
+          default: true
       responses:
         "200":
-          description: Sprawdzanie statusu sesji zakończone poprawnie
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/SessionStatusResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
@@ -970,36 +1103,36 @@ paths:
                     processingDescription: Zakończenie etapu finalizacji i zakończenia
                       procesu
                     invoiceStatusList: []
+              schema:
+                $ref: '#/components/schemas/SessionStatusResponse'
+          description: Sprawdzanie statusu sesji zakończone poprawnie
         "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.status.plain
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-              examples:
-                response example:
-                  summary: Przykład błędnej odpowiedzi
-                  description: Przykład błędnej odpowiedzi
-                  value:
-                    exception:
-                      serviceCtx: srvDVAKA
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.plain
-                      timestamp: 2021-10-01T12:13:14.999Z
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      exceptionDetailList:
-                      - exceptionCode: 12345
-                        exceptionDescription: Opis błędu.
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
@@ -1010,49 +1143,53 @@ paths:
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
+      summary: Sprawdzenie statusu aktywnej sesji interaktywnej
+      tags:
+      - Interfejsy interaktywne - sesja
   /online/Session/Status/{ReferenceNumber}:
     get:
-      tags:
-      - Interfejsy interaktywne - sesja
-      summary: Sprawdzenie statusu sesji ogólnej
       description: Sprawdzenie statusu przetwarzania na podstawie numeru referencyjnego
-      operationId: sessionStatusReferenceNumber
+      operationId: online.session.session.status.reference.number
       parameters:
-      - name: ReferenceNumber
-        in: path
+      - in: path
+        name: ReferenceNumber
         required: true
         schema:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
           type: string
-      - name: PageSize
-        in: query
-        required: true
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      - in: query
+        name: PageSize
         schema:
-          maximum: 100
-          minimum: 0
           type: integer
           format: int32
-      - name: PageOffset
-        in: query
-        required: true
-        schema:
+          default: 10
           maximum: 100
-          minimum: 0
+          minimum: 10
+      - in: query
+        name: PageOffset
+        schema:
           type: integer
           format: int32
+          default: 0
+          minimum: 0
+      - in: query
+        name: IncludeDetails
+        schema:
+          type: boolean
+          default: true
       responses:
         "200":
-          description: Sprawdzanie statusu sesji zakończone poprawnie
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/SessionStatusResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
@@ -1063,753 +1200,493 @@ paths:
                     processingDescription: Zakończenie etapu finalizacji i zakończenia
                       procesu
                     invoiceStatusList: []
+              schema:
+                $ref: '#/components/schemas/SessionStatusResponse'
+          description: Sprawdzanie statusu sesji zakończone poprawnie
         "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.status.reference.number
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-              examples:
-                response example:
-                  summary: Przykład błędnej odpowiedzi
-                  description: Przykład błędnej odpowiedzi
-                  value:
-                    exception:
-                      serviceCtx: srvDVAKA
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.reference.Number
-                      timestamp: 2021-10-01T12:13:14.999Z
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      exceptionDetailList:
-                      - exceptionCode: 12345
-                        exceptionDescription: Opis błędu.
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
                       serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.status.reference.Number
+                      serviceName: online.session.session.status.reference.number
                       timestamp: 2021-10-01T12:13:14.999Z
                       referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
-  /online/Session/Terminate:
-    get:
+      summary: Sprawdzenie statusu sesji ogólnej
       tags:
       - Interfejsy interaktywne - sesja
-      summary: Wymuszenie zamknięcia sesji
-      description: Wymuszenie zamknięcia sesji interaktywnej
-      operationId: terminateSession
+  /online/Session/Terminate:
+    get:
+      description: Wymuszenie zamknięcia aktywnej sesji interaktywnej
+      operationId: online.session.session.terminate.plain
       responses:
         "200":
-          description: Sesja zakończona
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/TerminateSessionResponse'
               examples:
                 response example:
-                  summary: Przykład poprawnej odpowiedzi
                   description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
                   value:
                     timestamp: 2021-10-01T12:13:14.999Z
                     referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                     processingCode: 350
                     processingDescription: Sesja interaktywna zakończona. Komunikacja
                       zamknięta.
+              schema:
+                $ref: '#/components/schemas/TerminateSessionResponse'
+          description: Sesja zakończona
         "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.session.terminate.plain
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
           description: Nie znaleziono danych
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
-              examples:
-                response example:
-                  summary: Przykład błędnej odpowiedzi
-                  description: Przykład błędnej odpowiedzi
-                  value:
-                    exception:
-                      serviceCtx: srvDVAKA
-                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.terminate
-                      timestamp: 2021-10-01T12:13:14.999Z
-                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
-                      exceptionDetailList:
-                      - exceptionCode: 12345
-                        exceptionDescription: Opis błędu.
         "401":
-          description: Nieautoryzowany dostęp
           content:
             application/json:
-              schema:
-                $ref: '#/components/schemas/ExceptionResponse'
               examples:
                 response example:
-                  summary: Przykład błędnej odpowiedzi
                   description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
                   value:
                     exception:
                       serviceCtx: srvDVAKA
                       serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
-                      serviceName: online.session.session.terminate
+                      serviceName: online.session.session.terminate.plain
                       timestamp: 2021-10-01T12:13:14.999Z
                       referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
                       exceptionDetailList:
                       - exceptionCode: 12345
                         exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
       security:
       - SessionToken: []
+      summary: Wymuszenie zamknięcia aktywnej sesji
+      tags:
+      - Interfejsy interaktywne - sesja
 components:
   schemas:
-    GenerateTokenResponse:
-      required:
-      - authorisationToken
-      - elementReferenceNumber
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
+    AuthorisationChallengeRequest:
       type: object
       properties:
+        contextIdentifier:
+          $ref: '#/components/schemas/SubjectIdentifierByType'
+      required:
+      - contextIdentifier
+    AuthorisationChallengeResponse:
+      type: object
+      properties:
+        challenge:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        authorisationToken:
-          pattern: "[0-9A-F]{64}"
-          type: string
-    ExceptionDetailType:
       required:
-      - exceptionCode
-      - exceptionDescription
-      type: object
-      properties:
-        exceptionCode:
-          minimum: 0
-          type: integer
-          format: int32
-        exceptionDescription:
-          maxLength: 256
-          minLength: 1
-          type: string
-    ExceptionResponse:
-      required:
-      - exception
-      type: object
-      properties:
-        exception:
-          $ref: '#/components/schemas/ExceptionType'
-    ExceptionType:
-      required:
-      - exceptionDetailList
-      - serviceCode
-      - serviceCtx
-      - serviceName
+      - challenge
       - timestamp
-      type: object
-      properties:
-        serviceCtx:
-          maxLength: 64
-          minLength: 1
-          type: string
-        serviceCode:
-          maxLength: 64
-          minLength: 1
-          type: string
-        serviceName:
-          maxLength: 64
-          minLength: 1
-          type: string
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        exceptionDetailList:
-          maxItems: 100
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/ExceptionDetailType'
-    CredentialsRoleRequestTokenType:
-      required:
-      - roleDescription
-      - roleType
-      type: object
-      properties:
-        roleType:
-          type: string
-          enum:
-          - invoice_read
-          - invoice_write
-          - payment_confirmation_write
-          - credentials_read
-          - credentials_manage
-          - enforcement_operations
-        roleDescription:
-          type: string
-    GenerateTokenRequest:
-      required:
-      - generateToken
-      type: object
-      properties:
-        generateToken:
-          $ref: '#/components/schemas/GenerateTokenRequestType'
-    GenerateTokenRequestType:
-      required:
-      - credentialsRoleList
-      - description
-      type: object
-      properties:
-        description:
-          maxLength: 256
-          minLength: 1
-          type: string
-        credentialsRoleList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/CredentialsRoleRequestTokenType'
-    StatusCredentialsResponse:
-      required:
-      - elementReferenceNumber
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-    CredentialsIdentifierRequestIndividualCertificateFingerprintType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[0-9A-F]{64}"
-            type: string
-    CredentialsIdentifierRequestIndividualNipType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-            type: string
-    CredentialsIdentifierRequestIndividualPeselType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[0-9]{4}[0-3][0-9]{6}"
-            type: string
-    CredentialsIdentifierRequestInstitutionalNipType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-            type: string
-    CredentialsIdentifierRequestType:
-      required:
-      - type
-      type: object
-      properties:
-        identifier:
-          type: string
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          nip: '#/components/schemas/CredentialsIdentifierRequestIndividualNipType'
-          pesel: '#/components/schemas/CredentialsIdentifierRequestIndividualPeselType'
-          fingerprint: '#/components/schemas/CredentialsIdentifierRequestIndividualCertificateFingerprintType'
-          onip: '#/components/schemas/CredentialsIdentifierRequestInstitutionalNipType'
-    CredentialsRoleRequestStandardDescribedType:
-      required:
-      - roleDescription
-      - roleType
-      type: object
-      properties:
-        roleType:
-          type: string
-          enum:
-          - invoice_read
-          - invoice_write
-          - payment_confirmation_write
-          - credentials_read
-          - credentials_manage
-          - self_invoicing
-          - tax_representative
-          - enforcement_operations
-        roleDescription:
-          type: string
-    GrantCredentialsRequest:
-      required:
-      - grantCredentials
-      type: object
-      properties:
-        grantCredentials:
-          $ref: '#/components/schemas/GrantCredentialsRequestType'
-    GrantCredentialsRequestType:
-      required:
-      - credentialsIdentifier
-      - credentialsRoleList
-      - description
-      type: object
-      properties:
-        credentialsIdentifier:
-          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-        description:
-          maxLength: 256
-          minLength: 1
-          type: string
-        credentialsRoleList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/CredentialsRoleRequestStandardDescribedType'
-    CredentialsRoleRequestStandardBaseType:
-      required:
-      - roleType
-      type: object
-      properties:
-        roleType:
-          type: string
-          enum:
-          - invoice_read
-          - invoice_write
-          - payment_confirmation_write
-          - credentials_read
-          - credentials_manage
-          - self_invoicing
-          - tax_representative
-          - enforcement_operations
-    RevokeCredentialsRequest:
-      required:
-      - revokeCredentials
-      type: object
-      properties:
-        revokeCredentials:
-          $ref: '#/components/schemas/RevokeCredentialsRequestType'
-    RevokeCredentialsRequestType:
-      required:
-      - credentialsIdentifier
-      - credentialsRoleList
-      - description
-      type: object
-      properties:
-        credentialsIdentifier:
-          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-        description:
-          maxLength: 256
-          minLength: 1
-          type: string
-        credentialsRoleList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/CredentialsRoleRequestStandardBaseType'
-    RevokeTokenRequest:
-      required:
-      - revokeToken
-      type: object
-      properties:
-        revokeToken:
-          $ref: '#/components/schemas/RevokeTokenRequestType'
-    RevokeTokenRequestType:
-      required:
-      - sourceTokenIdentifier
-      - tokenNumber
-      type: object
-      properties:
-        sourceTokenIdentifier:
-          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-        tokenNumber:
-          maxLength: 256
-          minLength: 1
-          type: string
-    File1MBHashType:
-      required:
-      - fileSize
-      - hashSHA
-      type: object
-      properties:
-        hashSHA:
-          $ref: '#/components/schemas/HashSHAType'
-        fileSize:
-          maximum: 1048576
-          minimum: 0
-          type: integer
-          format: int32
-    File2MBHashType:
-      required:
-      - fileSize
-      - hashSHA
-      type: object
-      properties:
-        hashSHA:
-          $ref: '#/components/schemas/HashSHAType'
-        fileSize:
-          maximum: 2097152
-          minimum: 0
-          type: integer
-          format: int32
-    HashSHAType:
-      required:
-      - algorithm
-      - encoding
-      - value
-      type: object
-      properties:
-        algorithm:
-          pattern: SHA-256
-          type: string
-        encoding:
-          pattern: Base64
-          type: string
-        value:
-          maxLength: 44
-          minLength: 44
-          type: string
-          format: binary
-    InvoicePayloadEncryptedType:
-      required:
-      - encryptedInvoiceBody
-      - encryptedInvoiceHash
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/InvoicePayloadType'
-      - type: object
-        properties:
-          encryptedInvoiceHash:
-            $ref: '#/components/schemas/File2MBHashType'
-          encryptedInvoiceBody:
-            type: string
-            format: binary
-    InvoicePayloadPlainType:
-      required:
-      - invoiceBody
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/InvoicePayloadType'
-      - type: object
-        properties:
-          invoiceBody:
-            type: string
-            format: binary
-    InvoicePayloadType:
-      required:
-      - type
-      type: object
-      properties:
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          plain: '#/components/schemas/InvoicePayloadPlainType'
-          encrypted: '#/components/schemas/InvoicePayloadEncryptedType'
-    SendInvoiceRequest:
-      required:
-      - invoiceHash
-      - invoicePayload
-      type: object
-      properties:
-        invoiceHash:
-          $ref: '#/components/schemas/File1MBHashType'
-        invoicePayload:
-          $ref: '#/components/schemas/InvoicePayloadType'
-    SendInvoiceResponse:
-      required:
-      - elementReferenceNumber
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-    InvoiceStatusType:
-      type: object
-      properties:
-        invoiceNumber:
-          maxLength: 128
-          minLength: 1
-          type: string
-        ksefReferenceNumber:
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
-          type: string
-        acquisitionTimestamp:
-          type: string
-          format: date-time
-    StatusInvoiceResponse:
-      required:
-      - elementReferenceNumber
-      - invoiceStatus
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        invoiceStatus:
-          $ref: '#/components/schemas/InvoiceStatusType'
-    GetPaymentIdentifierReferenceNumbersResponse:
-      required:
-      - ksefReferenceNumberList
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        ksefReferenceNumberList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            type: string
-    RequestPaymentIdentifierResponse:
-      required:
-      - paymentIdentifier
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        paymentIdentifier:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-    RequestPaymentIdentifierRequest:
-      required:
-      - ksefReferenceNumberList
-      type: object
-      properties:
-        ksefReferenceNumberList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            type: string
     CredentialsBaseTypeObject:
-      required:
-      - type
       type: object
+      discriminator:
+        mapping:
+          list_plain: '#/components/schemas/CredentialsPlainType'
+          list_token: '#/components/schemas/CredentialsTokenType'
+          single_parent: '#/components/schemas/CredentialsParentType'
+        propertyName: type
       properties:
         identifier:
           type: object
         type:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          list_plain: '#/components/schemas/CredentialsPlainType'
-          list_token: '#/components/schemas/CredentialsTokenType'
-          single_parent: '#/components/schemas/CredentialsParentType'
-    CredentialsIdentifierResponseAuthorisationTokenType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[0-9A-F]{64}"
-            type: string
-    CredentialsIdentifierResponseIndividualCertificateFingerprintType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[0-9A-F]{64}"
-            type: string
-    CredentialsIdentifierResponseIndividualNipType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-            type: string
-    CredentialsIdentifierResponseIndividualPeselType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[0-9]{4}[0-3][0-9]{6}"
-            type: string
-    CredentialsIdentifierResponseInstitutionalNipType:
-      required:
-      - identifier
-      type: object
-      properties:
-        identifier:
-          pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-          type: string
-    CredentialsIdentifierResponseSystemType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
-    CredentialsIdentifierResponseType:
       required:
       - type
+    CredentialsIdentifierRequestIndividualCertificateFingerprintType:
       type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[0-9A-F]{64}"
+      required:
+      - identifier
+    CredentialsIdentifierRequestIndividualNipType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    CredentialsIdentifierRequestIndividualPeselType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[0-9]{4}[0-3][0-9]{6}"
+      required:
+      - identifier
+    CredentialsIdentifierRequestIndividualType:
+      type: object
+      discriminator:
+        mapping:
+          fingerprint: '#/components/schemas/CredentialsIdentifierRequestIndividualCertificateFingerprintType'
+          nip: '#/components/schemas/CredentialsIdentifierRequestIndividualNipType'
+          pesel: '#/components/schemas/CredentialsIdentifierRequestIndividualPeselType'
+        propertyName: type
       properties:
         identifier:
           type: string
         type:
           type: string
+      required:
+      - type
+    CredentialsIdentifierRequestInstitutionalNipType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    CredentialsIdentifierRequestInstitutionalType:
+      type: object
       discriminator:
-        propertyName: type
         mapping:
-          system: '#/components/schemas/CredentialsIdentifierResponseSystemType'
-          nip: '#/components/schemas/CredentialsIdentifierResponseIndividualNipType'
-          pesel: '#/components/schemas/CredentialsIdentifierResponseIndividualPeselType'
+          onip: '#/components/schemas/CredentialsIdentifierRequestInstitutionalNipType'
+        propertyName: type
+      properties:
+        identifier:
+          type: string
+        type:
+          type: string
+      required:
+      - type
+    CredentialsIdentifierRequestType:
+      type: object
+      discriminator:
+        mapping:
+          fingerprint: '#/components/schemas/CredentialsIdentifierRequestIndividualCertificateFingerprintType'
+          nip: '#/components/schemas/CredentialsIdentifierRequestIndividualNipType'
+          onip: '#/components/schemas/CredentialsIdentifierRequestInstitutionalNipType'
+          pesel: '#/components/schemas/CredentialsIdentifierRequestIndividualPeselType'
+        propertyName: type
+      properties:
+        identifier:
+          type: string
+        type:
+          type: string
+      required:
+      - type
+    CredentialsIdentifierResponseAuthorisationTokenType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      required:
+      - identifier
+    CredentialsIdentifierResponseIndividualCertificateFingerprintType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[0-9A-F]{64}"
+      required:
+      - identifier
+    CredentialsIdentifierResponseIndividualNipType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    CredentialsIdentifierResponseIndividualPeselType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[0-9]{4}[0-3][0-9]{6}"
+      required:
+      - identifier
+    CredentialsIdentifierResponseInstitutionalNipType:
+      type: object
+      properties:
+        identifier:
+          type: string
+          pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    CredentialsIdentifierResponseSystemType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            maxLength: 64
+            minLength: 1
+      required:
+      - identifier
+    CredentialsIdentifierResponseType:
+      type: object
+      discriminator:
+        mapping:
           fingerprint: '#/components/schemas/CredentialsIdentifierResponseIndividualCertificateFingerprintType'
+          nip: '#/components/schemas/CredentialsIdentifierResponseIndividualNipType'
           onip: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
+          pesel: '#/components/schemas/CredentialsIdentifierResponseIndividualPeselType'
+          system: '#/components/schemas/CredentialsIdentifierResponseSystemType'
           token: '#/components/schemas/CredentialsIdentifierResponseAuthorisationTokenType'
+        propertyName: type
+      properties:
+        identifier:
+          type: string
+        type:
+          type: string
+      required:
+      - type
     CredentialsParentType:
       type: object
       allOf:
       - $ref: '#/components/schemas/CredentialsBaseTypeObject'
       - type: object
         properties:
-          identifier:
-            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
           credentialsRole:
             $ref: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
+          identifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
     CredentialsPlainType:
       type: object
       properties:
-        identifier:
-          $ref: '#/components/schemas/CredentialsIdentifierResponseType'
         credentialsRoleList:
           type: array
           items:
             $ref: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
+          uniqueItems: true
+        identifier:
+          $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+    CredentialsRoleRequestContextBaseType:
+      type: object
+      properties:
+        roleType:
+          type: string
+          enum:
+          - credentials_manage
+      required:
+      - roleType
+    CredentialsRoleRequestContextDescribedType:
+      type: object
+      properties:
+        roleDescription:
+          type: string
+          maxLength: 256
+          minLength: 5
+        roleType:
+          type: string
+          enum:
+          - credentials_manage
+      required:
+      - roleDescription
+      - roleType
+    CredentialsRoleRequestStandardBaseType:
+      type: object
+      properties:
+        roleType:
+          type: string
+          enum:
+          - introspection
+          - invoice_read
+          - invoice_write
+          - payment_confirmation_write
+          - credentials_read
+          - credentials_manage
+          - self_invoicing
+          - tax_representative
+          - enforcement_operations
+          - subunit_manage
+      required:
+      - roleType
+    CredentialsRoleRequestStandardDescribedType:
+      type: object
+      properties:
+        roleDescription:
+          type: string
+          maxLength: 256
+          minLength: 5
+        roleType:
+          type: string
+          enum:
+          - introspection
+          - invoice_read
+          - invoice_write
+          - payment_confirmation_write
+          - credentials_read
+          - credentials_manage
+          - self_invoicing
+          - tax_representative
+          - enforcement_operations
+          - subunit_manage
+      required:
+      - roleDescription
+      - roleType
+    CredentialsRoleRequestTokenType:
+      type: object
+      properties:
+        roleDescription:
+          type: string
+          maxLength: 256
+          minLength: 5
+        roleType:
+          type: string
+          enum:
+          - invoice_read
+          - invoice_write
+          - payment_confirmation_write
+          - credentials_read
+          - credentials_manage
+          - enforcement_operations
+      required:
+      - roleDescription
+      - roleType
+    CredentialsRoleResponseBaseTypeObject:
+      type: object
+      discriminator:
+        mapping:
+          granted: '#/components/schemas/CredentialsRoleResponseGrantedForInstitutionType'
+          standard_details: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
+          standard_plain: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
+          token: '#/components/schemas/CredentialsRoleResponseTokenType'
+        propertyName: type
+      properties:
+        roleDescription:
+          type: string
+        roleType:
+          type: object
+        startTimestamp:
+          type: string
+          format: date-time
+        type:
+          type: string
+      required:
+      - startTimestamp
+      - type
+    CredentialsRoleResponseGrantedForInstitutionType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleGrantorIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
+          roleType:
+            type: string
+            enum:
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - self_invoicing
+            - tax_representative
+            - court_bailiff
+            - enforcement_authority
+            - local_government_unit
+            - local_government_sub_unit
+            - vat_group_unit
+            - vat_group_sub_unit
+      required:
+      - startTimestamp
     CredentialsRoleResponseStandardDetailsType:
       type: object
       allOf:
       - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
       - type: object
         properties:
+          credentialsAssignmentType:
+            type: string
+            enum:
+            - system
+            - user
+          roleAssigningAuthorIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
           roleType:
             type: string
             enum:
             - owner
+            - introspection
             - invoice_read
             - invoice_write
             - payment_confirmation_write
@@ -1820,13 +1697,13 @@ components:
             - enforcement_operations
             - court_bailiff
             - enforcement_authority
-          credentialsAssignmentType:
-            type: string
-            enum:
-            - system
-            - user
-          roleAssigningAuthorIdentifier:
-            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+            - subunit_manage
+            - local_government_unit
+            - local_government_sub_unit
+            - vat_group_unit
+            - vat_group_sub_unit
+      required:
+      - startTimestamp
     CredentialsRoleResponseStandardPlainType:
       type: object
       allOf:
@@ -1837,6 +1714,7 @@ components:
             type: string
             enum:
             - owner
+            - introspection
             - invoice_read
             - invoice_write
             - payment_confirmation_write
@@ -1847,6 +1725,13 @@ components:
             - enforcement_operations
             - court_bailiff
             - enforcement_authority
+            - subunit_manage
+            - local_government_unit
+            - local_government_sub_unit
+            - vat_group_unit
+            - vat_group_sub_unit
+      required:
+      - startTimestamp
     CredentialsRoleResponseTokenType:
       type: object
       allOf:
@@ -1862,161 +1747,526 @@ components:
             - credentials_read
             - credentials_manage
             - enforcement_operations
+      required:
+      - startTimestamp
     CredentialsTokenType:
       type: object
       allOf:
       - $ref: '#/components/schemas/CredentialsBaseTypeObject'
       - type: object
         properties:
-          identifier:
-            $ref: '#/components/schemas/CredentialsIdentifierResponseAuthorisationTokenType'
           credentialsRoleList:
             type: array
             items:
               $ref: '#/components/schemas/CredentialsRoleResponseTokenType'
-          parent:
-            $ref: '#/components/schemas/CredentialsPlainType'
+            uniqueItems: true
           description:
             type: string
+          identifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseAuthorisationTokenType'
+          lastUseTimestamp:
+            type: string
+            format: date-time
+          parent:
+            $ref: '#/components/schemas/CredentialsPlainType'
+          registrationTimestamp:
+            type: string
+            format: date-time
           status:
             type: integer
             format: int32
-    QuerySyncCredentialsResponse:
       required:
-      - credentialsList
-      - referenceNumber
-      - timestamp
+      - lastUseTimestamp
+      - registrationTimestamp
+    ExceptionDetailType:
       type: object
       properties:
+        exceptionCode:
+          type: integer
+          format: int32
+          minimum: 0
+        exceptionDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+      required:
+      - exceptionCode
+      - exceptionDescription
+    ExceptionResponse:
+      type: object
+      properties:
+        exception:
+          $ref: '#/components/schemas/ExceptionType'
+      required:
+      - exception
+    ExceptionType:
+      type: object
+      properties:
+        exceptionDetailList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExceptionDetailType'
+          maxItems: 100
+          minItems: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        serviceCode:
+          type: string
+          maxLength: 64
+          minLength: 1
+        serviceCtx:
+          type: string
+          maxLength: 64
+          minLength: 1
+        serviceName:
+          type: string
+          maxLength: 64
+          minLength: 1
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        credentialsList:
-          maxItems: 1111
-          minItems: 1
+      required:
+      - exceptionDetailList
+      - serviceCode
+      - serviceCtx
+      - serviceName
+      - timestamp
+    File1MBHashType:
+      type: object
+      properties:
+        fileSize:
+          type: integer
+          format: int32
+          maximum: 1048576
+          minimum: 1
+        hashSHA:
+          $ref: '#/components/schemas/HashSHAType'
+      required:
+      - fileSize
+      - hashSHA
+    File2MBHashType:
+      type: object
+      properties:
+        fileSize:
+          type: integer
+          format: int32
+          maximum: 2097152
+          minimum: 1
+        hashSHA:
+          $ref: '#/components/schemas/HashSHAType'
+      required:
+      - fileSize
+      - hashSHA
+    FileUnlimitedHashType:
+      type: object
+      properties:
+        fileSize:
+          type: integer
+          format: int32
+          minimum: 1
+        hashSHA:
+          $ref: '#/components/schemas/HashSHAType'
+      required:
+      - fileSize
+      - hashSHA
+    GenerateTokenRequest:
+      type: object
+      properties:
+        generateToken:
+          $ref: '#/components/schemas/GenerateTokenRequestType'
+      required:
+      - generateToken
+    GenerateTokenRequestType:
+      type: object
+      properties:
+        credentialsRoleList:
           type: array
           items:
-            $ref: '#/components/schemas/CredentialsBaseTypeObject'
-    QueryCriteriaCredentialsAllType:
-      required:
-      - queryCredentialsScopeResultType
-      - queryCredentialsTypeResultType
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/QueryCriteriaCredentialsType'
-      - type: object
-        properties:
-          queryCredentialsTypeResultType:
-            type: string
-            enum:
-            - all
-            - standard
-            - token
-          queryCredentialsScopeResultType:
-            type: string
-            enum:
-            - current
-    QueryCriteriaCredentialsIdType:
-      required:
-      - credentialsIdentifier
-      - queryCredentialsScopeResultType
-      - queryCredentialsTypeResultType
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/QueryCriteriaCredentialsType'
-      - type: object
-        properties:
-          queryCredentialsTypeResultType:
-            type: string
-            enum:
-            - all
-            - standard
-            - token
-          queryCredentialsScopeResultType:
-            type: string
-            enum:
-            - current
-          credentialsIdentifier:
-            $ref: '#/components/schemas/CredentialsIdentifierRequestType'
-    QueryCriteriaCredentialsType:
-      required:
-      - type
-      type: object
-      properties:
-        type:
+            $ref: '#/components/schemas/CredentialsRoleRequestTokenType'
+          maxItems: 7
+          minItems: 1
+          uniqueItems: true
+        description:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          list_all: '#/components/schemas/QueryCriteriaCredentialsAllType'
-          list_id: '#/components/schemas/QueryCriteriaCredentialsIdType'
-    QuerySyncCredentialsRequest:
+          maxLength: 256
+          minLength: 5
       required:
-      - queryCriteria
+      - credentialsRoleList
+      - description
+    GenerateTokenResponse:
       type: object
       properties:
-        queryCriteria:
-          $ref: '#/components/schemas/QueryCriteriaCredentialsType'
-    QueryInvoiceAsyncInitResponse:
+        authorisationToken:
+          type: string
+          pattern: "[0-9A-F]{64}"
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
       required:
+      - authorisationToken
       - elementReferenceNumber
       - processingCode
       - processingDescription
       - referenceNumber
       - timestamp
+    GetPaymentIdentifierReferenceNumbersResponse:
       type: object
       properties:
+        ksefReferenceNumberList:
+          type: array
+          items:
+            type: string
+          maxItems: 100
+          minItems: 1
+          uniqueItems: true
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      required:
+      - ksefReferenceNumberList
+      - referenceNumber
+      - timestamp
+    GrantContextCredentialsRequest:
+      type: object
+      properties:
+        grantContextCredentials:
+          $ref: '#/components/schemas/GrantContextCredentialsRequestType'
+      required:
+      - grantContextCredentials
+    GrantContextCredentialsRequestType:
+      type: object
+      properties:
+        contextIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestInstitutionalType'
+        credentialsIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestIndividualType'
+        credentialsRole:
+          $ref: '#/components/schemas/CredentialsRoleRequestContextDescribedType'
+      required:
+      - contextIdentifier
+      - credentialsIdentifier
+      - credentialsRole
+    GrantCredentialsRequest:
+      type: object
+      properties:
+        grantCredentials:
+          $ref: '#/components/schemas/GrantCredentialsRequestType'
+      required:
+      - grantCredentials
+    GrantCredentialsRequestType:
+      type: object
+      properties:
+        credentialsIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+        credentialsRoleList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialsRoleRequestStandardDescribedType'
+          maxItems: 10
+          minItems: 1
+          uniqueItems: true
+      required:
+      - credentialsIdentifier
+      - credentialsRoleList
+    HashSHAType:
+      type: object
+      properties:
+        algorithm:
           type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
+          pattern: SHA-256
+        encoding:
+          type: string
+          pattern: Base64
+        value:
+          type: string
+          format: binary
+          maxLength: 44
+          minLength: 44
+      required:
+      - algorithm
+      - encoding
+      - value
+    InitSessionResponse:
+      type: object
+      deprecated: true
+      properties:
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        sessionToken:
+          $ref: '#/components/schemas/InitialisedSessionType'
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - referenceNumber
+      - sessionToken
+      - timestamp
+    InitialisedSessionType:
+      type: object
+      properties:
+        context:
+          $ref: '#/components/schemas/SessionContextType'
+        token:
+          type: string
+          maxLength: 64
+          minLength: 64
+      required:
+      - context
+      - token
+    InvoiceDivisionPlainPartType:
+      type: object
+      properties:
+        partExpiration:
+          type: string
+          format: date-time
+        partName:
+          type: string
+          maxLength: 100
+          minLength: 1
+        partNumber:
           type: integer
           format: int32
-        processingDescription:
+          minimum: 0
+        partRangeFrom:
           type: string
-        elementReferenceNumber:
+          format: date-time
+        partRangeTo:
+          type: string
+          format: date-time
+        partReferenceNumber:
+          type: string
           pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-    QueryCriteriaInvoiceDetailType:
+        plainPartHash:
+          $ref: '#/components/schemas/FileUnlimitedHashType'
       required:
-      - invoicingDateFrom
-      - invoicingDateTo
-      - subjectType
+      - partExpiration
+      - partName
+      - partNumber
+      - partRangeFrom
+      - partRangeTo
+      - partReferenceNumber
+      - plainPartHash
+    InvoiceHeaderType:
+      type: object
+      properties:
+        acquisitionTimestamp:
+          type: string
+          format: date-time
+        currency:
+          type: string
+          pattern: "[A-Z]{3}"
+        gross:
+          type: string
+          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
+        invoiceHash:
+          $ref: '#/components/schemas/FileUnlimitedHashType'
+        invoiceReferenceNumber:
+          type: string
+          maxLength: 256
+          minLength: 1
+        invoicingDate:
+          type: string
+          format: date
+        ksefReferenceNumber:
+          type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+        net:
+          type: string
+          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
+        subjectBy:
+          $ref: '#/components/schemas/SubjectByType'
+        subjectByK:
+          $ref: '#/components/schemas/SubjectByType'
+        subjectTo:
+          $ref: '#/components/schemas/SubjectToType'
+        subjectToKList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectToType'
+          maxItems: 100
+          minItems: 1
+        subjectsAuthorizedList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectAuthorizedType'
+          maxItems: 1
+          minItems: 1
+        subjectsOtherList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubjectOtherType'
+          maxItems: 100
+          minItems: 1
+        vat:
+          type: string
+          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
+      required:
+      - acquisitionTimestamp
+      - currency
+      - gross
+      - invoiceHash
+      - invoiceReferenceNumber
+      - invoicingDate
+      - ksefReferenceNumber
+      - net
+      - subjectBy
+      - subjectTo
+      - vat
+    InvoicePayloadEncryptedType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/InvoicePayloadType'
+      - type: object
+        properties:
+          encryptedInvoiceBody:
+            type: string
+            format: binary
+          encryptedInvoiceHash:
+            $ref: '#/components/schemas/File2MBHashType'
+      required:
+      - encryptedInvoiceBody
+      - encryptedInvoiceHash
+    InvoicePayloadPlainType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/InvoicePayloadType'
+      - type: object
+        properties:
+          invoiceBody:
+            type: string
+            format: binary
+      required:
+      - invoiceBody
+    InvoicePayloadType:
+      type: object
+      discriminator:
+        mapping:
+          encrypted: '#/components/schemas/InvoicePayloadEncryptedType'
+          plain: '#/components/schemas/InvoicePayloadPlainType'
+        propertyName: type
+      properties:
+        type:
+          type: string
+      required:
+      - type
+    InvoiceStatusType:
+      type: object
+      properties:
+        acquisitionTimestamp:
+          type: string
+          format: date-time
+        invoiceNumber:
+          type: string
+          maxLength: 256
+          minLength: 1
+        ksefReferenceNumber:
+          type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+    QueryCriteriaCredentialsAllType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/QueryCriteriaCredentialsType'
+      - type: object
+        properties:
+          queryCredentialsScopeResultType:
+            type: string
+            enum:
+            - current
+          queryCredentialsTypeResultType:
+            type: string
+            enum:
+            - all
+            - standard
+            - token
+      required:
+      - queryCredentialsScopeResultType
+      - queryCredentialsTypeResultType
+    QueryCriteriaCredentialsIdType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/QueryCriteriaCredentialsType'
+      - type: object
+        properties:
+          credentialsIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+          queryCredentialsScopeResultType:
+            type: string
+            enum:
+            - current
+          queryCredentialsTypeResultType:
+            type: string
+            enum:
+            - all
+            - standard
+            - token
+      required:
+      - credentialsIdentifier
+      - queryCredentialsScopeResultType
+      - queryCredentialsTypeResultType
+    QueryCriteriaCredentialsType:
+      type: object
+      discriminator:
+        mapping:
+          list_all: '#/components/schemas/QueryCriteriaCredentialsAllType'
+          list_id: '#/components/schemas/QueryCriteriaCredentialsIdType'
+        propertyName: type
+      properties:
+        type:
+          type: string
+      required:
+      - type
+    QueryCriteriaInvoiceDetailType:
       type: object
       allOf:
       - $ref: '#/components/schemas/QueryCriteriaInvoiceType'
       - type: object
         properties:
           invoiceNumber:
-            maxLength: 128
+            type: string
+            maxLength: 256
             minLength: 1
-            type: string
-          ksefReferenceNumber:
-            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
-            type: string
           invoicingDateFrom:
             type: string
             format: date-time
+            description: yyyy-MM-dd'T'HH:mm:ss | minimum date range is 2022-01-01
           invoicingDateTo:
             type: string
             format: date-time
+            description: "yyyy-MM-dd'T'HH:mm:ss | maximum date range is current time\
+              \ (+ max 6 hours), the difference between date field and #invoicingDateFrom\
+              \ cannot be greater than 24 months, date field cannot be before #invoicingDateFrom"
+          ksefReferenceNumber:
+            type: string
+            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
           subjectBy:
             $ref: '#/components/schemas/SubjectByType'
           subjectTo:
             $ref: '#/components/schemas/SubjectToType'
-    QueryCriteriaInvoiceIncrementalType:
       required:
-      - acquisitionTimestampThresholdFrom
-      - acquisitionTimestampThresholdTo
+      - invoicingDateFrom
+      - invoicingDateTo
       - subjectType
+    QueryCriteriaInvoiceIncrementalType:
       type: object
       allOf:
       - $ref: '#/components/schemas/QueryCriteriaInvoiceType'
@@ -2025,14 +2275,18 @@ components:
           acquisitionTimestampThresholdFrom:
             type: string
             format: date-time
+            description: yyyy-MM-dd'T'HH:mm:ss | minimum date range is 2022-01-01
           acquisitionTimestampThresholdTo:
             type: string
             format: date-time
-    QueryCriteriaInvoiceRangeType:
+            description: "yyyy-MM-dd'T'HH:mm:ss | maximum date range is current time\
+              \ (+ max 6 hours), the difference between date field and #acquisitionTimestampThresholdFrom\
+              \ cannot be greater than 24 months, date field cannot be before #acquisitionTimestampThresholdFrom"
       required:
-      - invoicingDateFrom
-      - invoicingDateTo
+      - acquisitionTimestampThresholdFrom
+      - acquisitionTimestampThresholdTo
       - subjectType
+    QueryCriteriaInvoiceRangeType:
       type: object
       allOf:
       - $ref: '#/components/schemas/QueryCriteriaInvoiceType'
@@ -2041,14 +2295,25 @@ components:
           invoicingDateFrom:
             type: string
             format: date-time
+            description: yyyy-MM-dd'T'HH:mm:ss | minimum date range is 2022-01-01
           invoicingDateTo:
             type: string
             format: date-time
-    QueryCriteriaInvoiceType:
+            description: "yyyy-MM-dd'T'HH:mm:ss | maximum date range is current time\
+              \ (+ max 6 hours), the difference between date field and #invoicingDateFrom\
+              \ cannot be greater than 24 months, date field cannot be before #invoicingDateFrom"
       required:
+      - invoicingDateFrom
+      - invoicingDateTo
       - subjectType
-      - type
+    QueryCriteriaInvoiceType:
       type: object
+      discriminator:
+        mapping:
+          detail: '#/components/schemas/QueryCriteriaInvoiceDetailType'
+          incremental: '#/components/schemas/QueryCriteriaInvoiceIncrementalType'
+          range: '#/components/schemas/QueryCriteriaInvoiceRangeType'
+        propertyName: type
       properties:
         subjectType:
           type: string
@@ -2059,223 +2324,39 @@ components:
           - subjectAuthorized
         type:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          detail: '#/components/schemas/QueryCriteriaInvoiceDetailType'
-          incremental: '#/components/schemas/QueryCriteriaInvoiceIncrementalType'
-          range: '#/components/schemas/QueryCriteriaInvoiceRangeType'
-    QueryInvoiceRequest:
       required:
-      - queryCriteria
-      type: object
-      properties:
-        queryCriteria:
-          $ref: '#/components/schemas/QueryCriteriaInvoiceType'
-    SubjectByType:
-      required:
-      - issuedByIdentifier
-      - issuedByName
-      type: object
-      properties:
-        issuedByIdentifier:
-          $ref: '#/components/schemas/SubjectIdentifierByType'
-        issuedByName:
-          $ref: '#/components/schemas/SubjectNameType'
-    SubjectFullNameType:
-      required:
-      - fullName
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectNameType'
-      - type: object
-        properties:
-          fullName:
-            maxLength: 256
-            minLength: 1
-            type: string
-    SubjectIdentifierByCompanyType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierByType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-            type: string
-    SubjectIdentifierByType:
-      required:
+      - subjectType
       - type
+    QueryInvoiceAsyncInitResponse:
       type: object
       properties:
-        type:
+        elementReferenceNumber:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          onip: '#/components/schemas/SubjectIdentifierByCompanyType'
-    SubjectIdentifierToCompanyType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierToType'
-      - type: object
-        properties:
-          identifier:
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-            type: string
-    SubjectIdentifierToNoneType:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierToType'
-    SubjectIdentifierToOtherTaxType:
-      required:
-      - identifier
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierToType'
-      - type: object
-        properties:
-          identifier:
-            maxLength: 50
-            minLength: 1
-            type: string
-    SubjectIdentifierToType:
-      required:
-      - type
-      type: object
-      properties:
-        type:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          onip: '#/components/schemas/SubjectIdentifierToCompanyType'
-          other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
-          none: '#/components/schemas/SubjectIdentifierToNoneType'
-    SubjectNameType:
-      required:
-      - type
-      type: object
-      properties:
-        tradeName:
           maxLength: 256
           minLength: 1
+        referenceNumber:
           type: string
-        type:
-          type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          fn: '#/components/schemas/SubjectFullNameType'
-          pn: '#/components/schemas/SubjectPersonNameType'
-    SubjectPersonNameType:
-      required:
-      - firstName
-      - surname
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectNameType'
-      - type: object
-        properties:
-          firstName:
-            maxLength: 30
-            minLength: 1
-            type: string
-          surname:
-            maxLength: 81
-            minLength: 1
-            type: string
-    SubjectToType:
-      required:
-      - issuedToIdentifier
-      type: object
-      properties:
-        issuedToIdentifier:
-          $ref: '#/components/schemas/SubjectIdentifierToType'
-        issuedToName:
-          $ref: '#/components/schemas/SubjectNameType'
-    FileUnlimitedHashType:
-      required:
-      - fileSize
-      - hashSHA
-      type: object
-      properties:
-        hashSHA:
-          $ref: '#/components/schemas/HashSHAType'
-        fileSize:
-          minimum: 0
-          type: integer
-          format: int32
-    InvoiceDivisionPlainPartType:
-      required:
-      - partExpiration
-      - partName
-      - partNumber
-      - partRangeFrom
-      - partRangeTo
-      - partReferenceNumber
-      - plainPartHash
-      type: object
-      properties:
-        partReferenceNumber:
-          type: string
-        partName:
-          type: string
-        partNumber:
-          type: integer
-          format: int32
-        partRangeFrom:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
           type: string
           format: date-time
-        partRangeTo:
-          type: string
-          format: date-time
-        partExpiration:
-          type: string
-          format: date-time
-        plainPartHash:
-          $ref: '#/components/schemas/FileUnlimitedHashType'
-    QueryInvoiceAsyncStatusResponse:
       required:
-      - divisionType
       - elementReferenceNumber
-      - numberOfElements
-      - numberOfParts
-      - partList
       - processingCode
       - processingDescription
       - referenceNumber
       - timestamp
+    QueryInvoiceAsyncStatusResponse:
       type: object
       properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        numberOfParts:
-          minimum: 0
-          type: integer
-          format: int32
-        numberOfElements:
-          minimum: 0
-          type: integer
-          format: int64
         divisionType:
           type: string
           enum:
@@ -2284,72 +2365,83 @@ components:
           - week
           - month
           - year
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        numberOfElements:
+          type: integer
+          format: int64
+          minimum: 0
+        numberOfParts:
+          type: integer
+          format: int32
+          minimum: 0
         partList:
-          maxItems: 111
-          minItems: 0
           type: array
           items:
             $ref: '#/components/schemas/InvoiceDivisionPlainPartType'
-    InvoiceHeaderType:
+          maxItems: 200
+          minItems: 0
+          uniqueItems: true
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
       required:
-      - acquisitionTimestamp
-      - gross
-      - invoiceReferenceNumber
-      - invoicingDate
-      - ksefReferenceNumber
-      - net
-      - subjectBy
-      - subjectTo
-      - vat
+      - elementReferenceNumber
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    QueryInvoiceRequest:
+      type: object
+      deprecated: true
+      properties:
+        queryCriteria:
+          $ref: '#/components/schemas/QueryCriteriaInvoiceType'
+      required:
+      - queryCriteria
+    QueryInvoiceSyncResponse:
       type: object
       properties:
-        invoiceReferenceNumber:
-          maxLength: 128
-          minLength: 1
+        invoiceHeaderList:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceHeaderType'
+          maxItems: 100
+          minItems: 0
+          uniqueItems: true
+        numberOfElements:
+          type: integer
+          format: int64
+          minimum: 0
+        pageOffset:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 0
+        pageSize:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 10
+        referenceNumber:
           type: string
-        ksefReferenceNumber:
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
-          type: string
-        invoicingDate:
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
           type: string
           format: date-time
-        acquisitionTimestamp:
-          type: string
-          format: date-time
-        subjectBy:
-          $ref: '#/components/schemas/SubjectByType'
-        subjectByK:
-          $ref: '#/components/schemas/SubjectByType'
-        subjectTo:
-          $ref: '#/components/schemas/SubjectToType'
-        subjectToKList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectToType'
-        subjectsOtherList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectOtherType'
-        subjectsAuthorizedList:
-          maxItems: 111
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/SubjectAuthorizedType'
-        net:
-          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
-          type: string
-        vat:
-          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
-          type: string
-        gross:
-          pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
-          type: string
-    QueryInvoiceSyncResponse:
       required:
       - invoiceHeaderList
       - numberOfElements
@@ -2357,38 +2449,305 @@ components:
       - pageSize
       - referenceNumber
       - timestamp
+    QuerySyncCredentialsRequest:
       type: object
       properties:
+        queryCriteria:
+          $ref: '#/components/schemas/QueryCriteriaCredentialsType'
+      required:
+      - queryCriteria
+    QuerySyncCredentialsResponse:
+      type: object
+      properties:
+        credentialsList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialsBaseTypeObject'
+          maxItems: 1000
+          minItems: 0
+          uniqueItems: true
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        numberOfElements:
-          minimum: 0
-          type: integer
-          format: int64
-        pageSize:
-          maximum: 100
-          minimum: 0
-          type: integer
-          format: int32
-        pageOffset:
-          maximum: 100
-          minimum: 0
-          type: integer
-          format: int32
-        invoiceHeaderList:
-          maxItems: 100
-          minItems: 1
+      required:
+      - credentialsList
+      - referenceNumber
+      - timestamp
+    RequestPaymentIdentifierRequest:
+      type: object
+      properties:
+        ksefReferenceNumberList:
           type: array
           items:
-            $ref: '#/components/schemas/InvoiceHeaderType'
-    SubjectAuthorizedType:
+            type: string
+          maxItems: 100
+          minItems: 1
+          uniqueItems: true
       required:
-      - issuedToIdentifier
-      - subjectAuthorizedType
+      - ksefReferenceNumberList
+    RequestPaymentIdentifierResponse:
+      type: object
+      properties:
+        paymentIdentifier:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - paymentIdentifier
+      - referenceNumber
+      - timestamp
+    RevokeContextCredentialsRequest:
+      type: object
+      properties:
+        revokeContextCredentials:
+          $ref: '#/components/schemas/RevokeContextCredentialsRequestType'
+      required:
+      - revokeContextCredentials
+    RevokeContextCredentialsRequestType:
+      type: object
+      properties:
+        contextIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestInstitutionalType'
+        credentialsIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestIndividualType'
+        credentialsRole:
+          $ref: '#/components/schemas/CredentialsRoleRequestContextBaseType'
+      required:
+      - contextIdentifier
+      - credentialsIdentifier
+      - credentialsRole
+    RevokeCredentialsRequest:
+      type: object
+      properties:
+        revokeCredentials:
+          $ref: '#/components/schemas/RevokeCredentialsRequestType'
+      required:
+      - revokeCredentials
+    RevokeCredentialsRequestType:
+      type: object
+      properties:
+        credentialsIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+        credentialsRoleList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialsRoleRequestStandardBaseType'
+          maxItems: 10
+          minItems: 1
+          uniqueItems: true
+      required:
+      - credentialsIdentifier
+      - credentialsRoleList
+    RevokeTokenRequest:
+      type: object
+      deprecated: true
+      properties:
+        revokeToken:
+          $ref: '#/components/schemas/RevokeTokenRequestType'
+      required:
+      - revokeToken
+    RevokeTokenRequestType:
+      type: object
+      properties:
+        sourceTokenIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierRequestType'
+        tokenNumber:
+          type: string
+          maxLength: 256
+          minLength: 1
+      required:
+      - sourceTokenIdentifier
+      - tokenNumber
+    SendInvoiceRequest:
+      type: object
+      properties:
+        invoiceHash:
+          $ref: '#/components/schemas/File1MBHashType'
+        invoicePayload:
+          $ref: '#/components/schemas/InvoicePayloadType'
+      required:
+      - invoiceHash
+      - invoicePayload
+    SendInvoiceResponse:
+      type: object
+      properties:
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - elementReferenceNumber
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    SessionContextType:
+      type: object
+      properties:
+        contextIdentifier:
+          $ref: '#/components/schemas/SubjectIdentifierByType'
+        contextName:
+          $ref: '#/components/schemas/SubjectNameType'
+        credentialsRoleList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+          maxItems: 1000
+          minItems: 1
+          uniqueItems: true
+      required:
+      - contextIdentifier
+      - credentialsRoleList
+    SessionInvoiceStatusType:
+      type: object
+      properties:
+        acquisitionTimestamp:
+          type: string
+          format: date-time
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        invoiceNumber:
+          type: string
+          maxLength: 256
+          minLength: 1
+        ksefReferenceNumber:
+          type: string
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+      required:
+      - elementReferenceNumber
+      - processingCode
+      - processingDescription
+    SessionStatusResponse:
+      type: object
+      properties:
+        invoiceStatusList:
+          type: array
+          items:
+            $ref: '#/components/schemas/SessionInvoiceStatusType'
+        numberOfElements:
+          type: integer
+          format: int64
+          minimum: 0
+        pageOffset:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 0
+        pageSize:
+          type: integer
+          format: int32
+          maximum: 100
+          minimum: 10
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    StatusCredentialsResponse:
+      type: object
+      properties:
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - elementReferenceNumber
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    StatusInvoiceResponse:
+      type: object
+      properties:
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        invoiceStatus:
+          $ref: '#/components/schemas/InvoiceStatusType'
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - elementReferenceNumber
+      - invoiceStatus
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    SubjectAuthorizedType:
       type: object
       properties:
         issuedToIdentifier:
@@ -2401,10 +2760,110 @@ components:
           - enforcement_authority
           - court_bailiff
           - tax_representative
-    SubjectOtherType:
       required:
       - issuedToIdentifier
-      - subjectOtherType
+      - subjectAuthorizedType
+    SubjectByType:
+      type: object
+      properties:
+        issuedByIdentifier:
+          $ref: '#/components/schemas/SubjectIdentifierByType'
+        issuedByName:
+          $ref: '#/components/schemas/SubjectNameType'
+      required:
+      - issuedByIdentifier
+      - issuedByName
+    SubjectFullNameType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectNameType'
+      - type: object
+        properties:
+          fullName:
+            type: string
+            maxLength: 256
+            minLength: 1
+      required:
+      - fullName
+    SubjectIdentifierByCompanyType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierByType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    SubjectIdentifierByType:
+      type: object
+      discriminator:
+        mapping:
+          onip: '#/components/schemas/SubjectIdentifierByCompanyType'
+        propertyName: type
+      properties:
+        type:
+          type: string
+      required:
+      - type
+    SubjectIdentifierToCompanyType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    SubjectIdentifierToNoneType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierToType'
+    SubjectIdentifierToOtherTaxType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            maxLength: 50
+            minLength: 1
+      required:
+      - identifier
+    SubjectIdentifierToType:
+      type: object
+      discriminator:
+        mapping:
+          none: '#/components/schemas/SubjectIdentifierToNoneType'
+          onip: '#/components/schemas/SubjectIdentifierToCompanyType'
+          other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
+        propertyName: type
+      properties:
+        type:
+          type: string
+      required:
+      - type
+    SubjectNameType:
+      type: object
+      discriminator:
+        mapping:
+          fn: '#/components/schemas/SubjectFullNameType'
+          pn: '#/components/schemas/SubjectPersonNameType'
+        propertyName: type
+      properties:
+        tradeName:
+          type: string
+          maxLength: 256
+          minLength: 1
+        type:
+          type: string
+      required:
+      - type
+    SubjectOtherType:
       type: object
       properties:
         issuedToIdentifier:
@@ -2421,49 +2880,97 @@ components:
           - invoice_issuer
           - payer
           - other
-    AuthorisationChallengeRequest:
       required:
-      - contextIdentifier
+      - issuedToIdentifier
+      - subjectOtherType
+    SubjectPersonNameType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectNameType'
+      - type: object
+        properties:
+          firstName:
+            type: string
+            maxLength: 30
+            minLength: 1
+          surname:
+            type: string
+            maxLength: 81
+            minLength: 1
+      required:
+      - firstName
+      - surname
+    SubjectToType:
       type: object
       properties:
-        contextIdentifier:
-          $ref: '#/components/schemas/SubjectIdentifierByType'
-    AuthorisationChallengeResponse:
+        issuedToIdentifier:
+          $ref: '#/components/schemas/SubjectIdentifierToType'
+        issuedToName:
+          $ref: '#/components/schemas/SubjectNameType'
       required:
-      - challenge
-      - timestamp
+      - issuedToIdentifier
+    TerminateSessionResponse:
       type: object
       properties:
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        challenge:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-    CredentialsRoleResponseBaseTypeObject:
       required:
-      - type
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    V2_CredentialsRoleGrantedForInstitutionInheritanceType:
       type: object
       properties:
-        roleType:
-          type: object
+        granteeIdentifier:
+          $ref: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
         roleDescription:
           type: string
+        roleType:
+          type: string
+          enum:
+          - invoice_read
+          - invoice_write
+          - payment_confirmation_write
+    V2_CredentialsRoleResponseBaseTypeObject:
+      type: object
+      discriminator:
+        mapping:
+          direct: '#/components/schemas/V2_CredentialsRoleResponseGrantedForIndividualDirectType'
+          granted: '#/components/schemas/V2_CredentialsRoleResponseGrantedByInstitutionType'
+          inherited: '#/components/schemas/V2_CredentialsRoleResponseGrantedForIndividualInheritedType'
+          token: '#/components/schemas/V2_CredentialsRoleResponseGrantedForIndividualTokenType'
+        propertyName: type
+      properties:
+        roleDescription:
+          type: string
+        roleType:
+          type: object
         type:
           type: string
-      discriminator:
-        propertyName: type
-        mapping:
-          standard_plain: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
-          standard_details: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
-          token: '#/components/schemas/CredentialsRoleResponseTokenType'
-          granted: '#/components/schemas/CredentialsRoleResponseGrantedForInstitutionType'
-    CredentialsRoleResponseGrantedForInstitutionType:
+      required:
+      - type
+    V2_CredentialsRoleResponseGrantedByInstitutionType:
       type: object
       allOf:
-      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - $ref: '#/components/schemas/V2_CredentialsRoleResponseBaseTypeObject'
       - type: object
         properties:
+          roleGrantorIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
           roleType:
             type: string
             enum:
@@ -2474,39 +2981,225 @@ components:
             - tax_representative
             - court_bailiff
             - enforcement_authority
-          roleGrantorIdentifier:
-            $ref: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
-    InitSessionResponse:
+            - local_government_unit
+            - local_government_sub_unit
+            - vat_group_unit
+            - vat_group_sub_unit
+    V2_CredentialsRoleResponseGrantedForIndividualDirectType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/V2_CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleType:
+            type: string
+            enum:
+            - owner
+            - introspection
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - credentials_read
+            - credentials_manage
+            - enforcement_operations
+            - subunit_manage
+    V2_CredentialsRoleResponseGrantedForIndividualInheritedType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/V2_CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          parent:
+            $ref: '#/components/schemas/V2_CredentialsRoleGrantedForInstitutionInheritanceType'
+          roleType:
+            type: string
+            enum:
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+    V2_CredentialsRoleResponseGrantedForIndividualTokenType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/V2_CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          roleType:
+            type: string
+            enum:
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - credentials_read
+            - credentials_manage
+            - enforcement_operations
+    V2_InitSessionResponse:
+      type: object
+      properties:
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        sessionToken:
+          $ref: '#/components/schemas/V2_InitialisedSessionType'
+        timestamp:
+          type: string
+          format: date-time
       required:
       - referenceNumber
       - sessionToken
       - timestamp
+    V2_InitialisedSessionType:
       type: object
       properties:
-        timestamp:
+        context:
+          $ref: '#/components/schemas/V2_SessionContextType'
+        token:
           type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        sessionToken:
-          $ref: '#/components/schemas/InitialisedSessionType'
-    InitialisedSessionType:
+          maxLength: 64
+          minLength: 64
       required:
       - context
       - token
+    V2_QueryCriteriaInvoiceDetailType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/V2_QueryCriteriaInvoiceType'
+      - type: object
+        properties:
+          invoiceNumber:
+            type: string
+            maxLength: 256
+            minLength: 1
+          invoicingDateFrom:
+            type: string
+            format: date-time
+            description: yyyy-MM-dd'T'HH:mm:ss | minimum date range is 2022-01-01
+          invoicingDateTo:
+            type: string
+            format: date-time
+            description: "yyyy-MM-dd'T'HH:mm:ss | maximum date range is current time\
+              \ (+ max 6 hours), the difference between date field and #invoicingDateFrom\
+              \ cannot be greater than 24 months, date field cannot be before #invoicingDateFrom"
+          ksefReferenceNumber:
+            type: string
+            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+          subjectBy:
+            $ref: '#/components/schemas/V2_SubjectByQueryType'
+          subjectTo:
+            $ref: '#/components/schemas/V2_SubjectToQueryType'
+      required:
+      - invoicingDateFrom
+      - invoicingDateTo
+      - subjectType
+    V2_QueryCriteriaInvoiceIncrementalType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/V2_QueryCriteriaInvoiceType'
+      - type: object
+        properties:
+          acquisitionTimestampThresholdFrom:
+            type: string
+            format: date-time
+            description: yyyy-MM-dd'T'HH:mm:ss | minimum date range is 2022-01-01
+          acquisitionTimestampThresholdTo:
+            type: string
+            format: date-time
+            description: "yyyy-MM-dd'T'HH:mm:ss | maximum date range is current time\
+              \ (+ max 6 hours), the difference between date field and #acquisitionTimestampThresholdFrom\
+              \ cannot be greater than 24 months, date field cannot be before #acquisitionTimestampThresholdFrom"
+      required:
+      - acquisitionTimestampThresholdFrom
+      - acquisitionTimestampThresholdTo
+      - subjectType
+    V2_QueryCriteriaInvoiceRangeType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/V2_QueryCriteriaInvoiceType'
+      - type: object
+        properties:
+          invoicingDateFrom:
+            type: string
+            format: date-time
+            description: yyyy-MM-dd'T'HH:mm:ss | minimum date range is 2022-01-01
+          invoicingDateTo:
+            type: string
+            format: date-time
+            description: "yyyy-MM-dd'T'HH:mm:ss | maximum date range is current time\
+              \ (+ max 6 hours), the difference between date field and #invoicingDateFrom\
+              \ cannot be greater than 24 months, date field cannot be before #invoicingDateFrom"
+      required:
+      - invoicingDateFrom
+      - invoicingDateTo
+      - subjectType
+    V2_QueryCriteriaInvoiceType:
+      type: object
+      discriminator:
+        mapping:
+          detail: '#/components/schemas/V2_QueryCriteriaInvoiceDetailType'
+          incremental: '#/components/schemas/V2_QueryCriteriaInvoiceIncrementalType'
+          range: '#/components/schemas/V2_QueryCriteriaInvoiceRangeType'
+        propertyName: type
+      properties:
+        subjectType:
+          type: string
+          enum:
+          - subject1
+          - subject2
+          - subject3
+          - subjectAuthorized
+        type:
+          type: string
+      required:
+      - subjectType
+      - type
+    V2_QueryInvoiceRequest:
       type: object
       properties:
-        token:
-          maxLength: 64
-          minLength: 64
-          type: string
-        context:
-          $ref: '#/components/schemas/SessionContextType'
-    SessionContextType:
+        queryCriteria:
+          $ref: '#/components/schemas/V2_QueryCriteriaInvoiceType'
       required:
-      - contextIdentifier
-      - credentialsRoleList
+      - queryCriteria
+    V2_RevokeTokenRequest:
+      type: object
+      properties:
+        revokeToken:
+          $ref: '#/components/schemas/V2_RevokeTokenRequestType'
+      required:
+      - revokeToken
+    V2_RevokeTokenRequestType:
+      type: object
+      properties:
+        tokenNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      required:
+      - tokenNumber
+    V2_RevokeTokenResponse:
+      type: object
+      properties:
+        elementReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
+    V2_SessionContextType:
       type: object
       properties:
         contextIdentifier:
@@ -2514,105 +3207,36 @@ components:
         contextName:
           $ref: '#/components/schemas/SubjectNameType'
         credentialsRoleList:
-          maxItems: 111
+          type: array
+          items:
+            $ref: '#/components/schemas/V2_CredentialsRoleResponseBaseTypeObject'
+          maxItems: 1000
           minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
-    SessionInvoiceStatusType:
+          uniqueItems: true
       required:
-      - elementReferenceNumber
-      - processingCode
-      - processingDescription
+      - contextIdentifier
+      - credentialsRoleList
+    V2_SubjectByQueryType:
       type: object
       properties:
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        elementReferenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        invoiceNumber:
-          maxLength: 128
-          minLength: 1
-          type: string
-        ksefReferenceNumber:
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
-          type: string
-        acquisitionTimestamp:
-          type: string
-          format: date-time
-    SessionStatusResponse:
+        issuedByIdentifier:
+          $ref: '#/components/schemas/SubjectIdentifierByType'
+        issuedByName:
+          $ref: '#/components/schemas/SubjectNameType'
       required:
-      - invoiceStatusList
-      - numberOfElements
-      - pageOffset
-      - pageSize
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
+      - issuedByIdentifier
+    V2_SubjectToQueryType:
       type: object
       properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        numberOfElements:
-          minimum: 0
-          type: integer
-          format: int64
-        pageSize:
-          maximum: 100
-          minimum: 0
-          type: integer
-          format: int32
-        pageOffset:
-          maximum: 100
-          minimum: 0
-          type: integer
-          format: int32
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
-        invoiceStatusList:
-          type: array
-          items:
-            $ref: '#/components/schemas/SessionInvoiceStatusType'
-    TerminateSessionResponse:
+        issuedToIdentifier:
+          $ref: '#/components/schemas/SubjectIdentifierToType'
+        issuedToName:
+          $ref: '#/components/schemas/SubjectNameType'
       required:
-      - processingCode
-      - processingDescription
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        processingCode:
-          maximum: 999
-          minimum: 100
-          type: integer
-          format: int32
-        processingDescription:
-          type: string
+      - issuedToIdentifier
   securitySchemes:
     SessionToken:
-      type: apiKey
       description: Token
-      name: SessionToken
       in: header
+      name: SessionToken
+      type: apiKey

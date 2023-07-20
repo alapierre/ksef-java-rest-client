@@ -1,39 +1,36 @@
 openapi: 3.0.1
 info:
-  title: KSeF
-  description: Krajowy System e-Faktur
   contact:
+    email: info.ksef@mf.gov.pl
     name: Info
     url: https://ksef.mf.gov.pl
-    email: info.ksef@mf.gov.pl
-  version: 1.0.0
+  description: Krajowy System e-Faktur
+  title: KSeF
+  version: 1.1.3
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
 servers:
-- url: https://ksef.mf.gov.pl/api
-  description: Środowisko produkcyjne
+- description: Środowisko produkcyjne
+  url: https://ksef.mf.gov.pl/api
   variables: {}
-- url: https://ksef-demo.mf.gov.pl/api
-  description: Środowisko demonstracyjne
+- description: Środowisko demonstracyjne
+  url: https://ksef-demo.mf.gov.pl/api
   variables: {}
-- url: https://ksef-test.mf.gov.pl/api
-  description: Środowisko testowe
+- description: Środowisko testowe
+  url: https://ksef-test.mf.gov.pl/api
   variables: {}
 tags:
-- name: KSeF
-  description: Krajowy System e-Faktur
+- description: Krajowy System e-Faktur
   externalDocs:
     description: Krajowy System e-Faktur
     url: https://ksef.mf.gov.pl
+  name: KSeF
 paths:
   /batch/Finish:
     post:
-      tags:
-      - Wysyłka wsadowa
-      summary: Wysyłka wsadowa paczki faktur do KSeF - finalizacja
       description: Finalizacja wysyłki wsadowej paczki faktur
-      operationId: finish
+      operationId: batch.finish
       requestBody:
         content:
           application/json:
@@ -42,25 +39,25 @@ paths:
         required: true
       responses:
         "200":
-          description: Finalizacja wysyłki wsadowej paczki faktur poprawna
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FinishResponse'
+          description: Finalizacja wysyłki wsadowej paczki faktur poprawna
         "400":
-          description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
-  /batch/Init:
-    post:
+          description: Nieprawidłowe wywołanie
+      summary: Wysyłka wsadowa paczki faktur do KSeF - finalizacja
       tags:
       - Wysyłka wsadowa
-      summary: Wysyłka wsadowa paczki faktur do KSeF - inicjalizacja
+  /batch/Init:
+    post:
       description: Inicjalizacja wysyłki wsadowej paczki faktur. Podpisany dokument
         http://ksef.mf.gov.pl/schema/gtw/svc/batch/init/request/2021/10/01/0001/InitRequest
-      operationId: initRequest
+      operationId: batch.init
       requestBody:
         content:
           application/octet-stream:
@@ -70,221 +67,227 @@ paths:
         required: true
       responses:
         "201":
-          description: Inicjalizacja wysyłki wsadowej paczki faktur poprawna
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/InitResponse'
+          description: Inicjalizacja wysyłki wsadowej paczki faktur poprawna
         "400":
-          description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
-  /batch/Upload/{ReferenceNumber}/{PartName}:
-    put:
+          description: Nieprawidłowe wywołanie
+      summary: Wysyłka wsadowa paczki faktur do KSeF - inicjalizacja
       tags:
       - Wysyłka wsadowa
-      summary: Wysyłka wsadowa paczki faktur do KSeF - załadowanie części paczki
+  /batch/Upload/{ReferenceNumber}/{PartName}:
+    put:
       description: Załadowanie zaszyfrowanych części paczki
-      operationId: upload
+      operationId: batch.upload
       parameters:
-      - name: ReferenceNumber
-        in: path
+      - in: path
+        name: ReferenceNumber
         required: true
         schema:
           type: string
-      - name: PartName
-        in: path
+      - in: path
+        name: PartName
         required: true
         schema:
           type: string
       requestBody:
-        description: Zaszyfrowana część paczki kluczem symetrycznym zadeklarowanym
-          w dokumencie Init
         content:
           application/octet-stream:
             schema:
               type: string
               format: binary
+        description: Zaszyfrowana część paczki kluczem symetrycznym zadeklarowanym
+          w dokumencie Init
         required: true
       responses:
         "201":
-          description: Załadowanie części paczki poprawne
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UploadResponse'
+          description: Załadowanie części paczki poprawne
         "400":
-          description: Nieprawidłowe wywołanie
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+      summary: Wysyłka wsadowa paczki faktur do KSeF - załadowanie części paczki
+      tags:
+      - Wysyłka wsadowa
 components:
   schemas:
-    FinishResponse:
-      required:
-      - referenceNumber
-      - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
     ExceptionDetailType:
-      required:
-      - exceptionCode
-      - exceptionDescription
       type: object
       properties:
         exceptionCode:
-          minimum: 0
           type: integer
           format: int32
+          minimum: 0
         exceptionDescription:
+          type: string
           maxLength: 256
           minLength: 1
-          type: string
-    ExceptionResponse:
       required:
-      - exception
+      - exceptionCode
+      - exceptionDescription
+    ExceptionResponse:
       type: object
       properties:
         exception:
           $ref: '#/components/schemas/ExceptionType'
+      required:
+      - exception
     ExceptionType:
+      type: object
+      properties:
+        exceptionDetailList:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExceptionDetailType'
+          maxItems: 100
+          minItems: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        serviceCode:
+          type: string
+          maxLength: 64
+          minLength: 1
+        serviceCtx:
+          type: string
+          maxLength: 64
+          minLength: 1
+        serviceName:
+          type: string
+          maxLength: 64
+          minLength: 1
+        timestamp:
+          type: string
+          format: date-time
       required:
       - exceptionDetailList
       - serviceCode
       - serviceCtx
       - serviceName
       - timestamp
+    FinishRequest:
       type: object
       properties:
-        serviceCtx:
-          maxLength: 64
-          minLength: 1
+        referenceNumber:
           type: string
-        serviceCode:
-          maxLength: 64
-          minLength: 1
-          type: string
-        serviceName:
-          maxLength: 64
-          minLength: 1
-          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        exceptionDetailList:
-          maxItems: 100
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/ExceptionDetailType'
-    FinishRequest:
       required:
       - referenceNumber
       - timestamp
+    FinishResponse:
       type: object
       properties:
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-    HeaderEntryType:
       required:
-      - key
-      - value
+      - referenceNumber
+      - timestamp
+    HeaderEntryType:
       type: object
       properties:
         key:
+          type: string
           maxLength: 64
           minLength: 1
-          type: string
         value:
+          type: string
           maxLength: 128
           minLength: 1
-          type: string
+      required:
+      - key
+      - value
     InitResponse:
+      type: object
+      properties:
+        packageSignature:
+          $ref: '#/components/schemas/PackageSignatureInitResponseType'
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
       required:
       - packageSignature
       - referenceNumber
       - timestamp
-      type: object
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
-        packageSignature:
-          $ref: '#/components/schemas/PackageSignatureInitResponseType'
     PackagePartSignatureInitResponseType:
-      required:
-      - method
-      - ordinalNumber
-      - partFileName
-      - url
       type: object
       properties:
-        ordinalNumber:
-          minimum: 0
-          type: integer
-          format: int32
-        partFileName:
-          pattern: "[a-zA-Z0-9_\\.\\-]{5,100}"
-          type: string
-        url:
-          maxLength: 512
-          minLength: 1
-          pattern: "http[s]?:/{2}(([0-9a-z])([0-9a-z_-])*\\.)+([0-9a-z])([0-9a-z_-])*"
-          type: string
+        headerEntryList:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderEntryType'
+          maxItems: 100
+          minItems: 1
+          uniqueItems: true
         method:
           type: string
           enum:
           - POST
           - PUT
-        headerEntryList:
-          maxItems: 100
-          minItems: 1
-          type: array
-          items:
-            $ref: '#/components/schemas/HeaderEntryType'
-    PackageSignatureInitResponseType:
+        ordinalNumber:
+          type: integer
+          format: int32
+          minimum: 0
+        partFileName:
+          type: string
+          pattern: "[a-zA-Z0-9_\\.\\-]{5,100}"
+        url:
+          type: string
+          maxLength: 512
+          minLength: 1
+          pattern: "http[s]?:\\/{2}([0-9a-z][0-9a-z_-]*\\.)+[0-9a-z][0-9a-z_-]*(([0-9a-zA-Z][0-9a-zA-Z_-]*\\\
+            .?)*\\/?)*"
       required:
-      - packageName
-      - packagePartSignatureList
+      - method
+      - ordinalNumber
+      - partFileName
+      - url
+    PackageSignatureInitResponseType:
       type: object
       properties:
         packageName:
-          pattern: "[a-zA-Z0-9_\\.\\-]{5,100}"
           type: string
+          pattern: "[a-zA-Z0-9_\\.\\-]{5,100}"
         packagePartSignatureList:
-          maxItems: 100
-          minItems: 1
           type: array
           items:
             $ref: '#/components/schemas/PackagePartSignatureInitResponseType'
-    UploadResponse:
+          maxItems: 100
+          minItems: 1
+          uniqueItems: true
       required:
-      - referenceNumber
-      - timestamp
+      - packageName
+      - packagePartSignatureList
+    UploadResponse:
       type: object
       properties:
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
         timestamp:
           type: string
           format: date-time
-        referenceNumber:
-          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
-          type: string
+      required:
+      - referenceNumber
+      - timestamp

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Deklaracja xmlns="http://crd.gov.pl/wzor/2014/12/08/1887/"
+            xmlns:etd="http://crd.gov.pl/xml/schematy/dziedzinowe/mf/2011/06/21/eD/DefinicjeTypy/"
+>
+ <Naglowek>
+  <KodFormularza kodPodatku="PIT" kodSystemowy="PIT-11 (21)" rodzajZobowiazania="Z" wersjaSchemy="1-0E">PIT-11</KodFormularza>
+  <WariantFormularza>21</WariantFormularza>
+  <CelZlozenia poz="P_6">1</CelZlozenia>
+  <Rok>2014</Rok>
+  <KodUrzedu>0402</KodUrzedu>
+ </Naglowek>
+ <Podmiot1 rola="Płatnik">
+  <etd:OsobaNiefizyczna>
+   <etd:NIP>1234567890</etd:NIP>
+   <etd:PelnaNazwa>SID1</etd:PelnaNazwa>
+   <etd:REGON>76547894321900</etd:REGON>
+  </etd:OsobaNiefizyczna>
+ </Podmiot1>
+ <Podmiot2 rola="Podatnik">
+  <etd:OsobaFizyczna>
+   <etd:PESEL>87031204056</etd:PESEL>
+   <etd:ImiePierwsze>PIOTRJ</etd:ImiePierwsze>
+   <etd:Nazwisko>Jankowski</etd:Nazwisko>
+   <etd:DataUrodzenia>1984-03-18</etd:DataUrodzenia>
+  </etd:OsobaFizyczna>
+  <etd:AdresZamieszkania rodzajAdresu="RAD">
+   <etd:AdresPol>
+    <etd:KodKraju>PL</etd:KodKraju>
+    <etd:Wojewodztwo>MAZOWIECKIE</etd:Wojewodztwo>
+    <etd:Powiat>WARSZAWA</etd:Powiat>
+    <etd:Gmina>BEMOWO</etd:Gmina>
+    <etd:NrDomu>2</etd:NrDomu>
+    <etd:NrLokalu>30</etd:NrLokalu>
+    <etd:Miejscowosc>WARSZAWA</etd:Miejscowosc>
+    <etd:KodPocztowy>01-494</etd:KodPocztowy>
+    <etd:Poczta>WARSZAWA</etd:Poczta>
+   </etd:AdresPol>
+  </etd:AdresZamieszkania>
+ </Podmiot2>
+ <PozycjeSzczegolowe>
+  <P_24>1</P_24>
+  <P_25>800000.0</P_25>
+  <P_26>445.0</P_26>
+  <P_27>799555.0</P_27>
+  <P_29>98867</P_29>
+  <P_66>32253.99</P_66>
+  <P_68>59500.31</P_68>
+  <P_72>2</P_72>
+ </PozycjeSzczegolowe>
+ <Pouczenie>Za uchybienie obowiązkom płatnika grozi odpowiedzialność przewidziana w Kodeksie karnym skarbowym.</Pouczenie>
+</Deklaracja>

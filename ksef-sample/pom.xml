@@ -10,7 +10,7 @@
     <artifactId>ksef-sample</artifactId>
 
     <properties>
-        <ksef.client.version>2.0.16</ksef.client.version>
+        <ksef.client.version>2.0.17-SNAPSHOT</ksef.client.version>
 <!--        <ksef.client.version>${project.version}</ksef.client.version>-->
     </properties>
 

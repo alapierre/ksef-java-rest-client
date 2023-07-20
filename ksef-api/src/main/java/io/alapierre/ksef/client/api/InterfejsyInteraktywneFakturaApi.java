@@ -10,6 +10,7 @@ import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -26,7 +27,7 @@ public class InterfejsyInteraktywneFakturaApi {
     private final ApiClient apiClient;
 
     public @NotNull SendInvoiceResponse invoiceSend(File file, @NotNull String token) throws IOException, ApiException {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return invoiceSend(in, token);
         }
     }

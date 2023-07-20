@@ -1,4 +1,4 @@
-package io.alapierre.ntt.ksef.api.dss.facade;
+package io.alapierre.ksef.api.dss.facade;
 
 import eu.europa.esig.dss.model.DSSDocument;
 import io.alapierre.crypto.dss.signer.AbstractSigner;
