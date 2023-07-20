@@ -7,18 +7,15 @@ import io.alapierre.ksef.client.ApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneFakturaApi;
-import io.alapierre.ksef.client.api.InterfejsyInteraktywnePlatnosciApi;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneSesjaApi;
 import io.alapierre.ksef.client.api.InterfejsyInteraktywneZapytaniaApi;
 import io.alapierre.ksef.client.iterator.InvoiceQueryResponseAdapter;
 import io.alapierre.ksef.client.iterator.KsefResultStream;
 import io.alapierre.ksef.client.model.rest.auth.InitSignedResponse;
-import io.alapierre.ksef.client.model.rest.payment.PaymentIdRequest;
 import io.alapierre.ksef.client.model.rest.query.InvoiceQueryRequest;
 import io.alapierre.ksef.client.okhttp.OkHttpApiClient;
 import io.alapierre.ksef.client.serializer.gson.GsonJsonSerializer;
 import io.alapierre.ksef.token.facade.KsefTokenFacade;
-import lombok.SneakyThrows;
 import lombok.val;
 
 import java.io.File;
@@ -44,7 +41,6 @@ public class Main {
     private static final JsonSerializer serializer = new GsonJsonSerializer();
     private static final ApiClient client = new OkHttpApiClient(serializer);
     private static final InterfejsyInteraktywneSesjaApi sesjaApi = new InterfejsyInteraktywneSesjaApi(client);
-    private static final InterfejsyInteraktywnePlatnosciApi platnosciApi = new InterfejsyInteraktywnePlatnosciApi(client);
 
     public static final String token = "30AC53BF6313480A4C12278907E718C82086E19FD56DF3F43C889A28572FDD4A";
     //"24BB2B31E766F3BB2FF7244964DABCC680D611C515F85420F270254AD0C6E7D7"
@@ -104,22 +100,6 @@ public class Main {
                 .forEach(System.out::println);
     }
 
-    @SneakyThrows
-    public static void createAndGetPaymentIdentifier() {
 
-        val signedResponse = loginByToken();
-        val sessionToken = signedResponse.getSessionToken().getToken();
-
-        val id = platnosciApi.createPaymentIdentifier(
-                sessionToken,
-                PaymentIdRequest.builder()
-                        .ksefReferenceNumber("9781399259-20230530-81C11E-E32935-E9")
-                        .ksefReferenceNumber("9781399259-20230530-51FEA9-332505-E3")
-                        .build());
-
-        val numbers = platnosciApi.getReferenceNumbers(sessionToken, id.getPaymentIdentifier());
-        numbers.getKsefReferenceNumberList().forEach(System.out::println);
-
-    }
 
 }
