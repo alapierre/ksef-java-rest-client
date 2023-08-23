@@ -1,0 +1,10 @@
+POST https://{{host}}.mf.gov.pl/api/online/Payment/Identifier/Request
+Accept: application/json
+SessionToken: {{token}}
+Content-Type: application/json
+
+{
+  "ksefReferenceNumberList": [
+    "{{ksef_nr1}}"
+  ]
+}

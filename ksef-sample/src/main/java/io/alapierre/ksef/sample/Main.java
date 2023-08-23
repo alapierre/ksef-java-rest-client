@@ -49,6 +49,9 @@ public class Main {
 
         try {
             val signedResponse = loginByToken();
+
+            System.out.println("session token = " + signedResponse.getSessionToken().getToken());
+
             val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
             val sessionToken = signedResponse.getSessionToken().getToken();
             val resp = invoiceApi.invoiceSend(new File("ksef-sample/src/main/resources/FA1.xml"), sessionToken);
@@ -60,7 +63,7 @@ public class Main {
 
             loadIncomingInvoices(sessionToken);
 
-            sesjaApi.terminateSession(sessionToken);
+            //sesjaApi.terminateSession(sessionToken);
         } catch (ApiException ex) {
             System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
         } catch (IOException | ParseException e) {

@@ -310,7 +310,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
       responses:
         "200":
           content:
@@ -462,6 +462,13 @@ paths:
   /online/Invoice/Status/{InvoiceElementReferenceNumber}:
     get:
       description: Sprawdzenie statusu wysłanej faktury
+      externalDocs:
+        description: |-
+          Obsługiwany nagłówek 'ksef-number-variant'
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
       operationId: online.invoice.invoice.status
       parameters:
       - in: path
@@ -617,6 +624,50 @@ paths:
       summary: Wygenerowanie identyfikatora płatności
       tags:
       - Interfejsy interaktywne - płatności
+  /online/Query/Credential/Context/Sync:
+    get:
+      description: Zapytanie o poświadczenia nadane przez jednostkę nadrzędną
+      operationId: online.query.query.context.credentials
+      parameters:
+      - description: Identyfikator kontekstu
+        in: query
+        name: contextNip
+        schema:
+          type: string
+      - description: Identyfikator nadajacego uprawnienia
+        in: query
+        name: sourceIdentifier
+        schema:
+          type: string
+      - description: Identyfikator uprawnionego
+        in: query
+        name: targetIdentifier
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuerySyncCredentialsResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
+      security:
+      - SessionToken: []
+      summary: Zapytanie o poświadczenia nadane przez jednostkę nadrzędną
+      tags:
+      - Interfejsy interaktywne - zapytania
   /online/Query/Credential/Sync:
     post:
       description: Zapytanie o poświadczenia
@@ -775,6 +826,13 @@ paths:
   /online/Query/Invoice/Sync:
     post:
       description: Zapytanie o faktury
+      externalDocs:
+        description: |-
+          Obsługiwany nagłówek 'ksef-number-variant'
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
       operationId: online.query.query.invoice
       parameters:
       - in: query
@@ -879,6 +937,70 @@ paths:
                 $ref: '#/components/schemas/ExceptionResponse'
           description: Nieprawidłowe wywołanie
       summary: Inicjalizacja mechanizmu uwierzytelnienia i autoryzacji
+      tags:
+      - Interfejsy interaktywne - sesja
+  /online/Session/GenerateInternalIdentifier/{inputDigitsSequence}:
+    get:
+      description: Wygenerowanie identyfikatora wewnetrznego na podstawie nip i 4
+        cyfr
+      operationId: online.session.internal.identifier.generate
+      parameters:
+      - in: path
+        name: inputDigitsSequence
+        required: true
+        schema:
+          type: string
+          pattern: "[0-9]{4}"
+      responses:
+        "200":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład poprawnej odpowiedzi
+                  summary: Przykład poprawnej odpowiedzi
+                  value:
+                    timestamp: 2021-10-01T12:13:14.999Z
+                    internalIdentifier: 2366841886-80251
+              schema:
+                $ref: '#/components/schemas/InternalIdentifierGeneratedResponse'
+          description: Wygenerowany identyfikator
+        "400":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    exception:
+                      serviceCtx: srvDVAKA
+                      serviceCode: 20211001-EX-FFFFFFFFFF-FFFFFFFFFF-FF
+                      serviceName: online.session.internal.identifier.generate
+                      timestamp: 2021-10-01T12:13:14.999Z
+                      referenceNumber: 20211001-SE-FFFFFFFFFF-FFFFFFFFFF-FF
+                      exceptionDetailList:
+                      - exceptionCode: 12345
+                        exceptionDescription: Opis błędu.
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Błędne dane wejsściowe
+        "401":
+          content:
+            application/json:
+              examples:
+                response example:
+                  description: Przykład błędnej odpowiedzi
+                  summary: Przykład błędnej odpowiedzi
+                  value:
+                    timestamp: 2021-10-01T12:13:14.999Z
+                    internalIdentifier: 2366841886-80251
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieautoryzowany dostęp
+      security:
+      - SessionToken: []
+      summary: Wygenerowanie identyfikatora wewnetrznego
       tags:
       - Interfejsy interaktywne - sesja
   /online/Session/InitSigned:
@@ -1063,6 +1185,13 @@ paths:
   /online/Session/Status:
     get:
       description: Sprawdzenie statusu obecnego przetwarzania interaktywnego
+      externalDocs:
+        description: |-
+          Obsługiwany nagłówek 'ksef-number-variant'
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
       operationId: online.session.session.status.plain
       parameters:
       - in: query
@@ -1154,6 +1283,13 @@ paths:
   /online/Session/Status/{ReferenceNumber}:
     get:
       description: Sprawdzenie statusu przetwarzania na podstawie numeru referencyjnego
+      externalDocs:
+        description: |-
+          Obsługiwany nagłówek 'ksef-number-variant'
+          Obsługiwane wartości:
+          'v35'
+          'v36'
+          Brak nagłówka daje domyślną 35 znakową długość zwracanego numeru KSeF dla faktur/faktury w usłudze.
       operationId: online.session.session.status.reference.number
       parameters:
       - in: path
@@ -1335,21 +1471,40 @@ components:
       required:
       - challenge
       - timestamp
-    CredentialsBaseTypeObject:
+    CredentialsBaseTypeObjectObject:
       type: object
       discriminator:
         mapping:
+          list_context: '#/components/schemas/CredentialsContextType'
           list_plain: '#/components/schemas/CredentialsPlainType'
           list_token: '#/components/schemas/CredentialsTokenType'
           single_parent: '#/components/schemas/CredentialsParentType'
         propertyName: type
       properties:
+        credentialsRoleList:
+          type: array
+          items:
+            type: object
+          uniqueItems: true
         identifier:
           type: object
         type:
           type: string
       required:
       - type
+    CredentialsContextType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsBaseTypeObjectObject'
+      - type: object
+        properties:
+          credentialsRoleList:
+            type: array
+            items:
+              $ref: '#/components/schemas/CredentialsRoleResponseStandardContextDetailsType'
+            uniqueItems: true
+          identifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
     CredentialsIdentifierRequestIndividualCertificateFingerprintType:
       type: object
       allOf:
@@ -1413,6 +1568,7 @@ components:
       type: object
       discriminator:
         mapping:
+          int: '#/components/schemas/CredentialsIdentifierRequestInternalType'
           onip: '#/components/schemas/CredentialsIdentifierRequestInstitutionalNipType'
         propertyName: type
       properties:
@@ -1422,6 +1578,17 @@ components:
           type: string
       required:
       - type
+    CredentialsIdentifierRequestInternalType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierRequestInstitutionalType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}-\\d{5}"
+      required:
+      - identifier
     CredentialsIdentifierRequestType:
       type: object
       discriminator:
@@ -1490,6 +1657,17 @@ components:
           pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
       required:
       - identifier
+    CredentialsIdentifierResponseInternalIdentifierType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}-\\d{5}"
+      required:
+      - identifier
     CredentialsIdentifierResponseSystemType:
       type: object
       allOf:
@@ -1507,6 +1685,7 @@ components:
       discriminator:
         mapping:
           fingerprint: '#/components/schemas/CredentialsIdentifierResponseIndividualCertificateFingerprintType'
+          int: '#/components/schemas/CredentialsIdentifierResponseInternalIdentifierType'
           nip: '#/components/schemas/CredentialsIdentifierResponseIndividualNipType'
           onip: '#/components/schemas/CredentialsIdentifierResponseInstitutionalNipType'
           pesel: '#/components/schemas/CredentialsIdentifierResponseIndividualPeselType'
@@ -1523,11 +1702,16 @@ components:
     CredentialsParentType:
       type: object
       allOf:
-      - $ref: '#/components/schemas/CredentialsBaseTypeObject'
+      - $ref: '#/components/schemas/CredentialsBaseTypeObjectObject'
       - type: object
         properties:
           credentialsRole:
             $ref: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
+          credentialsRoleList:
+            type: array
+            items:
+              $ref: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
+            uniqueItems: true
           identifier:
             $ref: '#/components/schemas/CredentialsIdentifierResponseType'
     CredentialsPlainType:
@@ -1547,6 +1731,10 @@ components:
           type: string
           enum:
           - credentials_manage
+          - invoice_read
+          - invoice_write
+          - credentials_read
+          - introspection
       required:
       - roleType
     CredentialsRoleRequestContextDescribedType:
@@ -1560,6 +1748,10 @@ components:
           type: string
           enum:
           - credentials_manage
+          - invoice_read
+          - invoice_write
+          - credentials_read
+          - introspection
       required:
       - roleDescription
       - roleType
@@ -1627,6 +1819,7 @@ components:
       type: object
       discriminator:
         mapping:
+          context: '#/components/schemas/CredentialsRoleResponseStandardContextDetailsType'
           granted: '#/components/schemas/CredentialsRoleResponseGrantedForInstitutionType'
           standard_details: '#/components/schemas/CredentialsRoleResponseStandardDetailsType'
           standard_plain: '#/components/schemas/CredentialsRoleResponseStandardPlainType'
@@ -1667,6 +1860,45 @@ components:
             - local_government_sub_unit
             - vat_group_unit
             - vat_group_sub_unit
+      required:
+      - startTimestamp
+    CredentialsRoleResponseStandardContextDetailsType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/CredentialsRoleResponseBaseTypeObject'
+      - type: object
+        properties:
+          contextIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+          credentialsAssignmentType:
+            type: string
+            enum:
+            - system
+            - user
+          roleType:
+            type: string
+            enum:
+            - owner
+            - introspection
+            - invoice_read
+            - invoice_write
+            - payment_confirmation_write
+            - credentials_read
+            - credentials_manage
+            - self_invoicing
+            - tax_representative
+            - enforcement_operations
+            - court_bailiff
+            - enforcement_authority
+            - subunit_manage
+            - local_government_unit
+            - local_government_sub_unit
+            - vat_group_unit
+            - vat_group_sub_unit
+          sourceIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
+          targetIdentifier:
+            $ref: '#/components/schemas/CredentialsIdentifierResponseType'
       required:
       - startTimestamp
     CredentialsRoleResponseStandardDetailsType:
@@ -1752,7 +1984,7 @@ components:
     CredentialsTokenType:
       type: object
       allOf:
-      - $ref: '#/components/schemas/CredentialsBaseTypeObject'
+      - $ref: '#/components/schemas/CredentialsBaseTypeObjectObject'
       - type: object
         properties:
           credentialsRoleList:
@@ -1884,7 +2116,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CredentialsRoleRequestTokenType'
-          maxItems: 7
+          maxItems: 6
           minItems: 1
           uniqueItems: true
         description:
@@ -2033,6 +2265,18 @@ components:
       required:
       - context
       - token
+    InternalIdentifierGeneratedResponse:
+      type: object
+      properties:
+        internalIdentifier:
+          type: string
+          pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}-\\d{5}"
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - internalIdentifier
+      - timestamp
     InvoiceDivisionPlainPartType:
       type: object
       properties:
@@ -2075,6 +2319,8 @@ components:
         currency:
           type: string
           pattern: "[A-Z]{3}"
+        faP17Annotation:
+          type: boolean
         gross:
           type: string
           pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
@@ -2084,15 +2330,27 @@ components:
           type: string
           maxLength: 256
           minLength: 1
+        invoiceType:
+          type: string
+          enum:
+          - VAT
+          - KOR
+          - ZAL
+          - ROZ
+          - UPR
+          - KOR_ZAL
+          - KOR_ROZ
         invoicingDate:
           type: string
           format: date
         ksefReferenceNumber:
           type: string
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
         net:
           type: string
           pattern: "(\\-)?\\d{1,10}(\\.\\d{2})?"
+        schemaVersion:
+          type: string
         subjectBy:
           $ref: '#/components/schemas/SubjectByType'
         subjectByK:
@@ -2123,9 +2381,11 @@ components:
       required:
       - acquisitionTimestamp
       - currency
+      - faP17Annotation
       - gross
       - invoiceHash
       - invoiceReferenceNumber
+      - invoiceType
       - invoicingDate
       - ksefReferenceNumber
       - net
@@ -2181,7 +2441,7 @@ components:
           minLength: 1
         ksefReferenceNumber:
           type: string
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{12})-([0-9A-F]{2})"
     QueryCriteriaCredentialsAllType:
       type: object
       allOf:
@@ -2241,10 +2501,222 @@ components:
       - $ref: '#/components/schemas/QueryCriteriaInvoiceType'
       - type: object
         properties:
+          amountFrom:
+            type: number
+          amountTo:
+            type: number
+          amountType:
+            type: number
+            exclusiveMaximum: false
+            exclusiveMinimum: false
+            maximum: 3
+            minimum: 0
+          currencyCodes:
+            type: array
+            items:
+              type: string
+              enum:
+              - AED
+              - AFN
+              - ALL
+              - AMD
+              - ANG
+              - AOA
+              - ARS
+              - AUD
+              - AWG
+              - AZN
+              - BAM
+              - BBD
+              - BDT
+              - BGN
+              - BHD
+              - BIF
+              - BMD
+              - BND
+              - BOB
+              - BOV
+              - BRL
+              - BSD
+              - BTN
+              - BWP
+              - BYN
+              - BZD
+              - CAD
+              - CDF
+              - CHE
+              - CHF
+              - CHW
+              - CLF
+              - CLP
+              - CNY
+              - COP
+              - COU
+              - CRC
+              - CUC
+              - CUP
+              - CVE
+              - CZK
+              - DJF
+              - DKK
+              - DOP
+              - DZD
+              - EGP
+              - ERN
+              - ETB
+              - EUR
+              - FJD
+              - FKP
+              - GBP
+              - GEL
+              - GGP
+              - GHS
+              - GIP
+              - GMD
+              - GNF
+              - GTQ
+              - GYD
+              - HKD
+              - HNL
+              - HRK
+              - HTG
+              - HUF
+              - IDR
+              - ILS
+              - IMP
+              - INR
+              - IQD
+              - IRR
+              - ISK
+              - JEP
+              - JMD
+              - JOD
+              - JPY
+              - KES
+              - KGS
+              - KHR
+              - KMF
+              - KPW
+              - KRW
+              - KWD
+              - KYD
+              - KZT
+              - LAK
+              - LBP
+              - LKR
+              - LRD
+              - LSL
+              - LYD
+              - MAD
+              - MDL
+              - MGA
+              - MKD
+              - MMK
+              - MNT
+              - MOP
+              - MRU
+              - MUR
+              - MVR
+              - MWK
+              - MXN
+              - MXV
+              - MYR
+              - MZN
+              - NAD
+              - NGN
+              - NIO
+              - NOK
+              - NPR
+              - NZD
+              - OMR
+              - PAB
+              - PEN
+              - PGK
+              - PHP
+              - PKR
+              - PLN
+              - PYG
+              - QAR
+              - RON
+              - RSD
+              - RUB
+              - RWF
+              - SAR
+              - SBD
+              - SCR
+              - SDG
+              - SEK
+              - SGD
+              - SHP
+              - SLL
+              - SOS
+              - SRD
+              - SSP
+              - STN
+              - SVC
+              - SYP
+              - SZL
+              - THB
+              - TJS
+              - TMT
+              - TND
+              - TOP
+              - TRY
+              - TTD
+              - TWD
+              - TZS
+              - UAH
+              - UGX
+              - USD
+              - USN
+              - UYI
+              - UYU
+              - UYW
+              - UZS
+              - VES
+              - VND
+              - VUV
+              - WST
+              - XAF
+              - XAG
+              - XAU
+              - XBA
+              - XBB
+              - XBC
+              - XBD
+              - XCD
+              - XDR
+              - XOF
+              - XPD
+              - XPF
+              - XPT
+              - XSU
+              - XUA
+              - XXX
+              - YER
+              - ZAR
+              - ZMW
+              - ZWL
+            uniqueItems: true
+          faP17Annotation:
+            type: boolean
           invoiceNumber:
             type: string
             maxLength: 256
             minLength: 1
+          invoiceTypes:
+            type: array
+            items:
+              type: string
+              enum:
+              - VAT
+              - KOR
+              - ZAL
+              - ROZ
+              - UPR
+              - KOR_ZAL
+              - KOR_ROZ
+            uniqueItems: true
           invoicingDateFrom:
             type: string
             format: date-time
@@ -2257,7 +2729,7 @@ components:
               \ cannot be greater than 24 months, date field cannot be before #invoicingDateFrom"
           ksefReferenceNumber:
             type: string
-            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
           subjectBy:
             $ref: '#/components/schemas/SubjectByType'
           subjectTo:
@@ -2357,14 +2829,6 @@ components:
     QueryInvoiceAsyncStatusResponse:
       type: object
       properties:
-        divisionType:
-          type: string
-          enum:
-          - hour
-          - day
-          - week
-          - month
-          - year
         elementReferenceNumber:
           type: string
           pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
@@ -2462,7 +2926,7 @@ components:
         credentialsList:
           type: array
           items:
-            $ref: '#/components/schemas/CredentialsBaseTypeObject'
+            $ref: '#/components/schemas/CredentialsBaseTypeObjectObject'
           maxItems: 1000
           minItems: 0
           uniqueItems: true
@@ -2635,7 +3099,7 @@ components:
           minLength: 1
         ksefReferenceNumber:
           type: string
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{12})-([0-9A-F]{2})"
         processingCode:
           type: integer
           format: int32
@@ -2652,10 +3116,20 @@ components:
     SessionStatusResponse:
       type: object
       properties:
+        creationTimestamp:
+          type: string
+          format: date-time
+        entityType:
+          type: string
+          maxLength: 256
+          minLength: 1
         invoiceStatusList:
           type: array
           items:
             $ref: '#/components/schemas/SessionInvoiceStatusType'
+        lastUpdateTimestamp:
+          type: string
+          format: date-time
         numberOfElements:
           type: integer
           format: int64
@@ -2686,6 +3160,9 @@ components:
           type: string
           format: date-time
       required:
+      - creationTimestamp
+      - entityType
+      - lastUpdateTimestamp
       - processingCode
       - processingDescription
       - referenceNumber
@@ -2800,6 +3277,7 @@ components:
       type: object
       discriminator:
         mapping:
+          int: '#/components/schemas/SubjectIdentifierInternalType'
           onip: '#/components/schemas/SubjectIdentifierByCompanyType'
         propertyName: type
       properties:
@@ -2807,6 +3285,82 @@ components:
           type: string
       required:
       - type
+    SubjectIdentifierInternalType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierByType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}-\\d{5}"
+      required:
+      - identifier
+    SubjectIdentifierOtherToCompanyType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierOtherToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    SubjectIdentifierOtherToInternalType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierOtherToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}-\\d{5}"
+      required:
+      - identifier
+    SubjectIdentifierOtherToNoneType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierOtherToType'
+    SubjectIdentifierOtherToNrIdType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierOtherToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            maxLength: 50
+            minLength: 1
+      required:
+      - identifier
+    SubjectIdentifierOtherToType:
+      type: object
+      discriminator:
+        mapping:
+          int: '#/components/schemas/SubjectIdentifierOtherToInternalType'
+          none: '#/components/schemas/SubjectIdentifierOtherToNoneType'
+          nrId: '#/components/schemas/SubjectIdentifierOtherToNrIdType'
+          onip: '#/components/schemas/SubjectIdentifierOtherToCompanyType'
+          vatUE: '#/components/schemas/SubjectIdentifierOtherToVatUeType'
+        propertyName: type
+      properties:
+        type:
+          type: string
+      required:
+      - type
+    SubjectIdentifierOtherToVatUeType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierOtherToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            maxLength: 50
+            minLength: 1
+      required:
+      - identifier
     SubjectIdentifierToCompanyType:
       type: object
       allOf:
@@ -2822,7 +3376,7 @@ components:
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectIdentifierToType'
-    SubjectIdentifierToOtherTaxType:
+    SubjectIdentifierToOtherType:
       type: object
       allOf:
       - $ref: '#/components/schemas/SubjectIdentifierToType'
@@ -2840,18 +3394,32 @@ components:
         mapping:
           none: '#/components/schemas/SubjectIdentifierToNoneType'
           onip: '#/components/schemas/SubjectIdentifierToCompanyType'
-          other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
+          other: '#/components/schemas/SubjectIdentifierToOtherType'
+          vatUE: '#/components/schemas/SubjectIdentifierToVatUeType'
         propertyName: type
       properties:
         type:
           type: string
       required:
       - type
+    SubjectIdentifierToVatUeType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectIdentifierToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            maxLength: 50
+            minLength: 1
+      required:
+      - identifier
     SubjectNameType:
       type: object
       discriminator:
         mapping:
           fn: '#/components/schemas/SubjectFullNameType'
+          none: '#/components/schemas/SubjectNoneType'
           pn: '#/components/schemas/SubjectPersonNameType'
         propertyName: type
       properties:
@@ -2863,11 +3431,15 @@ components:
           type: string
       required:
       - type
+    SubjectNoneType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectNameType'
     SubjectOtherType:
       type: object
       properties:
         issuedToIdentifier:
-          $ref: '#/components/schemas/SubjectIdentifierToType'
+          $ref: '#/components/schemas/SubjectIdentifierOtherToType'
         issuedToName:
           $ref: '#/components/schemas/SubjectNameType'
         subjectOtherType:
@@ -3065,10 +3637,222 @@ components:
       - $ref: '#/components/schemas/V2_QueryCriteriaInvoiceType'
       - type: object
         properties:
+          amountFrom:
+            type: number
+          amountTo:
+            type: number
+          amountType:
+            type: number
+            exclusiveMaximum: false
+            exclusiveMinimum: false
+            maximum: 3
+            minimum: 0
+          currencyCodes:
+            type: array
+            items:
+              type: string
+              enum:
+              - AED
+              - AFN
+              - ALL
+              - AMD
+              - ANG
+              - AOA
+              - ARS
+              - AUD
+              - AWG
+              - AZN
+              - BAM
+              - BBD
+              - BDT
+              - BGN
+              - BHD
+              - BIF
+              - BMD
+              - BND
+              - BOB
+              - BOV
+              - BRL
+              - BSD
+              - BTN
+              - BWP
+              - BYN
+              - BZD
+              - CAD
+              - CDF
+              - CHE
+              - CHF
+              - CHW
+              - CLF
+              - CLP
+              - CNY
+              - COP
+              - COU
+              - CRC
+              - CUC
+              - CUP
+              - CVE
+              - CZK
+              - DJF
+              - DKK
+              - DOP
+              - DZD
+              - EGP
+              - ERN
+              - ETB
+              - EUR
+              - FJD
+              - FKP
+              - GBP
+              - GEL
+              - GGP
+              - GHS
+              - GIP
+              - GMD
+              - GNF
+              - GTQ
+              - GYD
+              - HKD
+              - HNL
+              - HRK
+              - HTG
+              - HUF
+              - IDR
+              - ILS
+              - IMP
+              - INR
+              - IQD
+              - IRR
+              - ISK
+              - JEP
+              - JMD
+              - JOD
+              - JPY
+              - KES
+              - KGS
+              - KHR
+              - KMF
+              - KPW
+              - KRW
+              - KWD
+              - KYD
+              - KZT
+              - LAK
+              - LBP
+              - LKR
+              - LRD
+              - LSL
+              - LYD
+              - MAD
+              - MDL
+              - MGA
+              - MKD
+              - MMK
+              - MNT
+              - MOP
+              - MRU
+              - MUR
+              - MVR
+              - MWK
+              - MXN
+              - MXV
+              - MYR
+              - MZN
+              - NAD
+              - NGN
+              - NIO
+              - NOK
+              - NPR
+              - NZD
+              - OMR
+              - PAB
+              - PEN
+              - PGK
+              - PHP
+              - PKR
+              - PLN
+              - PYG
+              - QAR
+              - RON
+              - RSD
+              - RUB
+              - RWF
+              - SAR
+              - SBD
+              - SCR
+              - SDG
+              - SEK
+              - SGD
+              - SHP
+              - SLL
+              - SOS
+              - SRD
+              - SSP
+              - STN
+              - SVC
+              - SYP
+              - SZL
+              - THB
+              - TJS
+              - TMT
+              - TND
+              - TOP
+              - TRY
+              - TTD
+              - TWD
+              - TZS
+              - UAH
+              - UGX
+              - USD
+              - USN
+              - UYI
+              - UYU
+              - UYW
+              - UZS
+              - VES
+              - VND
+              - VUV
+              - WST
+              - XAF
+              - XAG
+              - XAU
+              - XBA
+              - XBB
+              - XBC
+              - XBD
+              - XCD
+              - XDR
+              - XOF
+              - XPD
+              - XPF
+              - XPT
+              - XSU
+              - XUA
+              - XXX
+              - YER
+              - ZAR
+              - ZMW
+              - ZWL
+            uniqueItems: true
+          faP17Annotation:
+            type: boolean
           invoiceNumber:
             type: string
             maxLength: 256
             minLength: 1
+          invoiceTypes:
+            type: array
+            items:
+              type: string
+              enum:
+              - VAT
+              - KOR
+              - ZAL
+              - ROZ
+              - UPR
+              - KOR_ZAL
+              - KOR_ROZ
+            uniqueItems: true
           invoicingDateFrom:
             type: string
             format: date-time
@@ -3081,7 +3865,7 @@ components:
               \ cannot be greater than 24 months, date field cannot be before #invoicingDateFrom"
           ksefReferenceNumber:
             type: string
-            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+            pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
           subjectBy:
             $ref: '#/components/schemas/V2_SubjectByQueryType'
           subjectTo:

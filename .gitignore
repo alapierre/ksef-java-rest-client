@@ -19,3 +19,4 @@ buildNumber.properties
 *.iml
 out
 gen
+/http-client.private.env.json

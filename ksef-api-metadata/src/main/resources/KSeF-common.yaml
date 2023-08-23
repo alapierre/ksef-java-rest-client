@@ -75,6 +75,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StatusResponse'
+            application/vnd.v3+json:
+              schema:
+                $ref: '#/components/schemas/V3_StatusResponse'
           description: OK
         "400":
           content:
@@ -85,8 +88,95 @@ paths:
       summary: Interfejs wspólny pobrania statusu przetwarzania wsadowego
       tags:
       - Interfejsy wspólne - status
+  /common/Upo/{ReferenceNumber}/{UpoReferenceNumber}:
+    get:
+      description: Pobieranie UPO
+      operationId: common.upo
+      parameters:
+      - in: path
+        name: ReferenceNumber
+        required: true
+        schema:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      - in: path
+        name: UpoReferenceNumber
+        required: true
+        schema:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+      responses:
+        "200":
+          content:
+            application/vnd.v3+octet-stream:
+              schema:
+                type: object
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+          description: Nieprawidłowe wywołanie
+        "404":
+          content:
+            application/json: {}
+          description: Nie znaleziono wyszukiwanej treści
+      summary: Interfejs wspólny pobrania UPO
+      tags:
+      - Interfejsy wspólne - UPO
 components:
   schemas:
+    AnonymousSubjectIdentifierToCompanyType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AnonymousSubjectIdentifierToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
+      required:
+      - identifier
+    AnonymousSubjectIdentifierToNoneType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AnonymousSubjectIdentifierToType'
+    AnonymousSubjectIdentifierToOtherTaxType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/AnonymousSubjectIdentifierToType'
+      - type: object
+        properties:
+          identifier:
+            type: string
+            maxLength: 50
+            minLength: 1
+      required:
+      - identifier
+    AnonymousSubjectIdentifierToType:
+      type: object
+      discriminator:
+        mapping:
+          none: '#/components/schemas/AnonymousSubjectIdentifierToNoneType'
+          onip: '#/components/schemas/AnonymousSubjectIdentifierToCompanyType'
+          other: '#/components/schemas/AnonymousSubjectIdentifierToOtherTaxType'
+        propertyName: type
+      properties:
+        type:
+          type: string
+      required:
+      - type
+    AnonymousSubjectToType:
+      type: object
+      properties:
+        issuedToIdentifier:
+          $ref: '#/components/schemas/AnonymousSubjectIdentifierToType'
+        issuedToName:
+          $ref: '#/components/schemas/SubjectNameType'
+      required:
+      - issuedToIdentifier
+      - issuedToName
     ExceptionDetailType:
       type: object
       properties:
@@ -152,7 +242,7 @@ components:
           maxLength: 256
           minLength: 1
         subjectTo:
-          $ref: '#/components/schemas/SubjectToType'
+          $ref: '#/components/schemas/AnonymousSubjectToType'
       required:
       - dueValue
       - invoiceOryginalNumber
@@ -164,7 +254,7 @@ components:
           $ref: '#/components/schemas/InvoiceQueryDetailsType'
         ksefReferenceNumber:
           type: string
-          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"
+          pattern: "([1-9]((\\d[1-9])|([1-9]\\d))\\d{7}|M\\d{9}|[A-Z]{3}\\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-?([0-9A-F]{6})-([0-9A-F]{2})"
       required:
       - invoiceDetails
       - ksefReferenceNumber
@@ -206,51 +296,12 @@ components:
             minLength: 1
       required:
       - fullName
-    SubjectIdentifierToCompanyType:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierToType'
-      - type: object
-        properties:
-          identifier:
-            type: string
-            pattern: "[1-9]((\\d[1-9])|([1-9]\\d))\\d{7}"
-      required:
-      - identifier
-    SubjectIdentifierToNoneType:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierToType'
-    SubjectIdentifierToOtherTaxType:
-      type: object
-      allOf:
-      - $ref: '#/components/schemas/SubjectIdentifierToType'
-      - type: object
-        properties:
-          identifier:
-            type: string
-            maxLength: 50
-            minLength: 1
-      required:
-      - identifier
-    SubjectIdentifierToType:
-      type: object
-      discriminator:
-        mapping:
-          none: '#/components/schemas/SubjectIdentifierToNoneType'
-          onip: '#/components/schemas/SubjectIdentifierToCompanyType'
-          other: '#/components/schemas/SubjectIdentifierToOtherTaxType'
-        propertyName: type
-      properties:
-        type:
-          type: string
-      required:
-      - type
     SubjectNameType:
       type: object
       discriminator:
         mapping:
           fn: '#/components/schemas/SubjectFullNameType'
+          none: '#/components/schemas/SubjectNoneType'
           pn: '#/components/schemas/SubjectPersonNameType'
         propertyName: type
       properties:
@@ -262,6 +313,10 @@ components:
           type: string
       required:
       - type
+    SubjectNoneType:
+      type: object
+      allOf:
+      - $ref: '#/components/schemas/SubjectNameType'
     SubjectPersonNameType:
       type: object
       allOf:
@@ -279,12 +334,35 @@ components:
       required:
       - firstName
       - surname
-    SubjectToType:
+    V3_StatusResponse:
       type: object
       properties:
-        issuedToIdentifier:
-          $ref: '#/components/schemas/SubjectIdentifierToType'
-        issuedToName:
-          $ref: '#/components/schemas/SubjectNameType'
+        processingCode:
+          type: integer
+          format: int32
+          maximum: 999
+          minimum: 100
+        processingDescription:
+          type: string
+          maxLength: 256
+          minLength: 1
+        referenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        timestamp:
+          type: string
+          format: date-time
+        upoReferenceNumber:
+          type: string
+          pattern: "(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"
+        upoUrl:
+          type: string
+          maxLength: 512
+          minLength: 1
+          pattern: "http[s]?:\\/{2}([0-9a-z][0-9a-z_-]*\\.)+[0-9a-z][0-9a-z_-]*(([0-9a-zA-Z][0-9a-zA-Z_-]*\\\
+            .?)*\\/?)*"
       required:
-      - issuedToIdentifier
+      - processingCode
+      - processingDescription
+      - referenceNumber
+      - timestamp
