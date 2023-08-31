@@ -5,8 +5,8 @@
 # KSeF java REST client
 
 KSeF
-- API version: 1.1.0
-  - Build date: 2022-12-05
+- API version: 2.0.0
+  - Build date: 2023-08-31
 
 Krajowy Systemu e-Faktur
 
@@ -16,7 +16,6 @@ Celem projektu jest stworzenie elastycznego klienta API KSeF na platformę Java,
 popularnych bibliotek wywołań http i serializacji JSON.  Obecnie zaimplementowany jest klient OkHttp `OkHttpApiClient` oraz JDK11+ `HttpClient` a także serializer Gson `GsonJsonSerializer` i Jackson.
 
 Stabilne wersje są dostępne w Maven Central (nie ma potrzeby samodzielnego budowania ze źródeł): [![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-java)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-java)
-
 
 Pomoc w rozwoju projektu jest bardzo mile widziana. 
 
@@ -180,48 +179,14 @@ Biblioteka ułatwiająca wykonanie podpisu elektronicznego XADES na karcie krypt
 <dependency>
   <groupId>io.alapierre.crypto</groupId>
   <artifactId>digital-signature</artifactId>
-  <version>1.0</version>
+  <version>RELEASE</version>
 </dependency>
 ````
 
 ## Build Requirements
 
-Project can be build on JDK11+ and stating from version 2.0.13, we will stop supporting JDK8 at all. Last JDK8 compatible version is 2.0.12.
+The project can be built on JDK11+, and stating from version 2.0.13, we will stop supporting JDK8 at all. The last JDK8 compatible version was 2.0.12.
 
 Building the API client library requires:
 1. Java 11+
 2. Maven
-
-## Configuring maven to build multi JDK projects
-
-Normally you do not need it to build whole project with JDK 11.
-
-put toolchain.xml file in your `${user.home}/.m2`:
-
-````xml
-<?xml version="1.0" encoding="UTF-8"?>
-<toolchains>
-    <!-- JDK toolchains -->
-    <toolchain>
-        <type>jdk</type>
-        <provides>
-            <version>1.8</version>
-            <vendor>openjdk</vendor>
-        </provides>
-        <configuration>
-            <jdkHome>path to jdk 1.8</jdkHome>
-        </configuration>
-    </toolchain>
-    <toolchain>
-        <type>jdk</type>
-        <provides>
-            <version>11</version>
-            <vendor>openjdk</vendor>
-        </provides>
-        <configuration>
-            <jdkHome>path to jdk 11</jdkHome>
-        </configuration>
-    </toolchain>
-</toolchains>
-
-````

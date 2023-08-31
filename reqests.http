@@ -5,6 +5,7 @@ Content-Type: application/json
 
 {
   "ksefReferenceNumberList": [
-    "{{ksef_nr1}}"
+    "{{ksef_nr1}}",
+    "{{ksef_nr2}}"
   ]
 }

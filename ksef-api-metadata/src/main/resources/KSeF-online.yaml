@@ -6,7 +6,7 @@ info:
     url: https://ksef.mf.gov.pl
   description: Krajowy System e-Faktur
   title: KSeF
-  version: 1.1.3
+  version: 2.0.0
 externalDocs:
   description: Dokumentacja
   url: https://www.gov.pl/web/kas/krajowy-system-e-faktur
@@ -1731,10 +1731,6 @@ components:
           type: string
           enum:
           - credentials_manage
-          - invoice_read
-          - invoice_write
-          - credentials_read
-          - introspection
       required:
       - roleType
     CredentialsRoleRequestContextDescribedType:
@@ -1748,10 +1744,6 @@ components:
           type: string
           enum:
           - credentials_manage
-          - invoice_read
-          - invoice_write
-          - credentials_read
-          - introspection
       required:
       - roleDescription
       - roleType

@@ -1,7 +1,6 @@
 package io.alapierre.ksef.xml.model;
 
 import lombok.val;
-import lombok.var;
 import org.jetbrains.annotations.NotNull;
 import pl.gov.mf.ksef.schema.gtw.svc.online.auth.request._2021._10._01._0001.InitSessionSignedRequest;
 import pl.gov.mf.ksef.schema.gtw.svc.online.auth.request._2021._10._01._0001.InitSessionTokenRequest;
