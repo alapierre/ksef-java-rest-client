@@ -48,25 +48,26 @@ public class Main {
     public static void main(String[] args)  {
 
         try {
-            val signedResponse = loginByToken();
+            //val signedResponse = loginByToken();
 
-            System.out.println("session token = " + signedResponse.getSessionToken().getToken());
+            //System.out.println("session token = " + signedResponse.getSessionToken().getToken());
 
             val invoiceApi = new InterfejsyInteraktywneFakturaApi(client);
-            val sessionToken = signedResponse.getSessionToken().getToken();
-            val resp = invoiceApi.invoiceSend(new File("ksef-sample/src/main/resources/FA1.xml"), sessionToken);
+            //val sessionToken = signedResponse.getSessionToken().getToken();
+            val sessionToken = "9f0e06023b7d606e0694418a8f25501c5c76c1179ab90dbcf634b060ecf3f5db";
+            val resp = invoiceApi.invoiceSend(new File("ksef-sample/src/main/resources/FA2.xml"), sessionToken);
 
             System.out.printf("ElementReferenceNumber %s, ReferenceNumber %s, ProcessingCode %d\n",
                     resp.getElementReferenceNumber(),
                     resp.getReferenceNumber(),
                     resp.getProcessingCode());
 
-            loadIncomingInvoices(sessionToken);
+            //loadIncomingInvoices(sessionToken);
 
             //sesjaApi.terminateSession(sessionToken);
         } catch (ApiException ex) {
             System.out.printf("Błąd wywołania API %d (%s) opis błędu %s", ex.getCode(), ex.getMessage(),  ex.getResponseBody());
-        } catch (IOException | ParseException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }

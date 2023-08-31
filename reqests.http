@@ -5,7 +5,11 @@ Content-Type: application/json
 
 {
   "ksefReferenceNumberList": [
-    "{{ksef_nr1}}",
     "{{ksef_nr2}}"
   ]
 }
+
+###
+GET https://{{host}}.mf.gov.pl/api/online/Session/Status
+Accept: application/json
+SessionToken: {{token}}

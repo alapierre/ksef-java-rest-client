@@ -68,9 +68,9 @@ public class AuthRequestUtil {
         documentTypeType.setService(ServiceType.K_SE_F);
 
         val form = new FormCodeType();
-        form.setSystemCode("FA (1)");
+        form.setSystemCode("FA (2)");
         form.setSchemaVersion("1-0E");
-        form.setTargetNamespace("http://crd.gov.pl/wzor/2021/11/29/11089/");
+        form.setTargetNamespace("http://crd.gov.pl/wzor/2023/06/29/12648/");
         form.setValue("FA");
 
         documentTypeType.setFormCode(form);
