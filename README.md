@@ -6,7 +6,8 @@
 
 KSeF
 - API version: 2.0.0
-  - Build date: 2023-08-31
+- Build date: 2023-08-31
+- wspierana wersja schemy XML: FA (2)
 
 Krajowy Systemu e-Faktur
 
@@ -28,25 +29,25 @@ Pomoc w rozwoju projektu jest bardzo mile widziana.
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-client-okhttp</artifactId>
-        <version>2.0.15</version>
+        <version>2.0.18</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-json-serializer-gson</artifactId>
-        <version>2.0.15</version>
+        <version>2.0.18</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-token-facade</artifactId>
-        <version>2.0.15</version>
+        <version>2.0.18</version>
     </dependency>
 
     <dependency>
         <groupId>io.alapierre.ksef</groupId>
         <artifactId>ksef-dss-facade</artifactId>
-        <version>2.0.15</version>
+        <version>2.0.18</version>
         <scope>compile</scope>
     </dependency>
     
