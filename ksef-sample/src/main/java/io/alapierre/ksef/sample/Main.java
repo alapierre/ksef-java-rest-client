@@ -1,6 +1,5 @@
 package io.alapierre.ksef.sample;
 
-import io.alapierre.commons.date.DateUtils;
 import io.alapierre.crypto.dss.signer.P12Signer;
 import io.alapierre.ksef.api.dss.facade.KsefDssFacade;
 import io.alapierre.ksef.client.ApiClient;
@@ -22,8 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
 import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static io.alapierre.ksef.client.AbstractApiClient.Environment;
 import static io.alapierre.ksef.client.model.rest.auth.AuthorisationChallengeRequest.IdentifierType;
@@ -94,8 +91,9 @@ public class Main {
         val request = InvoiceQueryRequest.builder()
                 .queryCriteria(InvoiceQueryRequest.QueryCriteria.builder()
                         .subjectType("subject2")
-                        .acquisitionTimestampThresholdFrom(zapytaniaApi.convertDate(DateUtils.firstDayOfMonth(LocalDate.now())))
-                        .acquisitionTimestampThresholdTo(zapytaniaApi.convertDate(LocalDateTime.now()))
+                        .type("incremental")
+                        .acquisitionTimestampThresholdFrom("2023-08-01T00:00:00")
+                        .acquisitionTimestampThresholdTo("2023-09-01T00:00:00")
                         .build())
                 .build();
 

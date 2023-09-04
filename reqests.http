@@ -13,3 +13,34 @@ Content-Type: application/json
 GET https://{{host}}.mf.gov.pl/api/online/Session/Status
 Accept: application/json
 SessionToken: {{token}}
+
+### Zapytanie o faktury
+POST https://{{host}}.mf.gov.pl/api/online/Query/Invoice/Sync?PageSize=10&PageOffset=0
+Content-Type: application/json
+Accept: application/json
+SessionToken: {{token}}
+
+{
+  "queryCriteria": {
+    "subjectType": "subject2",
+    "type": "incremental",
+    "acquisitionTimestampThresholdFrom": "2023-08-01T00:00:00+00:00",
+    "acquisitionTimestampThresholdTo": "2023-08-31T23:59:59+00:00"
+  }
+}
+
+### Zapytanie o faktury drugi wariant daty
+POST https://{{host}}.mf.gov.pl/api/online/Query/Invoice/Sync?PageSize=10&PageOffset=0
+Content-Type: application/json
+SessionToken: {{token}}
+
+{
+  "queryCriteria": {
+    "subjectType": "subject2",
+    "type": "incremental",
+    "acquisitionTimestampThresholdFrom": "2023-08-01T00:00:00",
+    "acquisitionTimestampThresholdTo": "2023-09-01T00:00:00"
+  }
+}
+
+

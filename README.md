@@ -162,6 +162,7 @@ public class Main {
         val request = InvoiceQueryRequest.builder()
                 .queryCriteria(InvoiceQueryRequest.QueryCriteria.builder()
                         .subjectType("subject2")
+                        .type("incremental")
                         .acquisitionTimestampThresholdFrom(zapytaniaApi.convertDate(DateUtils.firstDayOfMonth(LocalDate.now())))
                         .acquisitionTimestampThresholdTo(zapytaniaApi.convertDate(LocalDateTime.now()))
                         .build())
