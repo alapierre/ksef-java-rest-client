@@ -76,7 +76,7 @@
         <jackson-databind.version>2.14.2</jackson-databind.version>
         <sonar.organization>alapierre</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <common-utils.version>1.11</common-utils.version>
+        <common-utils.version>1.12</common-utils.version>
         <crypto-utils.version>1.13</crypto-utils.version>
         <mockserver.version>5.14.0</mockserver.version>
         <jaxb-runtime.version>4.0.2</jaxb-runtime.version>
@@ -253,7 +253,7 @@
             <dependency>
                 <groupId>io.alapierre.commons</groupId>
                 <artifactId>xml-utils</artifactId>
-                <version>1.12-SNAPSHOT</version>
+                <version>${common-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.alapierre.crypto</groupId>
@@ -263,7 +263,7 @@
             <dependency>
                 <groupId>io.alapierre.commons</groupId>
                 <artifactId>date-utils</artifactId>
-                <version>1.11</version>
+                <version>${common-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>

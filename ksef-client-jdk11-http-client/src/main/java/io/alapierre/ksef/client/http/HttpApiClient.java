@@ -4,11 +4,11 @@ import io.alapierre.io.IOUtils;
 import io.alapierre.ksef.client.AbstractApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
+import jakarta.xml.bind.JAXBException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
