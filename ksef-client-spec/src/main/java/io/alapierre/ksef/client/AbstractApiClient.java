@@ -3,15 +3,15 @@ package io.alapierre.ksef.client;
 import io.alapierre.ksef.client.exception.BadRequestException;
 import io.alapierre.ksef.client.exception.ExceptionResponse;
 import io.alapierre.ksef.client.exception.TooManyRequestsException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.List;

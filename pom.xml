@@ -45,7 +45,7 @@
 
     <modules>
         <module>ksef-api-metadata</module>
-        <module>ksef-xml-model</module>
+        <module>ksef-xml-model-javax</module>
         <module>ksef-client-spec</module>
         <module>ksef-client-okhttp</module>
         <module>ksef-api</module>
@@ -56,6 +56,7 @@
         <module>ksef-dss-facade</module>
         <module>ksef-test-common</module>
         <module>ksef-sample</module>
+        <module>ksef-xml-model</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -78,6 +79,7 @@
         <common-utils.version>1.11</common-utils.version>
         <crypto-utils.version>1.13</crypto-utils.version>
         <mockserver.version>5.14.0</mockserver.version>
+        <jaxb-runtime.version>4.0.2</jaxb-runtime.version>
     </properties>
 
     <build>
@@ -251,7 +253,7 @@
             <dependency>
                 <groupId>io.alapierre.commons</groupId>
                 <artifactId>xml-utils</artifactId>
-                <version>1.11</version>
+                <version>1.12-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>io.alapierre.crypto</groupId>
@@ -259,14 +261,14 @@
                 <version>1.13</version>
             </dependency>
             <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-            <dependency>
                 <groupId>io.alapierre.commons</groupId>
                 <artifactId>date-utils</artifactId>
                 <version>1.11</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>4.0.0</version>
             </dependency>
 
         </dependencies>

@@ -64,18 +64,25 @@
         </dependency>
 
         <!-- potrzebne, tylko jeśli logujemy się podpisem -->
-        <dependency>
-            <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-dss-facade</artifactId>
-            <version>${ksef.client.version}</version>
-            <scope>compile</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.alapierre.ksef</groupId>-->
+<!--            <artifactId>ksef-dss-facade</artifactId>-->
+<!--            <version>${ksef.client.version}</version>-->
+<!--            <scope>compile</scope>-->
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>jaxb-runtime</artifactId>-->
+<!--                    <groupId>org.glassfish.jaxb</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

@@ -1,0 +1,16 @@
+<v1:Potwierdzenie wersjaSchemy="string" xmlns:v1="http://upo.schematy.mf.gov.pl/KSeF/v1">
+  <v1:NazwaPodmiotuPrzyjmujacego>Ministerstwo Finansów</v1:NazwaPodmiotuPrzyjmujacego>
+  <v1:NumerReferencyjny>20220111-SE-ED509F60C1-B506A73EC5-5E</v1:NumerReferencyjny>
+  <v1:IdentyfikatorPodatkowyPodmiotu>9999999999</v1:IdentyfikatorPodatkowyPodmiotu>
+  <v1:SkrotZlozonejStruktury>tokentokentokentokentokentokentokentokentoke</v1:SkrotZlozonejStruktury>
+  <v1:NazwaStrukturyLogicznej>token</v1:NazwaStrukturyLogicznej>
+  <v1:KodFormularza>token</v1:KodFormularza>
+  <!--1 or more repetitions:-->
+  <v1:Dokument>
+    <v1:NumerKSeFDokumentu>6891152920-20211229-3BC3D0-EB7586-21</v1:NumerKSeFDokumentu>
+    <v1:NumerFaktury>token</v1:NumerFaktury>
+    <v1:DataPrzeslaniaDokumentu>2022-01-15T06:49:45Z</v1:DataPrzeslaniaDokumentu>
+    <v1:DataPrzyjeciaDokumentu>2022-01-15T21:44:14Z</v1:DataPrzyjeciaDokumentu>
+    <v1:SkrotDokumentu>tokentokentokentokentokentokentokentokentoke</v1:SkrotDokumentu>
+  </v1:Dokument>
+</v1:Potwierdzenie>

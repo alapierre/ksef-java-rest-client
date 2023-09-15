@@ -55,7 +55,7 @@
 
         <dependency>
             <groupId>io.alapierre.ksef</groupId>
-            <artifactId>ksef-xml-model</artifactId>
+            <artifactId>ksef-xml-model-javax</artifactId>
             <version>${project.version}</version>
         </dependency>
 

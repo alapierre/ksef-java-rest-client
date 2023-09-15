@@ -1,7 +1,5 @@
 package io.alapierre.ksef.sample;
 
-import io.alapierre.crypto.dss.signer.P12Signer;
-import io.alapierre.ksef.api.dss.facade.KsefDssFacade;
 import io.alapierre.ksef.client.ApiClient;
 import io.alapierre.ksef.client.ApiException;
 import io.alapierre.ksef.client.JsonSerializer;
@@ -18,7 +16,6 @@ import io.alapierre.ksef.token.facade.KsefTokenFacade;
 import lombok.val;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.KeyStore;
 import java.text.ParseException;
 
@@ -69,12 +66,12 @@ public class Main {
         }
     }
 
-    public static InitSignedResponse loginBySignature() throws IOException, ApiException {
-
-        val signer = new P12Signer(pas, tokenFile);
-        KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
-        return facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
-    }
+//    public static InitSignedResponse loginBySignature() throws IOException, ApiException {
+//
+//        val signer = new P12Signer(pas, tokenFile);
+//        KsefDssFacade facade = new KsefDssFacade(signer, sesjaApi);
+//        return facade.authByDigitalSignature(NIP_FIRMY, IdentifierType.onip);
+//    }
 
     @SuppressWarnings("DuplicatedCode")
     public static InitSignedResponse loginByToken() throws ApiException, ParseException {
