@@ -66,7 +66,7 @@
         <maven.compiler.release>11</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <annotations.version>24.0.1</annotations.version>
-        <lombok.version>1.18.26</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <slf4j-api.version>2.0.7</slf4j-api.version>
         <logback-classic.version>1.4.6</logback-classic.version>
         <okhttp.version>4.11.0</okhttp.version>
