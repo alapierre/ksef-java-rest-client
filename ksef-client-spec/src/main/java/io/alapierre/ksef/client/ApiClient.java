@@ -32,4 +32,5 @@ public interface ApiClient {
     <R> Optional<R> postXML(@NotNull String endpoint, @NotNull Object body, @NotNull Class<R> classOfR) throws ApiException;
 
     void getStream(@NotNull String endpoint, @NotNull String token, @NotNull OutputStream os) throws ApiException;
+    void postStream(@NotNull String endpoint, @NotNull Object body, @NotNull OutputStream os) throws ApiException;
 }

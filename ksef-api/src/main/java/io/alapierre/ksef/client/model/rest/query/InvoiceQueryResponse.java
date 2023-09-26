@@ -1,5 +1,6 @@
 package io.alapierre.ksef.client.model.rest.query;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
@@ -36,6 +37,7 @@ public class InvoiceQueryResponse {
     }
 
     @Data
+    @AllArgsConstructor
     public static class SubjectTo{
         private IssuedToIdentifier issuedToIdentifier;
         private IssuedToName issuedToName;
@@ -43,6 +45,7 @@ public class InvoiceQueryResponse {
 
 
     @Data
+    @AllArgsConstructor
     public static class IssuedToName{
         private String type;
         private String tradeName;
@@ -50,6 +53,7 @@ public class InvoiceQueryResponse {
     }
 
     @Data
+    @AllArgsConstructor
     public static class IssuedToIdentifier{
         private String type;
         private String identifier;

@@ -11,7 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -123,7 +126,7 @@ public class OkHttpApiClient extends AbstractApiClient {
                 throw createException(response);
             }
 
-            if(response.body() != null) {
+            if (response.body() != null) {
                 try (val is = response.body().byteStream()) {
                     IOUtils.copy(is, os);
                 }
@@ -133,7 +136,28 @@ public class OkHttpApiClient extends AbstractApiClient {
         }
     }
 
-    protected <B, R> Optional<R> doPostJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, Map<String, String> headers)  throws ApiException {
+    @Override
+    public void postStream(@NotNull String endpoint, @NotNull Object body, @NotNull OutputStream os) throws ApiException {
+        RequestBody requestBody = RequestBody.create(serializer.toJson(body), JSON);
+        Request request = createRequest(endpoint, requestBody, Collections.emptyMap(), true);
+
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw createException(response);
+            }
+
+            if (response.body() != null) {
+                try (val is = response.body().byteStream()) {
+                    IOUtils.copy(is, os);
+                }
+            }
+        } catch (IOException ex) {
+            throw new ApiException(ex);
+        }
+    }
+
+
+    protected <B, R> Optional<R> doPostJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, Map<String, String> headers) throws ApiException {
 
         RequestBody requestBody = RequestBody.create(serializer.toJson(body), JSON);
         Request request = createRequest(endpoint, requestBody, headers, true);
