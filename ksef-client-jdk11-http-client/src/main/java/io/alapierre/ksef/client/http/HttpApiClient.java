@@ -106,6 +106,25 @@ public class HttpApiClient extends AbstractApiClient {
         throw new IllegalStateException("Not implemented yet");
     }
 
+    @Override
+    public void postStream(@NotNull String endpoint, @NotNull Object body, @NotNull OutputStream os) throws ApiException {
+        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), true);
+
+        try {
+            HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
+            if (response.body() != null) {
+                try (InputStream is = response.body()) {
+                    IOUtils.copy(is, os);
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new ApiException(e);
+        }
+
+        throw new IllegalStateException("Not implemented yet");
+    }
+
+
     private HttpRequest prepareGetRequest(@NotNull String endpoint, @NotNull Map<String, String> headers) throws ApiException {
         List<String> headersList = prepareHeaders(headers);
         URI uri = prepareURI(endpoint);
