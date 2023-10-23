@@ -26,7 +26,7 @@ public class OkHttpApiClient extends AbstractApiClient {
 
     public static final String API_EXCEPTION = "Błąd wywołania API";
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client;
 
     private final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final MediaType XML = MediaType.get("application/xml; charset=utf-8");
@@ -34,14 +34,22 @@ public class OkHttpApiClient extends AbstractApiClient {
 
     public OkHttpApiClient(JsonSerializer serializer) {
         super(serializer, Environment.TEST);
+        client = new OkHttpClient();
     }
 
     public OkHttpApiClient(JsonSerializer serializer, String url) {
         super(serializer, url);
+        client = new OkHttpClient();
     }
 
     public OkHttpApiClient(JsonSerializer serializer, Environment environment) {
         super(serializer, environment);
+        client = new OkHttpClient();
+    }
+
+    public OkHttpApiClient(JsonSerializer serializer, Environment environment, OkHttpClient client) {
+        super(serializer, environment);
+        this.client = client;
     }
 
     @Override

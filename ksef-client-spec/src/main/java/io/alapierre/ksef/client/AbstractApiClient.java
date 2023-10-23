@@ -1,8 +1,6 @@
 package io.alapierre.ksef.client;
 
-import io.alapierre.ksef.client.exception.BadRequestException;
-import io.alapierre.ksef.client.exception.ExceptionResponse;
-import io.alapierre.ksef.client.exception.TooManyRequestsException;
+import io.alapierre.ksef.client.exception.*;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -16,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -83,13 +82,25 @@ public abstract class AbstractApiClient implements ApiClient {
     }
 
     protected ApiException mapHttpResponseStatusToException(int code, String message, Map<String, List<String>> headers, String body) {
+
+        val exceptionsFromKSef = getExceptionDetails(body);
+        val errorCodes = exceptionsFromKSef != null ? extractKsefExceptionsCodes(exceptionsFromKSef) : Collections.emptySet();
+
         if(code == 429)
-            return new TooManyRequestsException(code, message, headers, body, getExceptionDetails(body));
+            return new TooManyRequestsException(code, message, headers, body, exceptionsFromKSef);
         else if (code == 400) {
-            return new BadRequestException(code, message, headers, body, getExceptionDetails(body));
+
+            if(errorCodes.contains(21177)) return new MaxResultsExceededException(code, message, headers, body, exceptionsFromKSef);
+            if(errorCodes.contains(21301)) return new NoAuthorizationException(code, message, headers, body, exceptionsFromKSef);
+
+            return new BadRequestException(code, message, headers, body, exceptionsFromKSef);
         }
 
         return new ApiException(code, message, headers, body, getExceptionDetails(body));
+    }
+
+    protected Set<Integer> extractKsefExceptionsCodes(List<ApiException.ExceptionDetail> list) {
+        return list.stream().map(ApiException.ExceptionDetail::getExceptionCode).collect(Collectors.toSet());
     }
 
     @Getter
