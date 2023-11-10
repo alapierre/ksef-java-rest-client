@@ -32,6 +32,7 @@ public class InvoiceQueryResponse {
         private List<Object> subjectToKList;
         private List<Object> subjectsOtherList;
         private List<Object> subjectsAuthorizedList;
+        private String currency;
         private String net;
         private String vat;
         private String gross;
