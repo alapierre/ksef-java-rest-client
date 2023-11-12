@@ -81,6 +81,15 @@ public class InterfejsyInteraktywneSesjaApi {
     }
 
     @NotNull
+    public SessionStatus sessionStatusByReference(@NotNull String token, @NotNull String reference, int pageSize, int pageOffset, boolean details) throws ApiException {
+
+        val endpoint= String.format("online/Session/Status/%s?PageSize=%d&PageOffset=%d&IncludeDetails=%b", reference, pageSize, pageOffset, details);
+
+        val ret = apiClient.getJson(endpoint, SessionStatus.class, token);
+        return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));
+    }
+
+    @NotNull
     public SessionTerminateResponse terminateSession(@NotNull String token) throws ApiException {
         val ret = apiClient.getJson("online/Session/Terminate", SessionTerminateResponse.class, token);
         return ret.orElseThrow(() -> new ApiException(BAD_API_RESPONSE));

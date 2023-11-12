@@ -49,6 +49,12 @@ public class HttpApiClient extends AbstractApiClient {
     }
 
     @Override
+    public <R> Optional<R> getJsonWithAcceptHeader(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String accept) throws ApiException {
+        HttpRequest request = prepareGetRequest(endpoint, Map.of("Accept", accept));
+        return callAndReturnJson(classOfR, request);
+    }
+
+    @Override
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR) throws ApiException {
         HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), true);
         return callAndReturnJson(classOfR, request);
@@ -57,6 +63,12 @@ public class HttpApiClient extends AbstractApiClient {
     @Override
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
         HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), true);
+        return callAndReturnJson(classOfR, request);
+    }
+
+    @Override
+    public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token, @NotNull String accept) throws ApiException {
+        HttpRequest request = prepareGetRequest(endpoint, Map.of("Accept", accept));
         return callAndReturnJson(classOfR, request);
     }
 

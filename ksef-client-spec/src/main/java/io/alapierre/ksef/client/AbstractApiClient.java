@@ -11,10 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -91,7 +88,8 @@ public abstract class AbstractApiClient implements ApiClient {
         else if (code == 400) {
 
             if(errorCodes.contains(21177)) return new MaxResultsExceededException(code, message, headers, body, exceptionsFromKSef);
-            if(errorCodes.contains(21301)) return new NoAuthorizationException(code, message, headers, body, exceptionsFromKSef);
+            if(errorCodes.contains(21301)) return new NoAuthorizationException(message, code, headers, body);
+            if(errorCodes.contains(21304)) return new NoAuthenticationException(code, message, headers, body, exceptionsFromKSef);
 
             return new BadRequestException(code, message, headers, body, exceptionsFromKSef);
         }

@@ -54,11 +54,29 @@ public class OkHttpApiClient extends AbstractApiClient {
 
     @Override
     public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
+        return getJson(endpoint, classOfR, token, "application/json");
+    }
+
+    @Override
+    public <R> Optional<R> getJson(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String token, @NotNull String accept) throws ApiException {
 
         val builder = new Request.Builder();
         builder.url(createUrl(endpoint));
-        builder.addHeader(TOKEN_HEADER_NAME, token);
+        builder
+                .addHeader(TOKEN_HEADER_NAME, token)
+                .addHeader("Accept", accept);
         builder.get();
+
+        return callAndReturnJson(classOfR, builder.build());
+    }
+
+    @Override
+    public <R> Optional<R> getJsonWithAcceptHeader(@NotNull String endpoint, @NotNull Class<R> classOfR, @NotNull String accept) throws ApiException {
+
+        val builder = new Request.Builder();
+        builder.url(createUrl(endpoint))
+                .addHeader("Accept", accept)
+                .get();
 
         return callAndReturnJson(classOfR, builder.build());
     }

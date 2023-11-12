@@ -116,4 +116,14 @@ public class InterfejsyInteraktywneFakturaApi {
                 .processingDescription(upo.getProcessingDescription())
                 .build();
     }
+
+    public SessionStatusResponse sessionStatusWithUpoURL(@NotNull String referenceNumber) throws ApiException {
+        val endpoint = String.format("common/Status/%s", referenceNumber);
+        val resp = apiClient.getJsonWithAcceptHeader(endpoint, SessionStatusResponse.class, "application/vnd.v3+json");
+        return resp.orElseThrow(() -> new ApiException("Nieprawidłowa odpowiedź z API"));
+    }
+
+    public void loadUpoByUrl(String upoUrl, @NotNull OutputStream os) throws ApiException {
+        apiClient.getStream(upoUrl, "", os);
+    }
 }

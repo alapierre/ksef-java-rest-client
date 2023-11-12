@@ -28,7 +28,7 @@ import java.text.ParseException;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Slf4j
-public class RequestsTests {
+public class RequestsIT {
 
     JsonSerializer serializer = new GsonJsonSerializer();
     ApiClient client = new OkHttpApiClient(serializer);
