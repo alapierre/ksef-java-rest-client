@@ -76,7 +76,7 @@
         <jackson-databind.version>2.15.3</jackson-databind.version>
         <sonar.organization>alapierre</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <common-utils.version>1.12</common-utils.version>
+        <common-utils.version>1.13</common-utils.version>
         <crypto-utils.version>1.13</crypto-utils.version>
         <mockserver.version>5.14.0</mockserver.version>
         <jaxb-runtime.version>4.0.2</jaxb-runtime.version>
