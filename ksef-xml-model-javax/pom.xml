@@ -73,7 +73,7 @@
         <dependency>
             <groupId>io.alapierre.commons</groupId>
             <artifactId>xml-utils</artifactId>
-            <version>1.11</version>
+            <version>1.14</version>
             <exclusions>
                 <exclusion>
                     <artifactId>jakarta.xml.bind-api</artifactId>
