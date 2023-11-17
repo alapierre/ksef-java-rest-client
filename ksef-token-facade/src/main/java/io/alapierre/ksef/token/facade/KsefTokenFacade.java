@@ -31,9 +31,9 @@ public class KsefTokenFacade {
     private final InterfejsyInteraktywneSesjaApi api;
 
     private boolean isSchemaValidationEnabled() {
-        val res = Boolean.parseBoolean(System.getProperty("io.alapierre.ksef.validateAuthRequestXML", "true"));
-        if (!res) log.info("AuthRequest XML validation is disabled");
-        return res;
+        boolean isValidationEnabled = SchemaConfiguration.isValidateAuthRequestXML();
+        if (!isValidationEnabled) log.info("AuthRequest XML validation is disabled");
+        return isValidationEnabled;
     }
 
     public InitSignedResponse authByToken(@NonNull Environment env, @NonNull String identifier, AuthorisationChallengeRequest.IdentifierType identifierType, @NotNull String token) throws ApiException, ParseException {
