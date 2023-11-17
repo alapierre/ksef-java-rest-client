@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+		xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		xmlns="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
+		xmlns:types="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
+		targetNamespace="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
+		elementFormDefault="qualified" attributeFormDefault="unqualified"
+		version="1.0" xml:lang="PL"
+>
+	<xs:complexType name="DocumentTypeType">
+		<xs:sequence>
+			<xs:element name="Service" type="ServiceType"/>
+			<xs:element name="FormCode" type="FormCodeType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="ServiceType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="KSeF"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="FormCodeType">
+		<xs:sequence>
+			<xs:element name="SystemCode" type="NonEmptyString32Type"/>
+			<xs:element name="SchemaVersion" type="NonEmptyString16Type"/>
+			<xs:element name="TargetNamespace" type="NonEmptyString256Type"/>
+			<xs:element name="Value" type="NonEmptyString256Type"/>
+		</xs:sequence>
+	</xs:complexType>
+
+
+	<xs:complexType name="FileUnlimitedHashType">
+		<xs:sequence>
+			<xs:element name="HashSHA" type="HashSHAType"/>
+			<xs:element name="FileSize" type="UnlimitedFileSizeType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="File50MBHashType">
+		<xs:sequence>
+			<xs:element name="HashSHA" type="HashSHAType"/>
+			<xs:element name="FileSize" type="FileSize50MBType"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="HashSHAType">
+		<xs:sequence>
+			<xs:element name="Algorithm" type="xs:token" fixed="SHA-256"/>
+			<xs:element name="Encoding" type="xs:token" fixed="Base64"/>
+			<xs:element name="Value" type="FixedLengthToken44Type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:simpleType name="UnlimitedFileSizeType">
+		<xs:restriction base="xs:long">
+			<xs:minExclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FileSize50MBType">
+		<xs:restriction base="xs:integer">
+			<xs:minExclusive value="0"/>
+			<xs:maxInclusive value="52428800"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FileSize5MBType">
+		<xs:restriction base="xs:integer">
+			<xs:minExclusive value="0"/>
+			<xs:maxInclusive value="5242880"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FileSize2MBType">
+		<xs:restriction base="xs:integer">
+			<xs:minExclusive value="0"/>
+			<xs:maxInclusive value="2097152"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FileSize1MBType">
+		<xs:restriction base="xs:integer">
+			<xs:minExclusive value="0"/>
+			<xs:maxInclusive value="1048576"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<xs:complexType name="EncryptionType">
+		<xs:sequence>
+			<xs:element name="EncryptionKey" type="EncryptionKeyType"/>
+			<xs:element name="EncryptionInitializationVector" type="EncryptionInitializationVectorType"/>
+			<xs:element name="EncryptionAlgorithmKey" type="EncryptionAlgorithmKeyType"/>
+			<xs:element name="EncryptionAlgorithmData" type="EncryptionAlgorithmDataType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="EncryptionKeyType">
+		<xs:sequence>
+			<xs:element name="Encoding" type="xs:token" fixed="Base64"/>
+			<xs:element name="Algorithm" type="xs:token" fixed="AES"/>
+			<xs:element name="Size" type="xs:int" fixed="256"/>
+			<xs:element name="Value" type="FixedLengthToken344Type">
+				<xs:annotation>
+					<xs:documentation>Encryption key bytes encrypted with service certificate public key (transformation RSA/ECB/PKCS#1) and then encoded with Base64</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="EncryptionInitializationVectorType">
+		<xs:sequence>
+			<xs:element name="Encoding" type="xs:token" fixed="Base64"/>
+			<xs:element name="Bytes" type="xs:int" fixed="16"/>
+			<xs:element name="Value" type="FixedLengthToken24Type"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="EncryptionAlgorithmKeyType">
+		<xs:sequence>
+			<xs:element name="Algorithm" type="xs:token" fixed="RSA"/>
+			<xs:element name="Mode" type="xs:token" fixed="ECB"/>
+			<xs:element name="Padding" type="xs:token" fixed="PKCS#1"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="EncryptionAlgorithmDataType">
+		<xs:sequence>
+			<xs:element name="Algorithm" type="xs:token" fixed="AES"/>
+			<xs:element name="Mode" type="xs:token" fixed="CBC"/>
+			<xs:element name="Padding" type="xs:token" fixed="PKCS#7"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="AccountNumberType">
+		<xs:choice>
+			<xs:element name="NRB" type="NRBType"/>
+			<xs:element name="IBAN" type="IBANType"/>
+		</xs:choice>
+	</xs:complexType>
+
+
+
+	<xs:simpleType name="AmountType">
+		<xs:restriction base="xs:decimal">
+			<xs:fractionDigits value="2" fixed="true"/>
+			<xs:totalDigits value="12" fixed="true"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="DateType">
+		<xs:restriction base="xs:date">
+			<xs:whiteSpace value="collapse"/>
+			<xs:minInclusive value="2022-01-01"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="IdentifierNIPType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[1-9]((\d[1-9])|([1-9]\d))\d{7}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentifierInternalType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[1-9]((\d[1-9])|([1-9]\d))\d{7}-\d{5}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentifierPESELType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9]{4}[0-3][0-9]{6}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IdentifierCertificateType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[0-9A-F]{40}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="IntegerPositiveType">
+		<xs:restriction base="xs:integer">
+			<xs:minExclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="IntegerNonNegativeType">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PageSizeType">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="10"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PlainInvoiceType">
+		<xs:restriction base="xs:base64Binary"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="InvoicePaymentConfirmationSignedType">
+		<xs:restriction base="xs:base64Binary"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="EncryptedInvoiceType">
+		<xs:restriction base="xs:base64Binary"/>
+	</xs:simpleType>
+
+	<xs:complexType name="SubjectNameType" abstract="true">
+		<xs:sequence>
+			<xs:element name="TradeName" type="NonEmptyString256Type" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubjectFullNameType">
+		<xs:complexContent>
+			<xs:extension base="SubjectNameType">
+				<xs:sequence>
+					<xs:element name="FullName" type="NonEmptyString256Type"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SubjectPersonNameType">
+		<xs:complexContent>
+			<xs:extension base="SubjectNameType">
+				<xs:sequence>
+					<xs:element name="FirstName" type="NonEmptyString30Type"/>
+					<xs:element name="Surname" type="NonEmptyString81Type"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SubjectIdentifierByType" abstract="true">
+		<xs:sequence>
+			<xs:element name="Identifier" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubjectIdentifierByCompanyType">
+		<xs:complexContent>
+			<xs:restriction base="SubjectIdentifierByType">
+				<xs:sequence>
+					<xs:element name="Identifier" type="IdentifierNIPType"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SubjectIdentifierInternalType">
+		<xs:complexContent>
+			<xs:restriction base="SubjectIdentifierByType">
+				<xs:sequence>
+					<xs:element name="Identifier" type="IdentifierInternalType"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SubjectIdentifierToType" abstract="true">
+		<xs:sequence>
+			<xs:element name="Identifier" type="xs:string"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="SubjectIdentifierToCompanyType">
+		<xs:complexContent>
+			<xs:restriction base="SubjectIdentifierToType">
+				<xs:sequence>
+					<xs:element name="Identifier" type="IdentifierNIPType"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SubjectIdentifierToOtherTaxType">
+		<xs:complexContent>
+			<xs:restriction base="SubjectIdentifierToType">
+				<xs:sequence>
+					<xs:element name="Identifier" type="NonEmptyString50Type"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="SubjectIdentifierToNoneType">
+		<xs:complexContent>
+			<xs:restriction base="SubjectIdentifierToType">
+				<xs:sequence>
+					<xs:element name="Identifier" type="EmptyStringType"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="AuthorisationTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SerialNumber"/>
+			<xs:enumeration value="Fingerprint"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="KSeFReferenceNumberType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([1-9]((\d[1-9])|([1-9]\d))\d{7}|M\d{9}|[A-Z]{3}\d{7})-(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-F]{6})-([0-9A-F]{6})-([0-9A-F]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PaymentIdentifierType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ReferenceNumberType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="QueryReferenceNumberType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ChallengeReferenceNumberType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(20[2-9][0-9]|2[1-9][0-9]{2}|[3-9][0-9]{3})(0[1-9]|1[0-2])(0[1-9]|[1-2][0-9]|3[0-1])-([0-9A-Z]{2})-([0-9A-F]{10})-([0-9A-F]{10})-([0-9A-F]{2})"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ServiceCodeType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ServiceNameType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="Card4DigitsType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="4"/>
+			<xs:maxLength value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="StatusCodeType">
+		<xs:restriction base="xs:integer">
+			<xs:minInclusive value="100"/>
+			<xs:maxInclusive value="999"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FixedLengthToken24Type">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="24"/>
+			<xs:maxLength value="24"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FixedLengthToken44Type">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="44"/>
+			<xs:maxLength value="44"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="FixedLengthToken344Type">
+		<xs:restriction base="xs:token">
+			<xs:minLength value="344"/>
+			<xs:maxLength value="344"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString256Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="256"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString140Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="140"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString128Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="128"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString81Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="81"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString64Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="64"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString50Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString32Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="32"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString30Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="30"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NonEmptyString16Type">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="16"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="EmptyStringType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="0"/>
+			<xs:maxLength value="0"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TimestampType">
+		<xs:restriction base="xs:dateTime">
+			<xs:whiteSpace value="collapse"/>
+			<xs:minInclusive value="2022-01-01T00:00:00+01:00"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="UPOType">
+		<xs:restriction base="xs:base64Binary"/>
+	</xs:simpleType>
+
+	<xs:simpleType name="URLType">
+		<xs:restriction base="xs:string">
+			<xs:minLength value="1"/>
+			<xs:maxLength value="512"/>
+			<xs:pattern value="http[s]?:\/{2}(([0-9a-z])([0-9a-z_-])*\.)+([0-9a-z])([0-9a-z_-])*"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="IBANType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{2}[0-9]{2}[A-Z0-9]{10,30}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="NRBType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(PL)?[0-9]{2}[0-9]{8}[0-9]{16}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="CurrencyCodeType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z]{2,3}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

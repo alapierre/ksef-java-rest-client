@@ -56,6 +56,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <catalog>${basedir}/src/main/resources/catalog.cat</catalog>
                 </configuration>
                 <dependencies>
                     <dependency>

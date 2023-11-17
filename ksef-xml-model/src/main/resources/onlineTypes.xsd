@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://ksef.mf.gov.pl/schema/gtw/svc/online/types/2021/10/01/0001"
+	xmlns:online.types="http://ksef.mf.gov.pl/schema/gtw/svc/online/types/2021/10/01/0001"
+	xmlns:types="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
+	targetNamespace="http://ksef.mf.gov.pl/schema/gtw/svc/online/types/2021/10/01/0001"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0" xml:lang="PL"
+>
+	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001" schemaLocation="gtwTypes.xsd"/>
+
+	<xs:complexType name="AuthorisationContextSignedType">
+		<xs:complexContent>
+			<xs:extension base="AuthorisationContextType">
+				<xs:sequence>
+					<xs:element name="Type" type="types:AuthorisationTypeType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AuthorisationContextTokenType">
+		<xs:complexContent>
+			<xs:extension base="AuthorisationContextType">
+				<xs:sequence>
+					<xs:element name="Token" type="types:FixedLengthToken344Type">
+						<xs:annotation>
+							<xs:documentation>Authorisation token bytes encrypted with service certificate public key (transformation RSA/ECB/PKCS#1) and then encoded with Base64</xs:documentation></xs:annotation>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="AuthorisationContextType" abstract="true">
+		<xs:sequence>
+			<xs:element name="Challenge" type="types:ChallengeReferenceNumberType"/>
+			<xs:element name="Identifier" type="types:SubjectIdentifierByType"/>
+			<xs:element name="DocumentType" type="types:DocumentTypeType"/>
+			<xs:element name="Encryption" type="types:EncryptionType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="InvoicePaymentConfirmationTokenType" abstract="true">
+		<xs:sequence>
+			<xs:element name="Timestamp" type="types:TimestampType"/>
+			<xs:element name="UniqueID" type="types:NonEmptyString128Type"/>
+			<xs:element name="BookingDate" type="types:DateType"/>
+			<xs:element name="CurrencyCode" type="types:CurrencyCodeType"/>
+			<xs:element name="Amount" type="types:AmountType"/>
+			<xs:element name="PaymentSubject" type="types:NonEmptyString140Type"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InvoicePaymentConfirmationTokenBankType">
+		<xs:complexContent>
+			<xs:extension base="InvoicePaymentConfirmationTokenType">
+				<xs:sequence>
+					<xs:element name="SourceAccountNumber" type="types:AccountNumberType"/>
+					<xs:element name="DestinationAccountNumber" type="types:AccountNumberType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InvoicePaymentConfirmationTokenFaktorType">
+		<xs:complexContent>
+			<xs:extension base="InvoicePaymentConfirmationTokenType">
+				<xs:sequence>
+					<xs:element name="SourceIdentifier" type="types:SubjectIdentifierToType"/>
+					<xs:element name="DestinationIdentifier" type="types:SubjectIdentifierByType"/>
+					<xs:element name="DestinationAccountNumber" type="types:AccountNumberType" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InvoicePaymentConfirmationTokenOnlineType">
+		<xs:complexContent>
+			<xs:extension base="InvoicePaymentConfirmationTokenType">
+				<xs:sequence>
+					<xs:element name="ServiceType" type="types:NonEmptyString64Type"/>
+					<xs:element name="DestinationIdentifier" type="types:SubjectIdentifierByType" minOccurs="0"/>
+					<xs:element name="DestinationAccountNumber" type="types:AccountNumberType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InvoicePaymentConfirmationTokenCardType">
+		<xs:complexContent>
+			<xs:extension base="InvoicePaymentConfirmationTokenType">
+				<xs:sequence>
+					<xs:element name="Card4Digits" type="types:Card4DigitsType"/>
+					<xs:element name="DestinationIdentifier" type="types:SubjectIdentifierByType" minOccurs="0"/>
+					<xs:element name="DestinationAccountNumber" type="types:AccountNumberType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="InvoicePaymentConfirmationTokenDirectType">
+		<xs:complexContent>
+			<xs:extension base="InvoicePaymentConfirmationTokenType">
+				<xs:sequence>
+					<xs:element name="PaymentType" type="types:NonEmptyString64Type"/>
+					<xs:element name="SourceIdentifier" type="types:SubjectIdentifierToType"/>
+					<xs:element name="DestinationIdentifier" type="types:SubjectIdentifierByType"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+</xs:schema>

@@ -10,6 +10,7 @@ import io.alapierre.ksef.xml.model.AuthTokenRequestSerializer;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jetbrains.annotations.NotNull;
 import pl.gov.mf.ksef.schema.gtw.svc.online.auth.request._2021._10._01._0001.InitSessionTokenRequest;
 
@@ -29,6 +30,12 @@ public class KsefTokenFacade {
 
     private final InterfejsyInteraktywneSesjaApi api;
 
+    private boolean isSchemaValidationEnabled() {
+        val res = Boolean.parseBoolean(System.getProperty("io.alapierre.ksef.validateAuthRequestXML", "true"));
+        if (!res) log.info("AuthRequest XML validation is disabled");
+        return res;
+    }
+
     public InitSignedResponse authByToken(@NonNull Environment env, @NonNull String identifier, AuthorisationChallengeRequest.IdentifierType identifierType, @NotNull String token) throws ApiException, ParseException {
         AuthorisationChallengeResponse challengeResponse = api.authorisationChallengeCall(identifier, identifierType);
         log.debug("challengeResponse = {}", challengeResponse);
@@ -39,7 +46,7 @@ public class KsefTokenFacade {
         log.debug("Token request {}", request);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         AuthTokenRequestSerializer serializer = new AuthTokenRequestSerializer();
-        serializer.toStream(request, os);
+        serializer.toStream(request, os, isSchemaValidationEnabled());
         return api.initSessionTokenCall(os.toByteArray());
     }
 
