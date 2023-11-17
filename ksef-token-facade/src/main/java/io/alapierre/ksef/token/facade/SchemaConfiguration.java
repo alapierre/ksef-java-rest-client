@@ -8,7 +8,7 @@ public class SchemaConfiguration {
     @Getter
     private static boolean validateAuthRequestXML = true;
 
-    public static void setValidateAuthRequestXML(boolean myVariable) {
-        SchemaConfiguration.validateAuthRequestXML = myVariable;
+    public static void setValidateAuthRequestXML(boolean validateAuthRequestXML) {
+        SchemaConfiguration.validateAuthRequestXML = validateAuthRequestXML;
     }
 }
