@@ -57,6 +57,7 @@
         <module>ksef-test-common</module>
         <module>ksef-sample</module>
         <module>ksef-xml-model</module>
+        <module>ksef-qr</module>
     </modules>
     <packaging>pom</packaging>
 
