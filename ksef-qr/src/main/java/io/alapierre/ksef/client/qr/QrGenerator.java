@@ -16,11 +16,9 @@ import lombok.val;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 /**
@@ -40,8 +38,6 @@ public class QrGenerator {
      * @param ksefNumber The KSEF number.
      * @param invoice The invoice as a byte array.
      * @return The verification link.
-     * @throws NoSuchAlgorithmException if the SHA-256 algorithm is not available.
-     * @throws UnsupportedEncodingException if the UTF-8 charset is not supported.
      */
     @SneakyThrows
     public static String verificationLink(Environment environment, String ksefNumber, byte[] invoice) {
