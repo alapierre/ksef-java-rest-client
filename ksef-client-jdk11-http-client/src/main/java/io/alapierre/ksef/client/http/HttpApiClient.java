@@ -195,7 +195,7 @@ public class HttpApiClient extends AbstractApiClient {
     private <R> Optional<R> callAndReturnJson(@NotNull Class<R> classOfR, @NotNull HttpRequest request) throws ApiException {
         try {
             HttpResponse<Optional<R>> req = client.send(request, new JsonBodyHandler<>(classOfR, serializer));
-            if (req.statusCode() != 200) {
+            if (req.statusCode() / 100 != 2) { // not a 2xx code
                 throw createException(req);
             }
             return req.body();
