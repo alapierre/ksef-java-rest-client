@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.*;
 
 /**
@@ -84,20 +85,20 @@ public class HttpApiClient extends AbstractApiClient {
 
     @Override
     public <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(body), OCTET, false);
+        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(body), OCTET, true);
         return callAndReturnJson(classOfR, request);
     }
 
     @Override
     public <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofByteArray(body), OCTET, false);
+        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofByteArray(body), OCTET, true);
         return callAndReturnJson(classOfR, request);
     }
 
     @Override
     public <R> Optional<R> postXML(@NotNull String endpoint, @NotNull Object body, @NotNull Class<R> classOfR) throws ApiException {
         try {
-            HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(marshalXML(body)), XML, false);
+            HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(marshalXML(body)), XML, true);
             return callAndReturnJson(classOfR, request);
         } catch (JAXBException e) {
             throw new ApiException("Błąd wywołania API", e);
@@ -195,19 +196,20 @@ public class HttpApiClient extends AbstractApiClient {
 
     private <R> Optional<R> callAndReturnJson(@NotNull Class<R> classOfR, @NotNull HttpRequest request) throws ApiException {
         try {
-            HttpResponse<Optional<R>> req = client.send(request, new JsonBodyHandler<>(classOfR, serializer));
-            if (req.statusCode() / 100 != 2) { // not a 2xx code
-                throw createException(req);
+            HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
+            if (resp.statusCode() / 100 != 2) { // not a 2xx code
+                throw createException(resp);
             }
-            return req.body();
+            String body = resp.body();
+            return serializer.fromJson(body, classOfR);
         } catch (IOException | InterruptedException e) {
             throw new ApiException(e);
         }
     }
 
-    protected <R> ApiException createException(@NotNull HttpResponse<Optional<R>> response) {
+    protected <R> ApiException createException(@NotNull HttpResponse<String> response) {
 
-        String body = response.body().map(Object::toString).orElse(null);
+        String body = response.body();
         log.debug("responseBody: {}", body);
 
         val headers = response.headers().map();

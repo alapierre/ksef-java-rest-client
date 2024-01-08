@@ -2,6 +2,8 @@ package io.alapierre.ksef.client.model.rest.query;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -9,12 +11,16 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class InvoiceQueryRequest {
 
     private QueryCriteria queryCriteria;
 
     @Data
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class QueryCriteria {
         private String subjectType;
         private String type;

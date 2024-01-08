@@ -5,6 +5,8 @@ import lombok.*;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class InvoiceRequest {
   private InvoiceDetails invoiceDetails;
   private String ksefReferenceNumber;
@@ -12,6 +14,8 @@ public class InvoiceRequest {
 
   @Data
   @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
   public static class InvoiceDetails {
     private String dueValue;
     private String invoiceOryginalNumber;

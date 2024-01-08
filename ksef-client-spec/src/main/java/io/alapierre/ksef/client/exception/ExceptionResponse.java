@@ -1,6 +1,8 @@
 package io.alapierre.ksef.client.exception;
 
-import lombok.Value;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -8,12 +10,16 @@ import java.util.List;
  * @author Adrian Lapierre {@literal al@alapierre.io}
  * Copyrights by original author 2022.11.08
  */
-@Value
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExceptionResponse {
 
     Exception exception;
 
-    @Value
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class Exception {
         List<ExceptionDetailList> exceptionDetailList;
         String referenceNumber;
@@ -23,7 +29,9 @@ public class ExceptionResponse {
         String timestamp;
     }
 
-    @Value
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ExceptionDetailList {
         int exceptionCode;
         String exceptionDescription;
