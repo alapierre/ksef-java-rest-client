@@ -25,6 +25,7 @@ import java.util.*;
  */
 @Slf4j
 public class HttpApiClient extends AbstractApiClient {
+    private static final String CONTENT_TYPE = "Content-Type";
     private static final String JSON = "application/json; charset=utf-8";
     private static final String XML = "application/xml; charset=utf-8";
     private static final String OCTET = "application/octet-stream; charset=utf-8";
@@ -204,7 +205,7 @@ public class HttpApiClient extends AbstractApiClient {
         }
     }
 
-    protected ApiException createException(@NotNull HttpResponse<?> response) {
+    protected <R> ApiException createException(@NotNull HttpResponse<Optional<R>> response) {
 
         String body = response.body().map(Object::toString).orElse(null);
         log.debug("responseBody: {}", body);
