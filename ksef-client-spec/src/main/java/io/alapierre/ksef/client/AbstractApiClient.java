@@ -65,23 +65,27 @@ public abstract class AbstractApiClient implements ApiClient {
     @Nullable
     protected List<ApiException.ExceptionDetail> getExceptionDetails(@Nullable String body) {
         List<ApiException.ExceptionDetail> details;
-        details = serializer.fromJson(body, ExceptionResponse.class).map(exceptionResponse -> {
-            if(exceptionResponse.getException() != null) {
-                val list = exceptionResponse.getException().getExceptionDetailList();
-                return list.stream().map(exceptionDetailList -> ApiException.ExceptionDetail.builder()
-                        .exceptionCode(exceptionDetailList.getExceptionCode())
-                        .exceptionDescription(exceptionDetailList.getExceptionDescription())
-                        .build()).collect(Collectors.toList());
-            }
-            return null;
-        }).orElse(Collections.emptyList());
+        try {
+            details = serializer.fromJson(body, ExceptionResponse.class).map(exceptionResponse -> {
+                if(exceptionResponse.getException() != null) {
+                    val list = exceptionResponse.getException().getExceptionDetailList();
+                    return list.stream().map(exceptionDetailList -> ApiException.ExceptionDetail.builder()
+                            .exceptionCode(exceptionDetailList.getExceptionCode())
+                            .exceptionDescription(exceptionDetailList.getExceptionDescription())
+                            .build()).collect(Collectors.toList());
+                }
+                return null;
+            }).orElse(List.of());
+        } catch (Exception e) {
+            return List.of();
+        }
         return details;
     }
 
     protected ApiException mapHttpResponseStatusToException(int code, String message, Map<String, List<String>> headers, String body) {
 
         val exceptionsFromKSef = getExceptionDetails(body);
-        val errorCodes = exceptionsFromKSef != null ? extractKsefExceptionsCodes(exceptionsFromKSef) : Collections.emptySet();
+        val errorCodes = exceptionsFromKSef != null ? extractKsefExceptionsCodes(exceptionsFromKSef) : Set.of();
 
         if(code == 429)
             return new TooManyRequestsException(code, message, headers, body, exceptionsFromKSef);
