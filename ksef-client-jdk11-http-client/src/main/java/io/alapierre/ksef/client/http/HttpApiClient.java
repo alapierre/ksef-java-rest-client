@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.util.*;
 
 /**
@@ -25,6 +26,10 @@ import java.util.*;
  */
 @Slf4j
 public class HttpApiClient extends AbstractApiClient {
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String JSON = "application/json; charset=utf-8";
+    private static final String XML = "application/xml; charset=utf-8";
+    private static final String OCTET = "application/octet-stream; charset=utf-8";
 
     private final HttpClient client = HttpClient.newHttpClient();
 
@@ -56,13 +61,13 @@ public class HttpApiClient extends AbstractApiClient {
 
     @Override
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), true);
+        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), JSON, true);
         return callAndReturnJson(classOfR, request);
     }
 
     @Override
     public <B, R> Optional<R> postJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), true);
+        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), JSON, true);
         return callAndReturnJson(classOfR, request);
     }
 
@@ -74,26 +79,26 @@ public class HttpApiClient extends AbstractApiClient {
 
     @Override
     public <B, R> Optional<R> putJson(@NotNull String endpoint, @NotNull B body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), false);
+        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), JSON, false);
         return callAndReturnJson(classOfR, request);
     }
 
     @Override
     public <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(body), false);
+        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(body), OCTET, false);
         return callAndReturnJson(classOfR, request);
     }
 
     @Override
     public <R> Optional<R> postXMLFromBytes(@NotNull String endpoint, byte[] body, @NotNull Class<R> classOfR, @NotNull String token) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofByteArray(body), false);
+        HttpRequest request = preparePostRequest(endpoint, Map.of(TOKEN_HEADER_NAME, token), HttpRequest.BodyPublishers.ofByteArray(body), OCTET, false);
         return callAndReturnJson(classOfR, request);
     }
 
     @Override
     public <R> Optional<R> postXML(@NotNull String endpoint, @NotNull Object body, @NotNull Class<R> classOfR) throws ApiException {
         try {
-            HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(marshalXML(body)), false);
+            HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofByteArray(marshalXML(body)), XML, false);
             return callAndReturnJson(classOfR, request);
         } catch (JAXBException e) {
             throw new ApiException("Błąd wywołania API", e);
@@ -120,7 +125,7 @@ public class HttpApiClient extends AbstractApiClient {
 
     @Override
     public void postStream(@NotNull String endpoint, @NotNull Object body, @NotNull OutputStream os) throws ApiException {
-        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), true);
+        HttpRequest request = preparePostRequest(endpoint, Collections.emptyMap(), HttpRequest.BodyPublishers.ofString(serializer.toJson(body)), JSON, true);
 
         try {
             HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
@@ -136,7 +141,6 @@ public class HttpApiClient extends AbstractApiClient {
         throw new IllegalStateException("Not implemented yet");
     }
 
-
     private HttpRequest prepareGetRequest(@NotNull String endpoint, @NotNull Map<String, String> headers) throws ApiException {
         List<String> headersList = prepareHeaders(headers);
         URI uri = prepareURI(endpoint);
@@ -147,24 +151,28 @@ public class HttpApiClient extends AbstractApiClient {
                 .build();
     }
 
-
     private HttpRequest preparePostRequest(@NotNull String endpoint,
                                            @NotNull Map<String, String> headers,
                                            @NotNull HttpRequest.BodyPublisher bodyPublisher,
+                                           @NotNull String bodyContentType,
                                            boolean post) throws ApiException {
         List<String> headersList = prepareHeaders(headers);
         URI uri = prepareURI(endpoint);
 
         HttpRequest.Builder httpRequestBuilder = HttpRequest.newBuilder()
-                .uri(uri)
-                .headers(headersList.toArray(new String[0]));
+                .uri(uri);
 
+        if (!headersList.isEmpty()) {
+            httpRequestBuilder.headers(headersList.toArray(new String[0]));
+        }
         if (post) {
             httpRequestBuilder.POST(bodyPublisher);
         } else {
             httpRequestBuilder.PUT(bodyPublisher);
         }
-        return httpRequestBuilder.build();
+        return httpRequestBuilder
+                .header(CONTENT_TYPE, bodyContentType)
+                .build();
     }
 
     private URI prepareURI(@NotNull String endpoint) throws ApiException {
@@ -188,22 +196,20 @@ public class HttpApiClient extends AbstractApiClient {
 
     private <R> Optional<R> callAndReturnJson(@NotNull Class<R> classOfR, @NotNull HttpRequest request) throws ApiException {
         try {
-            HttpResponse<Optional<R>> req = client.send(request, new JsonBodyHandler<>(classOfR, serializer));
-            if (req.statusCode() != 200) {
-                throw createException(req);
+            HttpResponse<String> resp = client.send(request, BodyHandlers.ofString());
+            if (resp.statusCode() / 100 != 2) { // not a 2xx code
+                throw createException(resp);
             }
-            return req.body();
+            String body = resp.body();
+            return serializer.fromJson(body, classOfR);
         } catch (IOException | InterruptedException e) {
             throw new ApiException(e);
         }
     }
 
-    protected ApiException createException(@NotNull HttpResponse<?> response) {
+    protected <R> ApiException createException(@NotNull HttpResponse<String> response) {
 
-        val responseBody = response.body();
-
-        String body;
-        body = responseBody != null ? responseBody.toString() : null;
+        String body = response.body();
         log.debug("responseBody: {}", body);
 
         val headers = response.headers().map();

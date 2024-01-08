@@ -2,6 +2,8 @@ package io.alapierre.ksef.client.model.rest.auth;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Adrian Lapierre {@literal al@alapierre.io}
@@ -9,6 +11,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SessionToken {
     private String token;
     private Context context;

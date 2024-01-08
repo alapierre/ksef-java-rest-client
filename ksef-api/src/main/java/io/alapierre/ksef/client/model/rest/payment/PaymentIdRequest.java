@@ -3,7 +3,8 @@ package io.alapierre.ksef.client.model.rest.payment;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
-import lombok.experimental.Tolerate;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -13,11 +14,9 @@ import java.util.List;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PaymentIdRequest {
-
-    @Tolerate
-    public PaymentIdRequest() {
-    }
 
     @Singular("ksefReferenceNumber")
     private List<String> ksefReferenceNumberList;
