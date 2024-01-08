@@ -9,8 +9,8 @@
 	elementFormDefault="qualified" attributeFormDefault="unqualified"
 	version="1.0" xml:lang="PL"
 >
-	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001" schemaLocation="https://ksef-test.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001/gtwTypes.xsd"/>
-	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001" schemaLocation="https://ksef-test.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001/batchTypes.xsd"/>
+	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001" schemaLocation="gtwTypes.xsd"/>
+	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001" schemaLocation="batchTypes.xsd"/>
 
 	<xs:element name="InitRequest">
 		<xs:complexType>

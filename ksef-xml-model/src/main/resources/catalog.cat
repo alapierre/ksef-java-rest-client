@@ -4,6 +4,10 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
 
     <public
+        publicId="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001"
+        uri="batchTypes.xsd"/>
+
+    <public
         publicId="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
         uri="gtwTypes.xsd"/>
 

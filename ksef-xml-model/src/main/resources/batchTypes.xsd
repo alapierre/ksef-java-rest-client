@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001"
+	xmlns:batch.types="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001"
+	xmlns:types="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001"
+	targetNamespace="http://ksef.mf.gov.pl/schema/gtw/svc/batch/types/2021/10/01/0001"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0" xml:lang="PL"
+>
+	<xs:import namespace="http://ksef.mf.gov.pl/schema/gtw/svc/types/2021/10/01/0001" schemaLocation="gtwTypes.xsd"/>
+
+	<xs:simpleType name="CompressionTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="zip"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="PackagePartSignatureInitRequestType">
+		<xs:annotation>
+			<xs:documentation>Package part bytes encrypted with service certificate public key (transformation AES/CBC/PKCS#7)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="OrdinalNumber" type="types:IntegerPositiveType"/>
+			<xs:element name="PartFileName" type="batch.types:PartFileNameType"/>
+			<xs:element name="PartFileHash" type="batch.types:PartFileHashType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="PackageType">
+		<xs:sequence>
+			<xs:element name="PackageType" type="batch.types:PackageTypeType"/>
+			<xs:element name="CompressionType" type="batch.types:CompressionTypeType"/>
+			<xs:element name="Value" type="batch.types:PackageNameType"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="PackageFileHashType">
+		<xs:complexContent>
+			<xs:extension base="types:FileUnlimitedHashType"/>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="PartFileHashType">
+		<xs:complexContent>
+			<xs:extension base="types:File50MBHashType"/>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="PackageTypeType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="single"/>
+			<xs:enumeration value="split"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PackageNameType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z0-9_\.\-]{5,100}"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PartFileNameType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z0-9_\.\-]{5,100}"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>
