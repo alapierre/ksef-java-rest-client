@@ -36,6 +36,11 @@ public class InvoiceQueryResponse {
         private String net;
         private String vat;
         private String gross;
+        private boolean faP17Annotation;
+        private String invoiceType;
+        private String schemaVersion;
+        private boolean hidden;
+
     }
 
     @Data
