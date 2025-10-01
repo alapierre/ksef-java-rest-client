@@ -2,7 +2,11 @@
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![Maven Central](http://img.shields.io/maven-central/v/io.alapierre.ksef/ksef-java)](https://search.maven.org/artifact/io.alapierre.ksef/ksef-java)
 
-# KSeF java REST client
+# If you looking for KSeF 2.0 client
+
+You should use official KSeF 2.0 SDK https://github.com/CIRFMF/ksef-client-java or our pathed fork https://github.com/alapierre/ksef-client-java-mf-fork
+
+# KSeF 1.0 java REST client
 
 KSeF
 - API version: 2.0.4
